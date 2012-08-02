@@ -1,0 +1,13 @@
+*** DIBS Changelog ***
+
+
+2012.07.26 - version 1.2
+ * Changed ordertext sent to DIBS from orderID to Billing Name and Billing Address. OrderID is already sent as orderid to DIBS.
+ 
+ 2012.05.17 - version 1.1
+ * Changed callbackurl from site_url() to home_url()
+ * Added debug/log feature
+ * Updated readme file (The checkbox "All fields exclusive of card information response" must be checked).
+
+2011.10.13 - version 1.0
+ * First Release
