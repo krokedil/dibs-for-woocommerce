@@ -57,6 +57,7 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 		$this->merchant_id 	= ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
 		$this->key_1 		= html_entity_decode($this->settings['key_1']);
 		$this->key_2 		= html_entity_decode($this->settings['key_2']);
+		$this->capturenow 	= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';
 		$this->language 	= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
 		$this->testmode		= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
 		$this->debug		= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
@@ -142,6 +143,12 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 								'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'woothemes' ), 
 								'default' => 'sv'
 							),
+			'capturenow' => array(
+							'title' => __( 'Instant capture (capturenow)', 'woothemes' ), 
+							'type' => 'checkbox', 
+							'label' => __( 'If checked the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this function.', 'woothemes' ), 
+							'default' => 'no'
+						),
 			'testmode' => array(
 							'title' => __( 'Test Mode', 'woothemes' ), 
 							'type' => 'checkbox', 
@@ -214,7 +221,7 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 				// Merchant
 				'merchant' => $this->merchant_id,
 				
-				// Session
+				// Language
 				'lang' => $this->language,
 				
 				// Order
@@ -233,6 +240,7 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 				
 		);
 		
+		
 		// Calculate key
 		// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/
 		$key1 = $this->key_1;
@@ -250,9 +258,14 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 			$args['ip'] = $_SERVER['HTTP_CLIENT_IP'];
 		}
 		
-		
+		// Testmode
 		if ( $this->testmode == 'yes' ) {
 			$args['test'] = 'yes';
+		}
+		
+		// Instant capture
+		if ( $this->capturenow == 'yes' ) {
+			$args['capturenow'] = 'yes';
 		}
 			
 		
