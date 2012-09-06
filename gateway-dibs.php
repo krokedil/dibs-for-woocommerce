@@ -226,8 +226,10 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 				
 				// Order
 				'amount' => $order->order_total * 100,
-				'orderid' => $order_id,
-				'uniqueoid' => $order->order_key,
+				//'orderid' => $order_id,
+				'orderid' => $order->get_order_number(),
+				//'uniqueoid' => $order->order_key,
+				'uniqueoid' => $order_id,
 				'currency' => $this->dibs_currency[get_option('woocommerce_currency')],
 				'ordertext' => 'Name: ' . $order->billing_first_name . ' ' . $order->billing_last_name . '. Address: ' . $order->billing_address_1 . ', ' . $order->billing_postcode . ' ' . $order->billing_city,
 				
@@ -240,13 +242,15 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 				
 		);
 		
-		
+		//var_dump($order->get_order_number());
+		//die();
 		// Calculate key
 		// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/
 		$key1 = $this->key_1;
 		$key2 = $this->key_2;
 		$merchant = $this->merchant_id;
-		$orderid = $order_id;
+		//$orderid = $order_id;
+		$orderid = $order->get_order_number();
 		$currency = $this->dibs_currency[get_option('woocommerce_currency')];
 		$amount = $order->order_total * 100;	
 		$postvars = 'merchant=' . $merchant . '&orderid=' . $orderid . '&currency=' . $currency . '&amount=' . $amount;
@@ -375,7 +379,8 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
         endif;
 
 
-		if ( !empty($posted['orderid']) && is_numeric($posted['orderid']) ) {
+		//if ( !empty($posted['orderid']) && is_numeric($posted['orderid']) ) {
+		if ( !empty($posted['uniqueoid']) && is_numeric($posted['uniqueoid']) ) {
 			
 			// Verify MD5 checksum
 			// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/	
@@ -384,20 +389,22 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 			$vars = 'transact='. $posted['transact'] . '&amount=' . $posted['amount'] . '&currency=' . $posted['currency'];
 			$md5 = MD5($key2 . MD5($key1 . $vars));
 			
-			$order = new woocommerce_order( (int) $posted['orderid'] );
+			$order = new woocommerce_order( (int) $posted['uniqueoid'] );
 			
 			if($posted['authkey'] != $md5) {
 				// MD5 check failed
-				$order->add_order_note( __('MD5 check failed for Dibs callback with order_id: ', 'woocommerce') .$posted['orderid'] );
+				$order->add_order_note( __('MD5 check failed for Dibs callback with order_id: ', 'woocommerce') .$posted['uniqueoid'] );
 				exit();
 			}	
-		
+			
+			/*
 			if ($order->order_key !== $posted['uniqueoid']) {
 				// Unique ID check failed
-				$order->add_order_note( __('Unique ID check failed for Dibs callback with order_id:', 'woocommerce') .$posted['orderid'] );
+				$order->add_order_note( __('Unique ID check failed for Dibs callback with order_id:', 'woocommerce') .$posted['uniqueoid'] );
 				exit;
 			}
-		
+			*/
+			
 			if ($order->status !== 'completed') {
 				$order->add_order_note( __('DIBS payment completed. DIBS transaction number: ', 'woocommerce') . $posted['transact'] );
 				$order->payment_complete();
