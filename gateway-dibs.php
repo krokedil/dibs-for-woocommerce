@@ -8,7 +8,7 @@ Author: Niklas Högefjord
 Author URI: http://krokedil.com
 */
 
-/*  Copyright 2011  Niklas Högefjord  (email : niklas@krokedil.se)
+/*  Copyright 2011-2012  Niklas Högefjord  (email : niklas@krokedil.se)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -38,12 +38,13 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 	public function __construct() { 
 		global $woocommerce;
 		
-        $this->id			= 'dibs';
-        $this->icon 		= plugins_url(basename(dirname(__FILE__))."/images/dibs.png");
-        $this->has_fields 	= false;
-        $this->log 			= $woocommerce->logger();
+        $this->id					= 'dibs';
+        $this->icon 				= plugins_url(basename(dirname(__FILE__))."/images/dibs.png");
+        $this->has_fields 			= false;
+        $this->log 					= $woocommerce->logger();
         
-        $this->liveurl 		= 'https://payment.architrade.com/paymentweb/start.action';
+        $this->flexwin_url 			= 'https://payment.architrade.com/paymentweb/start.action';
+        $this->paymentwindow_url 	= 'https://sat1.dibspayment.com/dibspaymentwindow/entrypoint';
         
 		// Load the form fields.
 		$this->init_form_fields();
@@ -52,15 +53,17 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 		$this->init_settings();
 		
 		// Define user set variables
-		$this->title 		= ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
-		$this->description 	= ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
-		$this->merchant_id 	= ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
-		$this->key_1 		= html_entity_decode($this->settings['key_1']);
-		$this->key_2 		= html_entity_decode($this->settings['key_2']);
-		$this->capturenow 	= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';
-		$this->language 	= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
-		$this->testmode		= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
-		$this->debug		= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
+		$this->title 			= ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
+		$this->description 		= ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
+		$this->merchant_id 		= ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
+		$this->key_1 			= html_entity_decode($this->settings['key_1']);
+		$this->key_2 			= html_entity_decode($this->settings['key_2']);
+		$this->key_hmac 		= html_entity_decode($this->settings['key_hmac']);
+		$this->payment_method 	= ( isset( $this->settings['payment_method'] ) ) ? $this->settings['payment_method'] : '';
+		$this->capturenow 		= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';
+		$this->language 		= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
+		$this->testmode			= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
+		$this->debug			= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
 		
 		// Actions
 		add_action( 'init', array(&$this, 'check_callback') );
@@ -103,7 +106,7 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 			'enabled' => array(
 							'title' => __( 'Enable/Disable', 'woothemes' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable DIBS FlexWin', 'woothemes' ), 
+							'label' => __( 'Enable DIBS', 'woothemes' ), 
 							'default' => 'yes'
 						), 
 			'title' => array(
@@ -127,15 +130,28 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 			'key_1' => array(
 							'title' => __( 'MD5 k1', 'woothemes' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS MD5 k1; this is needed in order to take payment.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS MD5 k1; this is only needed when using Flexwin as the payment method.', 'woothemes' ), 
 							'default' => ''
 						),
 			'key_2' => array(
 							'title' => __( 'MD5 k2', 'woothemes' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS MD5 k2; this is needed in order to take payment.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS MD5 k2; this is only needed when using Flexwin as the payment method.', 'woothemes' ), 
 							'default' => ''
 						),
+			'key_hmac' => array(
+							'title' => __( 'HMAC Key (k)', 'woothemes' ), 
+							'type' => 'text', 
+							'description' => __( 'Please enter your DIBS HMAC Key (k); this is only needed when using Payment Window as the payment method.', 'woothemes' ), 
+							'default' => ''
+						),
+			'payment_method' => array(
+								'title' => __( 'Payment Method', 'woothemes' ), 
+								'type' => 'select',
+								'options' => array('flexwin'=>__( 'Flexwin', 'woothemes' ), 'paymentwindow'=>__( 'Payment Window', 'woothemes' )),
+								'description' => __( 'Choose payment method integration.', 'woothemes' ),
+								'default' => 'flexwin',
+								),
 			'language' => array(
 								'title' => __( 'Language', 'woothemes' ), 
 								'type' => 'select',
@@ -175,8 +191,8 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 	public function admin_options() {
 
     	?>
-    	<h3><?php _e('DIBS FlexWin', 'woothemes'); ?></h3>
-    	<p><?php _e('DIBS FlexWin works by sending the user to <a href="http://www.dibspayment.com/">DIBS</a> to enter their payment information.', 'woothemes'); ?></p>
+    	<h3><?php _e('DIBS', 'woothemes'); ?></h3>
+    	<p><?php _e('DIBS works by sending the user to <a href="http://www.dibspayment.com/">DIBS</a> to enter their payment information.', 'woothemes'); ?></p>
     	<table class="form-table">
     	<?php
     		if ( isset($this->dibs_currency[get_option('woocommerce_currency')]) ) {
@@ -214,64 +230,136 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 		
 		$order = &new woocommerce_order( $order_id );
 		
-		$dibs_adr = $this->liveurl;		
+		// Post the form to the right address
+		if ($this->payment_method == 'paymentwindow') {
+			$dibs_adr = $this->paymentwindow_url;		
+		} else {
+			$dibs_adr = $this->flexwin_url;
+		}
+		
 		
 		$args =
 			array(
 				// Merchant
 				'merchant' => $this->merchant_id,
 				
-				// Language
-				'lang' => $this->language,
-				
 				// Order
 				'amount' => $order->order_total * 100,
-				//'orderid' => $order_id,
-				'orderid' => $order->get_order_number(),
-				//'uniqueoid' => $order->order_key,
-				'uniqueoid' => $order_id,
-				'currency' => $this->dibs_currency[get_option('woocommerce_currency')],
-				'ordertext' => 'Name: ' . $order->billing_first_name . ' ' . $order->billing_last_name . '. Address: ' . $order->billing_address_1 . ', ' . $order->billing_postcode . ' ' . $order->billing_city,
 				
-				// URLs
-				// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL 
-				'callbackurl' => home_url(),
-				// Accept URL only works without problem if you check the box "Skip step 3 Payment approved" under ->Integration ->FlexWin in your DIBS account.
-				'accepturl' => add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id')))),
-				'cancelurl' => urlencode($order->get_cancel_order_url()),
+				// Currency
+				'currency' => $this->dibs_currency[get_option('woocommerce_currency')],	
 				
 		);
 		
-		//var_dump($order->get_order_number());
-		//die();
-		// Calculate key
-		// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/
-		$key1 = $this->key_1;
-		$key2 = $this->key_2;
-		$merchant = $this->merchant_id;
-		//$orderid = $order_id;
-		$orderid = $order->get_order_number();
-		$currency = $this->dibs_currency[get_option('woocommerce_currency')];
-		$amount = $order->order_total * 100;	
-		$postvars = 'merchant=' . $merchant . '&orderid=' . $orderid . '&currency=' . $currency . '&amount=' . $amount;
 		
-		$args['md5key'] = MD5($key2 . MD5($key1 . $postvars));
-		
-		
-		if( !empty($_SERVER['HTTP_CLIENT_IP']) ) {
-			$args['ip'] = $_SERVER['HTTP_CLIENT_IP'];
-		}
-		
-		// Testmode
-		if ( $this->testmode == 'yes' ) {
-			$args['test'] = 'yes';
-		}
-		
-		// Instant capture
-		if ( $this->capturenow == 'yes' ) {
-			$args['capturenow'] = 'yes';
-		}
+		// Payment Method - Payment Window
+		if ($this->payment_method == 'paymentwindow') {
+				
+			$args['orderID'] = $order_id;
+					
+			// Language
+			$args['language'] = $this->language;
+					
+			//'uniqueoid' => $order->order_key,
+			//'uniqueoid' => $order_id,
 			
+			//'ordertext' => 'Name: ' . $order->billing_first_name . ' ' . $order->billing_last_name . '. Address: ' . $order->billing_address_1 . ', ' . $order->billing_postcode . ' ' . $order->billing_city,
+				
+			// URLs
+			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL 
+			//$args['callbackUrl'] = trailingslashit(home_url());
+			$args['callbackUrl'] = site_url('/woocommerce/dibscallback');
+			// Accept URL only works without problem if you check the box "Skip step 3 Payment approved" under ->Integration ->FlexWin in your DIBS account.
+			$args['acceptReturnUrl'] = $this->get_return_url( $order );
+			$args['cancelreturnurl'] = trailingslashit($order->get_cancel_order_url());
+					
+			// Address info
+			$args['billingFirstName'] = $order->billing_first_name;
+			$args['billingLastName'] = $order->billing_last_name;
+			$args['billingAddress'] = $order->billing_address_1;
+			$args['billingAddress2'] = $order->billing_address_2;
+			$args['billingPostalPlace'] = $order->billing_city;
+			$args['billingPostalCode'] = $order->billing_postcode;
+			$args['billingEmail'] = $order->billing_email;
+			$args['billingMobile'] = $order->billing_phone;
+			
+			// Testmode
+			if ( $this->testmode == 'yes' ) {
+				$args['test'] = '1';
+			}
+			
+			// Instant capture
+			if ( $this->capturenow == 'yes' ) {
+				$args['capturenow'] = '1';
+			}
+			
+			// HMAC
+			$formKeyValues = $args;
+			require_once('calculateMac.php');
+			
+			// Calculate the MAC for the form key-values to be posted to DIBS.
+  			$MAC = calculateMac($formKeyValues, $this->key_hmac, $logfile);
+  			
+  			// Add MAC to the $args array
+  			$args['MAC'] = $MAC;
+  			
+		} else {
+			
+			// Payment Method - Flexwin
+			
+			//'orderid' => $order_id,
+			$args['orderid'] = $order->get_order_number();
+		
+			// Language
+			$args['lang'] =  $this->language;
+			
+			//'uniqueoid' => $order->order_key,
+			$args['uniqueoid'] = $order_id;
+			
+			$args['ordertext'] = 'Name: ' . $order->billing_first_name . ' ' . $order->billing_last_name . '. Address: ' . $order->billing_address_1 . ', ' . $order->billing_postcode . ' ' . $order->billing_city;
+				
+			// URLs
+			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL 
+			//$args['callbackurl'] = trailingslashit(home_url());
+			$args['callbackUrl'] = site_url('/woocommerce/dibscallback');
+			// Accept URL only works without problem if you check the box "Skip step 3 Payment approved" under ->Integration ->FlexWin in your DIBS account.
+			$args['accepturl'] = add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
+			$args['cancelurl'] = urlencode($order->get_cancel_order_url());
+			
+			// Testmode
+			if ( $this->testmode == 'yes' ) {
+				$args['test'] = 'yes';
+			}
+			
+			// Instant capture
+			if ( $this->capturenow == 'yes' ) {
+				$args['capturenow'] = 'yes';
+			}
+			
+			// IP
+			if( !empty($_SERVER['HTTP_CLIENT_IP']) ) {
+				$args['ip'] = $_SERVER['HTTP_CLIENT_IP'];
+			}
+
+			
+			// MD5
+			//var_dump($order->get_order_number());
+			//die();
+			// Calculate key
+			// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/
+			$key1 = $this->key_1;
+			$key2 = $this->key_2;
+			$merchant = $this->merchant_id;
+			//$orderid = $order_id;
+			$orderid = $order->get_order_number();
+			$currency = $this->dibs_currency[get_option('woocommerce_currency')];
+			$amount = $order->order_total * 100;	
+			$postvars = 'merchant=' . $merchant . '&orderid=' . $orderid . '&currency=' . $currency . '&amount=' . $amount;
+		
+			$args['md5key'] = MD5($key2 . MD5($key1 . $postvars));
+		}
+						
+				
 		
 		// Prepare the form
 		$fields = '';
@@ -327,7 +415,6 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 	function process_payment( $order_id ) {
 		
 		$order = &new woocommerce_order( $order_id );
-		
 		return array(
 			'result' 	=> 'success',
 			'redirect'	=> add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(get_option('woocommerce_pay_page_id'))))
@@ -353,12 +440,12 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 	**/
 	function check_callback() {
 	
-		if ( isset($_POST["transact"]) ) :
-			
+		if ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscallback') !== false ) {	
 			$_POST = stripslashes_deep($_POST);
+			header("HTTP/1.1 200 Ok");
 			do_action("valid-dibs-callback", $_POST);
 
-		endif;
+		}
 	}
 
 
@@ -371,6 +458,8 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 		// Debug
 		if ($this->debug=='yes') :
 			
+			$tmp_log = '';
+			
 			foreach ( $posted as $key => $value ) {
 				$tmp_log .= $key . '=' . $value . "\r\n";
 			}
@@ -380,7 +469,8 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 
 
 		//if ( !empty($posted['orderid']) && is_numeric($posted['orderid']) ) {
-		if ( !empty($posted['uniqueoid']) && is_numeric($posted['uniqueoid']) ) {
+		// Flexwin callback
+		if ( isset($_POST["transact"]) && !empty($posted['uniqueoid']) && is_numeric($posted['uniqueoid']) ) {
 			
 			// Verify MD5 checksum
 			// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/	
@@ -394,7 +484,7 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 			if($posted['authkey'] != $md5) {
 				// MD5 check failed
 				$order->add_order_note( __('MD5 check failed for Dibs callback with order_id: ', 'woocommerce') .$posted['uniqueoid'] );
-				exit();
+				exit;
 			}	
 			
 			/*
@@ -410,6 +500,59 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 				$order->payment_complete();
 			
 			}
+			
+			exit;
+			
+		} 
+		
+		// Payment Window callback
+		if ( isset($_POST["transaction"]) && !empty($posted['orderID']) && is_numeric($posted['orderID']) ) {	
+						
+			$order = new woocommerce_order( (int) $posted['orderID'] );
+					
+			if ( $order->status == 'completed' || $order->status == 'processing' ) {
+				
+				// Debug
+				if ($this->debug=='yes') :
+	        		$this->log->add( 'dibs', 'Second Payment window callback. Do nothing.' );			
+				endif;
+				
+				exit;
+				
+			}
+			
+			// Verify HMAC
+			require_once('calculateMac.php');
+  			$MAC = calculateMac($posted, $this->key_hmac, $logfile);
+  	
+			if($posted['MAC'] != $MAC) {
+				$order->add_order_note( __('HMAC check failed for Dibs callback with order_id: ', 'woocommerce') .$posted['transaction'] );
+				exit;
+			}
+				
+			switch (strtolower($posted['status'])) :
+	            case 'accepted' :
+	            case 'pending' :
+	            
+	            	// Order completed
+					$order->add_order_note( sprintf(__('DIBS payment completed. DIBS transaction number: %s.', 'woocommerce'), $posted['transaction'] ));
+					$order->payment_complete();
+					
+					
+				break;
+				
+				case 'declined' :
+				case 'error' :
+				
+					// Order failed
+	                $order->update_status('failed', sprintf(__('Payment %s via IPN.', 'woocommerce'), strtolower($posted['transaction']) ) );
+	                
+	            break;
+	            
+	            default:
+	            	// No action
+	            break;
+	        endswitch;
 			
 			exit;
 			
