@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce DIBS FlexWin Gateway
 Plugin URI: http://woocommerce.com
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 1.3
+Version: 1.3.1
 Author: Niklas Högefjord
 Author URI: http://krokedil.com
 */
@@ -24,6 +24,17 @@ Author URI: http://krokedil.com
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     
 */
+
+/**
+ * Required functions
+ */
+if ( ! function_exists( 'woothemes_queue_update' ) )
+	require_once( 'woo-includes/woo-functions.php' );
+
+/**
+ * Plugin updates
+ */
+woothemes_queue_update( plugin_basename( __FILE__ ), 'XXX', 'XXX' );
 
 // Init DIBS Gateway after WooCommerce has loaded
 add_action('plugins_loaded', 'init_dibs_gateway', 0);
