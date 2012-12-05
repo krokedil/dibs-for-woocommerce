@@ -34,7 +34,7 @@ if ( ! function_exists( 'woothemes_queue_update' ) )
 /**
  * Plugin updates
  */
-woothemes_queue_update( plugin_basename( __FILE__ ), 'XXX', 'XXX' );
+woothemes_queue_update( plugin_basename( __FILE__ ), 'a76c47dcf644f3ca7264357776c7da58', '18602' );
 
 // Init DIBS Gateway after WooCommerce has loaded
 add_action('plugins_loaded', 'init_dibs_gateway', 0);
