@@ -389,6 +389,8 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 		
 		
 		// Print out and send the form
+		//var_dump($dibs_adr);
+		//die();
 		return '<form action="'.$dibs_adr.'" method="post" id="dibs_payment_form">
 				' . $fields . '
 				<input type="submit" class="button-alt" id="submit_dibs_payment_form" value="'.__('Pay via dibs', 'woothemes').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancel order &amp; restore cart', 'woothemes').'</a>
@@ -451,10 +453,20 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 	**/
 	function check_callback() {
 	
-		if ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscallback') !== false ) {	
-			$_POST = stripslashes_deep($_POST);
+		if ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscallback') !== false ) {
+			
+			$this->log->add( 'dibs', 'Incoming callback from DIBS: ' );
+			
+			//$_POST = stripslashes_deep($_POST);
 			header("HTTP/1.1 200 Ok");
-			do_action("valid-dibs-callback", $_POST);
+			
+			$tmp_log ='';
+			
+			foreach ( $_POST as $key => $value ) {
+				$tmp_log .= $key . '=' . $value . "\r\n";
+			}
+			$this->log->add( 'dibs', 'Returning values from DIBS: ' . $tmp_log );
+			do_action("valid-dibs-callback", stripslashes_deep($_POST));
 
 		}
 	}
@@ -481,7 +493,7 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 
 		//if ( !empty($posted['orderid']) && is_numeric($posted['orderid']) ) {
 		// Flexwin callback
-		if ( isset($_POST["transact"]) && !empty($posted['uniqueoid']) && is_numeric($posted['uniqueoid']) ) {
+		if ( isset($posted['transact']) && !empty($posted['uniqueoid']) && is_numeric($posted['uniqueoid']) ) {
 			
 			// Verify MD5 checksum
 			// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/	
@@ -517,7 +529,7 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 		} 
 		
 		// Payment Window callback
-		if ( isset($_POST["transaction"]) && !empty($posted['orderID']) && is_numeric($posted['orderID']) ) {	
+		if ( isset($posted["transaction"]) && !empty($posted['orderID']) && is_numeric($posted['orderID']) ) {	
 						
 			$order = new woocommerce_order( (int) $posted['orderID'] );
 					
