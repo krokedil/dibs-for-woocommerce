@@ -42,9 +42,9 @@ add_action('plugins_loaded', 'init_dibs_gateway', 0);
 function init_dibs_gateway() {
 
 // If the WooCommerce payment gateway class is not available, do nothing
-if ( !class_exists( 'woocommerce_payment_gateway' ) ) return;
+if ( !class_exists( 'WC_Payment_Gateway' ) ) return;
 	
-class woocommerce_dibs extends woocommerce_payment_gateway {
+class WC_Gateway_Dibs extends WC_Payment_Gateway {
 		
 	public function __construct() { 
 		global $woocommerce;
@@ -80,7 +80,12 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 		add_action( 'init', array(&$this, 'check_callback') );
 		add_action('valid-dibs-callback', array(&$this, 'successful_request') );
 		add_action('woocommerce_receipt_dibs', array(&$this, 'receipt_page'));
-		add_action('woocommerce_update_options_payment_gateways', array(&$this, 'process_admin_options'));
+		
+		/* 1.6.6 */
+		add_action( 'woocommerce_update_options_payment_gateways', array( &$this, 'process_admin_options' ) );
+ 
+		/* 2.0.0 */
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
 		$this->dibs_currency = array(
@@ -307,7 +312,7 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 			// HMAC
 			$formKeyValues = $args;
 			require_once('calculateMac.php');
-			
+			$logfile = '';
 			// Calculate the MAC for the form key-values to be posted to DIBS.
   			$MAC = calculateMac($formKeyValues, $this->key_hmac, $logfile);
   			
@@ -452,8 +457,9 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 	* Check for DIBS Response
 	**/
 	function check_callback() {
-	
-		if ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscallback') !== false ) {
+		// Check for both IPN callback (dibscallback) and buyer-return-to-shop callback (statuscode)
+		//if ( ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscallback') !== false ) || isset($_GET['statuscode']) && isset($_GET['orderid']) ) {
+		if ( ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscallback') !== false ) || ( ( isset($_GET['statuscode']) || isset($_GET['status']) ) && ( isset($_GET['orderid']) || isset($_GET['orderID']) ) ) ) {
 			
 			$this->log->add( 'dibs', 'Incoming callback from DIBS: ' );
 			
@@ -462,11 +468,11 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 			
 			$tmp_log ='';
 			
-			foreach ( $_POST as $key => $value ) {
+			foreach ( $_REQUEST as $key => $value ) {
 				$tmp_log .= $key . '=' . $value . "\r\n";
 			}
 			$this->log->add( 'dibs', 'Returning values from DIBS: ' . $tmp_log );
-			do_action("valid-dibs-callback", stripslashes_deep($_POST));
+			do_action("valid-dibs-callback", stripslashes_deep($_REQUEST));
 
 		}
 	}
@@ -491,7 +497,6 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
         endif;
 
 
-		//if ( !empty($posted['orderid']) && is_numeric($posted['orderid']) ) {
 		// Flexwin callback
 		if ( isset($posted['transact']) && !empty($posted['uniqueoid']) && is_numeric($posted['uniqueoid']) ) {
 			
@@ -502,36 +507,55 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 			$vars = 'transact='. $posted['transact'] . '&amount=' . $posted['amount'] . '&currency=' . $posted['currency'];
 			$md5 = MD5($key2 . MD5($key1 . $vars));
 			
-			$order = new woocommerce_order( (int) $posted['uniqueoid'] );
+			$order_id = (int) $posted['uniqueoid'];
+			
+			$order = new woocommerce_order( $order_id );
 			
 			if($posted['authkey'] != $md5) {
 				// MD5 check failed
-				$order->add_order_note( __('MD5 check failed for Dibs callback with order_id: ', 'woocommerce') .$posted['uniqueoid'] );
-				exit;
+				$order->update_status('failed', sprintf(__('MD5 check failed. DIBS transaction ID: %s', 'woocommerce'), strtolower($posted['transaction']) ) );
+				
 			}	
 			
-			/*
-			if ($order->order_key !== $posted['uniqueoid']) {
-				// Unique ID check failed
-				$order->add_order_note( __('Unique ID check failed for Dibs callback with order_id:', 'woocommerce') .$posted['uniqueoid'] );
-				exit;
-			}
-			*/
 			
 			if ($order->status !== 'completed') {
-				$order->add_order_note( __('DIBS payment completed. DIBS transaction number: ', 'woocommerce') . $posted['transact'] );
-				$order->payment_complete();
+				switch (strtolower($posted['statuscode'])) :
+	            	case '2' :
+	            	case '5' :
+	            	case '12' :
+	            		// Order completed
+	            		$order->add_order_note( __('DIBS payment completed. DIBS transaction number: ', 'woocommerce') . $posted['transact'] );
+	            		$order->payment_complete();
+	            	break;
+	            	case '0' :
+	            	case '1' :
+	            	case '4' :
+	            	case '17' :
+	            		// Order failed
+	            		$order->update_status('failed', sprintf(__('DIBS payment %s not approved. Status code %s.', 'woocommerce'), strtolower($posted['transaction']), $posted['statuscode'] ) );
+	            	break;
+	            	
+	            	default:
+	            	// No action
+	            	break;
+	            	
+	            endswitch;
 			
 			}
 			
+			// Return to Thank you page if this is a buyer-return-to-shop callback
+			wp_redirect( add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id')))) );
+	            
 			exit;
 			
 		} 
 		
 		// Payment Window callback
 		if ( isset($posted["transaction"]) && !empty($posted['orderID']) && is_numeric($posted['orderID']) ) {	
-						
-			$order = new woocommerce_order( (int) $posted['orderID'] );
+				
+			$order_id = $posted['orderID'];
+			$this->log->add( 'dibs', 'Tjoho.' . $order_id );
+			$order = new woocommerce_order( $order_id );
 					
 			if ( $order->status == 'completed' || $order->status == 'processing' ) {
 				
@@ -576,6 +600,9 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 	            	// No action
 	            break;
 	        endswitch;
+	        
+	        // Return to Thank you page if this is a buyer-return-to-shop callback
+			wp_redirect( add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id')))) );
 			
 			exit;
 			
@@ -584,7 +611,7 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
 	}
 	
 	
-} // Close class woocommerce_dibs
+} // Close class WC_Gateway_Dibs
 
 
 
@@ -594,7 +621,7 @@ class woocommerce_dibs extends woocommerce_payment_gateway {
  * Add the gateway to WooCommerce
  **/
 function add_dibs_gateway( $methods ) {
-	$methods[] = 'woocommerce_dibs'; return $methods;
+	$methods[] = 'WC_Gateway_Dibs'; return $methods;
 }
 
 add_filter('woocommerce_payment_gateways', 'add_dibs_gateway' );
