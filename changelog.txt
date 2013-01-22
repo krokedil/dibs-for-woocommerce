@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2013 - version 1.3.2
+ * Better callback support
+ 
 2012.12.05 - version 1.3.1
  * Updater
 
