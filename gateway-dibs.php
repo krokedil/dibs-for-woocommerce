@@ -3,12 +3,12 @@
 Plugin Name: WooCommerce DIBS FlexWin Gateway
 Plugin URI: http://woocommerce.com
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 1.3.1
+Version: 1.3.2
 Author: Niklas Högefjord
 Author URI: http://krokedil.com
 */
 
-/*  Copyright 2011-2012  Niklas Högefjord  (email : niklas@krokedil.se)
+/*  Copyright 2011-2013  Niklas Högefjord  (email : niklas@krokedil.se)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -50,7 +50,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 		global $woocommerce;
 		
         $this->id					= 'dibs';
-        $this->icon 				= plugins_url(basename(dirname(__FILE__))."/images/dibs.png");
+        $this->icon 				= apply_filters( 'woocommerce_dibs_icon', plugins_url(basename(dirname(__FILE__))."/images/dibs.png") );
         $this->has_fields 			= false;
         $this->log 					= $woocommerce->logger();
         
@@ -77,7 +77,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 		$this->debug			= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
 		
 		// Actions
-		add_action( 'init', array(&$this, 'check_callback') );
+		add_action( 'woocommerce_api_wc_gateway_dibs', array($this, 'check_callback') );
 		add_action('valid-dibs-callback', array(&$this, 'successful_request') );
 		add_action('woocommerce_receipt_dibs', array(&$this, 'receipt_page'));
 		
@@ -244,7 +244,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
     public function generate_dibs_form( $order_id ) {
 		global $woocommerce;
 		
-		$order = &new woocommerce_order( $order_id );
+		$order = &new WC_Order( $order_id );
 		
 		// Post the form to the right address
 		if ($this->payment_method == 'paymentwindow') {
@@ -283,10 +283,9 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 				
 			// URLs
 			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL 
-			//$args['callbackUrl'] = trailingslashit(home_url());
-			$args['callbackUrl'] = site_url('/woocommerce/dibscallback');
+			$args['callbackUrl'] = add_query_arg ('wc-api', 'WC_Gateway_Dibs', site_url('/woocommerce/dibscallback'));
 			// Accept URL only works without problem if you check the box "Skip step 3 Payment approved" under ->Integration ->FlexWin in your DIBS account.
-			$args['acceptReturnUrl'] = $this->get_return_url( $order );
+			$args['acceptReturnUrl'] = add_query_arg ('wc-api', 'WC_Gateway_Dibs', $this->get_return_url( $order ));
 			$args['cancelreturnurl'] = trailingslashit($order->get_cancel_order_url());
 					
 			// Address info
@@ -336,10 +335,9 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 				
 			// URLs
 			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL 
-			//$args['callbackurl'] = trailingslashit(home_url());
-			$args['callbackUrl'] = site_url('/woocommerce/dibscallback');
+			$args['callbackUrl'] = add_query_arg ('wc-api', 'WC_Gateway_Dibs', site_url('/woocommerce/dibscallback'));
 			// Accept URL only works without problem if you check the box "Skip step 3 Payment approved" under ->Integration ->FlexWin in your DIBS account.
-			$args['accepturl'] = add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
+			$args['accepturl'] = add_query_arg ('wc-api', 'WC_Gateway_Dibs', $this->get_return_url( $order ));
 			$args['cancelurl'] = urlencode($order->get_cancel_order_url());
 			
 			// Testmode
@@ -432,7 +430,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 	 **/
 	function process_payment( $order_id ) {
 		
-		$order = &new woocommerce_order( $order_id );
+		$order = new WC_order( $order_id );
 		return array(
 			'result' 	=> 'success',
 			'redirect'	=> add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(get_option('woocommerce_pay_page_id'))))
@@ -457,6 +455,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 	* Check for DIBS Response
 	**/
 	function check_callback() {
+		$this->log->add( 'dibs', 'Incoming callback - before if - from DIBS: ' );
 		// Check for both IPN callback (dibscallback) and buyer-return-to-shop callback (statuscode)
 		//if ( ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscallback') !== false ) || isset($_GET['statuscode']) && isset($_GET['orderid']) ) {
 		if ( ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscallback') !== false ) || ( ( isset($_GET['statuscode']) || isset($_GET['status']) ) && ( isset($_GET['orderid']) || isset($_GET['orderID']) ) ) ) {
@@ -509,7 +508,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 			
 			$order_id = (int) $posted['uniqueoid'];
 			
-			$order = new woocommerce_order( $order_id );
+			$order = new WC_Order( $order_id );
 			
 			if($posted['authkey'] != $md5) {
 				// MD5 check failed
@@ -555,7 +554,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 				
 			$order_id = $posted['orderID'];
 			$this->log->add( 'dibs', 'Tjoho.' . $order_id );
-			$order = new woocommerce_order( $order_id );
+			$order = new WC_Order( $order_id );
 					
 			if ( $order->status == 'completed' || $order->status == 'processing' ) {
 				
