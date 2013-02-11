@@ -1,6 +1,11 @@
 *** DIBS Changelog ***
 
-2013.01.23 - version 1.3.2
+2013.02.11 - version 1.3.3
+ * Callback check now moved to separate class.
+ * Bugfix: Callback url caused HMac calculation error (Payment Window).
+ * Improved Cancel order feature (problem in earlier versions due to DIBS callback url limitations)
+ 
+ 2013.01.23 - version 1.3.2
  * WC 2.0 Compat
  * Better callback support
  * Added apply_filters to Gateway icon.
