@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce DIBS FlexWin Gateway
 Plugin URI: http://woocommerce.com
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 1.3.3
+Version: 1.3.4
 Author: Niklas Högefjord
 Author URI: http://krokedil.com
 */
@@ -274,12 +274,17 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 			$args['orderID'] = $order_id;
 					
 			// Language
+			if ($this->language == 'no') $this->language = 'nb';
+
 			$args['language'] = $this->language;
-				
+							
 			// URLs
-			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL 
+			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL
+			// We also need to make the callback url the accept/return url. If we use $this->get_return_url( $order ) the HMAC calculation doesn't add up 
 			$args['callbackUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
-			$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
+			//$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
+			
+			$args['acceptReturnUrl'] = preg_replace( '/\\?.*/', '', $this->get_return_url( $order ) );
 			$args['cancelreturnurl'] = trailingslashit(site_url('/woocommerce/dibscancel'));
 					
 			// Address info
@@ -383,7 +388,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 		
 		
 		// Print out and send the form
-		//var_dump($dibs_adr);
+		//var_dump($fields);
 		//die();
 		return '<form action="'.$dibs_adr.'" method="post" id="dibs_payment_form">
 				' . $fields . '
@@ -609,7 +614,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 				$order->cancel_order( __('Order cancelled by customer.', 'dibs') );
 
 				// Message
-				$woocommerce->add_message( __('Your order was cancelled.', 'dibs') );
+				$woocommerce->add_error( __('Your order was cancelled.', 'dibs') );
 
 			 } elseif ($order->status!='pending') {
 
@@ -640,7 +645,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 				$order->cancel_order( __('Order cancelled by customer.', 'dibs') );
 
 				// Message
-				$woocommerce->add_message( __('Your order was cancelled.', 'dibs') );
+				$woocommerce->add_error( __('Your order was cancelled.', 'dibs') );
 
 			 } elseif ($order->status!='pending') {
 
@@ -699,7 +704,7 @@ class WC_Gateway_Dibs_Extra {
 	function check_callback() {
 		
 		// Cancel order POST
-		if ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscancel') !== false) {
+		if ( preg_match($_SERVER["REQUEST_URI"], 'woocommerce/dibscancel') !== false) {
 			
 			header("HTTP/1.1 200 Ok");
 			
