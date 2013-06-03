@@ -1,4 +1,7 @@
 *** DIBS Changelog ***
+2013.05.31 - version 1.3.5
+ * Bugfix: Changed preg_match for strpos in function check_callback(). Caused php warning on some servers.
+ * Added callback check so that orders doesn't get reported as processing/completed multiple times.
 
 2013.04.25 - version 1.3.4
  * Changed add_message to add_error in message displayed in function cancel_order().

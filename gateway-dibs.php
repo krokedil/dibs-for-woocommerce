@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce DIBS FlexWin Gateway
 Plugin URI: http://woocommerce.com
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 1.3.4
+Version: 1.3.5
 Author: Niklas Högefjord
 Author URI: http://krokedil.com
 */
@@ -111,7 +111,8 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 			$this->enabled = $this->settings['enabled'];
 		}
     } 
-
+    
+    
 
 	/**
      * Initialise Gateway Settings Form Fields
@@ -480,8 +481,20 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 			$order_id = (int) $posted['uniqueoid'];
 			
 			$order = new WC_Order( $order_id );
+	
 			
-						
+			// Check order not already completed or processing 
+			// (to avoid multiple callbacks from DIBS - IPN & return-to-shop callback
+	        if ( $order->status == 'completed' || $order->status == 'processing' ) {
+		        
+		        if ( $this->debug == 'yes' ) {
+		        	$this->log->add( 'dibs', 'Aborting, Order #' . $order_id . ' is already complete.' );
+		        }
+		        
+		        wp_redirect( add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id')))) );
+	        	exit;
+		    }
+	            
 			// Verify MD5
 			if($posted['authkey'] != $md5) {
 				// MD5 check failed
@@ -528,7 +541,19 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 			$order_id = $posted['orderID'];
 			
 			$order = new WC_Order( $order_id );
-					
+			
+			
+			// Check order not already completed or processing 
+			// (to avoid multiple callbacks from DIBS - IPN & return-to-shop callback
+	        if ( $order->status == 'completed' || $order->status == 'processing' ) {
+		        
+		        if ( $this->debug == 'yes' ) {
+		        	$this->log->add( 'dibs', 'Aborting, Order #' . $order_id . ' is already complete.' );
+		        }
+		        
+		        wp_redirect( add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id')))) ); 
+		        exit;
+		    }
 			
 			// Verify HMAC
 			require_once('calculateMac.php');
@@ -694,9 +719,12 @@ class WC_Gateway_Dibs_Extra {
 	
 	public function __construct() {
 		
+		
 		// Actions
 		add_action('init', array(&$this, 'check_callback'));
+		
 	}
+
 	
 	/**
 	* Check for DIBS Response
@@ -704,7 +732,7 @@ class WC_Gateway_Dibs_Extra {
 	function check_callback() {
 		
 		// Cancel order POST
-		if ( preg_match($_SERVER["REQUEST_URI"], 'woocommerce/dibscancel') !== false) {
+		if ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscancel') !== false) {
 			
 			header("HTTP/1.1 200 Ok");
 			
