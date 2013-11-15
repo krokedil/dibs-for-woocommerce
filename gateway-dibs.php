@@ -51,10 +51,7 @@ class WC_Gateway_Dibs extends WC_Payment_Gateway {
 		
 	} 
     
-    
 
-	
-	
 	
 } // Close class WC_Gateway_Dibs
 

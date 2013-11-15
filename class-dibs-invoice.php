@@ -262,7 +262,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		// URLs
 		// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL
 		// We also need to make the callback url the accept/return url. If we use $this->get_return_url( $order ) the HMAC calculation doesn't add up 
-		$args['callbackUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
+		$args['callbackUrl'] = apply_filters( 'woocommerce_dibs_invoice_callbackurl', trailingslashit(site_url('/woocommerce/dibscallback')) );
 		//$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
 		
 		$args['acceptReturnUrl'] = preg_replace( '/\\?.*/', '', $this->get_return_url( $order ) );
@@ -327,8 +327,8 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			}
 		
 			if ($_product->exists() && $item['qty']) :
-	
-				$tmp_product = 'st;' . $item['qty'] . ';' . $item['name'] . ';' . number_format($order->get_item_total( $item, false ), 2, '.', '')*100 . ';' . $order->get_line_tax($item)*100 . ';' . $tmp_sku;
+				
+				$tmp_product = 'st;' . $item['qty'] . ';' . $item['name'] . ';' . number_format($order->get_item_total( $item, false ), 2, '.', '')*100 . ';' . number_format($order->get_item_tax($item), 2, '.', '')*100 . ';' . $tmp_sku;
 				$args['oiRow'.$item_loop] = $tmp_product;
 	
 				$item_loop++;
@@ -400,34 +400,35 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
         endif;
 		
 		
+		$woocommerce->add_inline_js( '
+			jQuery("body").block({
+					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce' ) ) . '",
+					baseZ: 99999,
+					overlayCSS:
+					{
+						background: "#fff",
+						opacity: 0.6
+					},
+					css: {
+				        padding:        "20px",
+				        zindex:         "9999999",
+				        textAlign:      "center",
+				        color:          "#555",
+				        border:         "3px solid #aaa",
+				        backgroundColor:"#fff",
+				        cursor:         "wait",
+				        lineHeight:		"24px",
+				    }
+				});
+			jQuery("#submit_dibs_invoice_payment_form").click();
+		' );
+
+
 		// Print out and send the form
 		
 		return '<form action="'.$this->paymentwindow_url.'" method="post" id="dibs_invoice_payment_form">
 				' . $fields . '
 				<input type="submit" class="button-alt" id="submit_dibs_invoice_payment_form" value="'.__('Pay via dibs', 'woothemes').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancel order &amp; restore cart', 'woothemes').'</a>
-				<script type="text/javascript">
-					jQuery(function(){
-						jQuery("body").block(
-							{ 
-								message: "<img src=\"'.$woocommerce->plugin_url().'/assets/images/ajax-loader.gif\" alt=\"Redirecting...\" style=\"float:left; margin-right: 10px;\" />'.__('Thank you for your order. We are now redirecting you to dibs to make payment.', 'woothemes').'", 
-								overlayCSS: 
-								{ 
-									background: "#fff", 
-									opacity: 0.6 
-								},
-								css: { 
-							        padding:        20, 
-							        textAlign:      "center", 
-							        color:          "#555", 
-							        border:         "3px solid #aaa", 
-							        backgroundColor:"#fff", 
-							        cursor:         "wait",
-							        lineHeight:		"32px"
-							    } 
-							});
-						jQuery("#submit_dibs_invoice_payment_form").click();
-					});
-				</script>
 			</form>';
 		
 	}

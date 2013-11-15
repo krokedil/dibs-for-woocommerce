@@ -40,7 +40,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		
 		// Actions
 		//add_action( 'woocommerce_api_wc_gateway_dibs', array($this, 'check_callback') );
-		add_action('valid-dibs-callback', array(&$this, 'successful_request') );
+		//add_action('valid-dibs-callback', array(&$this, 'successful_request') );
 		add_action('woocommerce_receipt_dibs', array(&$this, 'receipt_page'));
 		
 		/* 1.6.6 */
@@ -248,8 +248,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 							
 			// URLs
 			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL
-			// We also need to make the callback url the accept/return url. If we use $this->get_return_url( $order ) the HMAC calculation doesn't add up 
-			$args['callbackUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
+			// We also need to make the callback url the accept/return url. If we use $this->get_return_url( $order ) the HMAC calculation doesn't add up
+			$args['callbackUrl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit(site_url('/woocommerce/dibscallback')) );
 			//$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
 			
 			$args['acceptReturnUrl'] = preg_replace( '/\\?.*/', '', $this->get_return_url( $order ) );
@@ -314,7 +314,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				
 					if ($_product->exists() && $item['qty']) :
 			
-						$tmp_product = 'st;' . $item['qty'] . ';' . $item['name'] . ';' . number_format($order->get_item_total( $item, false ), 2, '.', '')*100 . ';' . $order->get_line_tax($item)*100 . ';' . $tmp_sku;
+						$tmp_product = 'st;' . $item['qty'] . ';' . $item['name'] . ';' . number_format($order->get_item_total( $item, false ), 2, '.', '')*100 . ';' . $order->get_item_tax($item)*100 . ';' . $tmp_sku;
 						$args['oiRow'.$item_loop] = $tmp_product;
 
 						$item_loop++;
@@ -372,7 +372,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				
 			// URLs
 			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL 
-			$args['callbackurl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
+			$args['callbackurl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit(site_url('/woocommerce/dibscallback')) );
 			$args['accepturl'] = $this->get_return_url( $order );
 			$args['cancelurl'] = trailingslashit(site_url('/woocommerce/dibscancel'));
 			
@@ -425,34 +425,34 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
         endif;
 		
 		
+		$woocommerce->add_inline_js( '
+			jQuery("body").block({
+					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce' ) ) . '",
+					baseZ: 99999,
+					overlayCSS:
+					{
+						background: "#fff",
+						opacity: 0.6
+					},
+					css: {
+				        padding:        "20px",
+				        zindex:         "9999999",
+				        textAlign:      "center",
+				        color:          "#555",
+				        border:         "3px solid #aaa",
+				        backgroundColor:"#fff",
+				        cursor:         "wait",
+				        lineHeight:		"24px",
+				    }
+				});
+			jQuery("#submit_dibs_cc_payment_form").click();
+		' );
+		
 		// Print out and send the form
 		
 		return '<form action="'.$dibs_adr.'" method="post" id="dibs_cc_payment_form">
 				' . $fields . '
 				<input type="submit" class="button-alt" id="submit_dibs_cc_payment_form" value="'.__('Pay via dibs', 'woothemes').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancel order &amp; restore cart', 'woothemes').'</a>
-				<script type="text/javascript">
-					jQuery(function(){
-						jQuery("body").block(
-							{ 
-								message: "<img src=\"'.$woocommerce->plugin_url().'/assets/images/ajax-loader.gif\" alt=\"Redirecting...\" style=\"float:left; margin-right: 10px;\" />'.__('Thank you for your order. We are now redirecting you to dibs to make payment.', 'woothemes').'", 
-								overlayCSS: 
-								{ 
-									background: "#fff", 
-									opacity: 0.6 
-								},
-								css: { 
-							        padding:        20, 
-							        textAlign:      "center", 
-							        color:          "#555", 
-							        border:         "3px solid #aaa", 
-							        backgroundColor:"#fff", 
-							        cursor:         "wait",
-							        lineHeight:		"32px"
-							    } 
-							});
-						jQuery("#submit_dibs_cc_payment_form").click();
-					});
-				</script>
 			</form>';
 		
 	}
@@ -538,14 +538,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				
 			}	
 			
-			
+			// Set order status
 			if ($order->status !== 'completed' || $order->status !== 'processing') {
 				switch (strtolower($posted['statuscode'])) :
 	            	case '2' :
 	            	case '5' :
-	            	case '12' :
 	            		// Order completed
 	            		$order->add_order_note( __('DIBS payment completed. DIBS transaction number: ', 'woocommerce') . $posted['transact'] );
+	            		$order->payment_complete();
+	            	break;
+	            	case '12' :
+	            		// Order completed
+	            		$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs'), $posted['transact'] ) );
 	            		$order->payment_complete();
 	            	break;
 	            	case '0' :
@@ -573,11 +577,17 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		
 		// Payment Window callback
 		if ( isset($posted["transaction"]) && !empty($posted['orderID']) && is_numeric($posted['orderID']) ) {	
-				
+			
+			
+  			
 			$order_id = $posted['orderID'];
 			
 			$order = new WC_Order( $order_id );
 			
+			// Debug
+  			if ($this->debug=='yes') :
+  				$this->log->add( 'dibs', 'Order status: ' . $order->status );
+  			endif;
 			
 			// Check order not already completed or processing 
 			// (to avoid multiple callbacks from DIBS - IPN & return-to-shop callback
@@ -615,14 +625,19 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				
 			switch (strtolower($posted['status'])) :
 	            case 'accepted' :
-	            case 'pending' :
+	            
 	            
 	            	// Order completed
 					$order->add_order_note( sprintf(__('DIBS payment completed. DIBS transaction number: %s.', 'woocommerce'), $posted['transaction'] ));
 					$order->payment_complete();
 					
 					
-				break;
+					break;
+					
+				case 'pending' :
+					// No action
+	            	// On-hold until we sort this out with DIBS
+	            	$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs'), $posted['transaction'] ) );
 				
 				case 'declined' :
 				case 'error' :
@@ -630,11 +645,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 					// Order failed
 	                $order->update_status('failed', sprintf(__('Payment %s via IPN.', 'woocommerce'), strtolower($posted['transaction']) ) );
 	                
-	            break;
+					break;
 	            
 	            default:
 	            	// No action
-	            break;
+					break;
 	        endswitch;
 	        
 	        // Return to Thank you page if this is a buyer-return-to-shop callback
