@@ -1,4 +1,7 @@
 *** DIBS Changelog ***
+ * Feature:		Added setting for Order total calculation made by the gateway (DIBS Invoice). Useful when selling products that uses tax with 3 or 4 decimals.
+ * Fix:			Removed wp_enqueue_script invoice-fee.js (not used)
+ 
 2013.11.15 - version 1.4
  * Feature:		Added DIBS Invoice payment method
  * Fix: 		str_replace('+','-', '', $order->billing_phone)

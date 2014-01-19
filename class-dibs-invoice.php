@@ -31,6 +31,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		$this->key_hmac 		= html_entity_decode($this->settings['key_hmac']);
 		/*$this->capturenow 		= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';*/
 		$this->invoice_fee_id	= ( isset( $this->settings['invoice_fee_id'] ) ) ? $this->settings['invoice_fee_id'] : '';
+		$this->pg_calc_totals	= ( isset( $this->settings['pg_calc_totals'] ) ) ? $this->settings['pg_calc_totals'] : '';
 		$this->language 		= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
 		$this->testmode			= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
 		$this->debug			= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
@@ -102,7 +103,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		
-		wp_enqueue_script( 'wc-add-dibs-invoice-fee', plugins_url( 'js/invoice-fee.js' , __FILE__ ), array('wc-checkout'), false, true );
+		//wp_enqueue_script( 'wc-add-dibs-invoice-fee', plugins_url( 'js/invoice-fee.js' , __FILE__ ), array('wc-checkout'), false, true );
 		
 		
 	} // End construct
@@ -157,6 +158,13 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 								'description' => __( 'Create a hidden (simple) product that acts as the invoice fee. Enter the ID number in this textfield. Leave blank to disable. ', 'woothemes' ), 
 								'default' => ''
 							),
+			'pg_calc_totals' => array(
+							'title' => __( 'Totals calculation', 'woothemes' ), 
+							'type' => 'checkbox',
+							'label' => __( 'Let the payment gateway calculate totals', 'woothemes' ),
+							'description' => __( 'Order total sent to DIBS is calculated by the payment gateway, not by WooCommerce. This can be useful when having prices/tax amounts that use 3 or 4 decimals since DIBS process prices with 2 decimals. Both Order total and each order row is passed to DIBS. If they do not add up DIBS will cancel the payment. ', 'woothemes' ), 
+							'default' => 'no'
+						), 
 							/*
 			'capturenow' => array(
 							'title' => __( 'Instant capture (capturenow)', 'woothemes' ), 
@@ -230,6 +238,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		
 		$order = new WC_Order( $order_id );
 		
+		$payment_gateway_total_cost_calculation = '';
 		
 		$args =
 			array(
@@ -237,11 +246,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				'merchant' => $this->merchant_id,
 				
 				// Paytype
-				'paytype' => 'ALL_INVOICES',
-				
-				// Order
-				'amount' => strval($order->order_total * 100),
-				
+				'paytype' => 'ALL_INVOICES',				
 				
 				// Currency
 				'currency' => $this->dibs_currency[get_option('woocommerce_currency')],	
@@ -330,12 +335,13 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				
 				$tmp_product = 'st;' . $item['qty'] . ';' . $item['name'] . ';' . number_format($order->get_item_total( $item, false ), 2, '.', '')*100 . ';' . number_format($order->get_item_tax($item), 2, '.', '')*100 . ';' . $tmp_sku;
 				$args['oiRow'.$item_loop] = $tmp_product;
-	
+				
+				$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation + ($order->get_item_total( $item, false ) + $order->get_item_tax($item))*$item['qty'];
 				$item_loop++;
 
 			endif;
 		endforeach; endif;
-
+		
 		// Shipping Cost
 		if ($order->get_shipping()>0) :
 			
@@ -343,6 +349,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 			$args['oiRow'.$item_loop] = $tmp_shipping;
 			
+			$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation + ($order->order_shipping + $order->order_shipping_tax);
 			$item_loop++;
 
 		endif;
@@ -350,10 +357,12 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		// Discount
 		if ($order->get_order_discount()>0) :
 			
-			$tmp_discount = 'st;' . '1' . ';' . __('Discount', 'dibs') . ';' . -$order->get_order_discount() . ';' . '0' . ';' . '0';
+			$tmp_discount = 'st;' . '1' . ';' . __('Discount', 'dibs') . ';' . -number_format($order->get_order_discount(), 2, '.', '')*100 . ';' . '0' . ';' . '0';
 
 			$args['oiRow'.$item_loop] = $tmp_discount;
-
+			
+			$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation - $order->get_order_discount();
+			
 		endif;
 		
 		
@@ -365,9 +374,18 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			$args['invoiceFee'] = number_format($this->invoice_fee_price_ex_tax, 2, '.', '')*100;
 			$args['invoiceFeeVAT'] = round( $this->invoice_fee_tax_percentage, 1)*100;
 			//$args['invoiceFeeAmount'] = number_format($this->invoice_fee_price, 2, '.', '')*100;
+			$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation + $this->invoice_fee_price;
 		}
 		
-			
+		
+		
+		// Order total
+		if( $this->pg_calc_totals == 'yes' ) {
+			$args['amount'] = strval(number_format($payment_gateway_total_cost_calculation, 2, '.', '')*100);
+		} else {
+			$args['amount'] = strval(number_format($order->order_total, 2, '.', '')* 100);
+		}
+		
 		// HMAC
 		$formKeyValues = $args;
 		require_once('calculateMac.php');
