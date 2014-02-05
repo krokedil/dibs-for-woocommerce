@@ -14,7 +14,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$this->id					= 'dibs';
         $this->icon 				= apply_filters( 'woocommerce_dibs_icon', plugins_url(basename(dirname(__FILE__))."/images/dibs.png") );
         $this->has_fields 			= false;
-        $this->log 					= $woocommerce->logger();
+        $this->log 					= WC_Dibs_Compatibility::new_wc_logger();
         
         $this->flexwin_url 			= 'https://payment.architrade.com/paymentweb/start.action';
         $this->paymentwindow_url 	= 'https://sat1.dibspayment.com/dibspaymentwindow/entrypoint';
@@ -263,7 +263,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['billingPostalPlace'] = $order->billing_city;
 			$args['billingPostalCode'] = $order->billing_postcode;
 			$args['billingEmail'] = $order->billing_email;
-			$args['billingMobile'] =  str_replace('+','-', '', $order->billing_phone);
+			$args['billingMobile'] =  str_replace('+','-', $order->billing_phone);
 			
 			// Testmode
 			if ( $this->testmode == 'yes' ) {
@@ -425,7 +425,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
         endif;
 		
 		
-		$woocommerce->add_inline_js( '
+		WC_Dibs_Compatibility::wc_enqueue_js( '
 			jQuery("body").block({
 					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce' ) ) . '",
 					baseZ: 99999,
@@ -464,9 +464,17 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	function process_payment( $order_id ) {
 		
 		$order = new WC_order( $order_id );
+		
+		// Prepare redirect url
+		if( WC_Dibs_Compatibility::is_wc_version_gte_2_1() ) {
+	    	$redirect_url = $order->get_checkout_payment_url( true );
+		} else {
+	    	$redirect_url = add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(get_option('woocommerce_pay_page_id'))));
+		}
+			
 		return array(
 			'result' 	=> 'success',
-			'redirect'	=> add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(get_option('woocommerce_pay_page_id'))))
+			'redirect'	=> $redirect_url
 		);
 		
 	}
@@ -517,7 +525,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$order_id = (int) $posted['uniqueoid'];
 			
 			$order = new WC_Order( $order_id );
-	
+			
+			// Prepare redirect url
+			if( WC_Dibs_Compatibility::is_wc_version_gte_2_1() ) {
+	    		$redirect_url = WC_Dibs_Compatibility::get_checkout_order_received_url($order);
+			} else {
+	    		$redirect_url = add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
+			}
 			
 			// Check order not already completed or processing 
 			// (to avoid multiple callbacks from DIBS - IPN & return-to-shop callback
@@ -568,9 +582,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			
 			}
 			
+			
 			// Return to Thank you page if this is a buyer-return-to-shop callback
-			wp_redirect( add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id')))) );
-	            
+			wp_redirect( $redirect_url );
 			exit;
 			
 		} 
@@ -583,6 +597,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$order_id = $posted['orderID'];
 			
 			$order = new WC_Order( $order_id );
+			
+			// Prepare redirect url
+			if( WC_Dibs_Compatibility::is_wc_version_gte_2_1() ) {
+	    		$redirect_url = WC_Dibs_Compatibility::get_checkout_order_received_url($order);
+			} else {
+	    		$redirect_url = add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
+			}
 			
 			// Debug
   			if ($this->debug=='yes') :
@@ -597,7 +618,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		        	$this->log->add( 'dibs', 'Aborting, Order #' . $order_id . ' is already complete.' );
 		        }
 		        
-		        wp_redirect( add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id')))) ); 
+		        wp_redirect( $redirect_url ); 
 		        exit;
 		    }
 			
@@ -653,7 +674,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	        endswitch;
 	        
 	        // Return to Thank you page if this is a buyer-return-to-shop callback
-			wp_redirect( add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id')))) );
+			wp_redirect( $redirect_url );
 			
 			exit;
 			
@@ -690,18 +711,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				$order->cancel_order( __('Order cancelled by customer.', 'dibs') );
 
 				// Message
-				$woocommerce->add_error( __('Your order was cancelled.', 'dibs') );
+				WC_Dibs_Compatibility::wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
 
 			 } elseif ($order->status!='pending') {
 
-				$woocommerce->add_error( __('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs') );
+				WC_Dibs_Compatibility::wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
 
 			} else {
 
-				$woocommerce->add_error( __('Invalid order.', 'dibs') );
+				WC_Dibs_Compatibility::wc_add_notice(__('Invalid order.', 'dibs'), 'error');
 
 			}
-
+			
 			wp_safe_redirect($woocommerce->cart->get_cart_url());
 			exit;
 			
@@ -721,15 +742,15 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				$order->cancel_order( __('Order cancelled by customer.', 'dibs') );
 
 				// Message
-				$woocommerce->add_error( __('Your order was cancelled.', 'dibs') );
+				WC_Dibs_Compatibility::wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
 
 			 } elseif ($order->status!='pending') {
 
-				$woocommerce->add_error( __('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs') );
+				WC_Dibs_Compatibility::wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
 
 			} else {
 
-				$woocommerce->add_error( __('Invalid order.', 'dibs') );
+				WC_Dibs_Compatibility::wc_add_notice(__('Invalid order.', 'dibs'), 'error');
 
 			}
 

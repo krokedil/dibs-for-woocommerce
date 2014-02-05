@@ -1,4 +1,9 @@
 *** DIBS Changelog ***
+
+2014.02.05 - version 1.4.2
+ * Tweak 	- Improved invoice fee display on checkout page for Klarna invoice.
+ * Fix		- WooCommerce 2.1 compatibility
+  
 2014.01.20 - version 1.4.1
  * Feature:		Added setting for Order total calculation made by the gateway (DIBS Invoice). Useful when selling products that uses tax with 3 or 4 decimals.
  * Fix:			Removed wp_enqueue_script invoice-fee.js (not used).

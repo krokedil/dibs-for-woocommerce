@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce DIBS FlexWin Gateway
 Plugin URI: http://woocommerce.com
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 1.4.1
+Version: 1.4.2
 Author: Niklas Högefjord
 Author URI: http://krokedil.com
 */
@@ -41,26 +41,32 @@ add_action('plugins_loaded', 'init_dibs_gateway', 0);
 
 function init_dibs_gateway() {
 
-// If the WooCommerce payment gateway class is not available, do nothing
-if ( !class_exists( 'WC_Payment_Gateway' ) ) return;
+	// If the WooCommerce payment gateway class is not available, do nothing
+	if ( !class_exists( 'WC_Payment_Gateway' ) ) return;
 	
-class WC_Gateway_Dibs extends WC_Payment_Gateway {
+	class WC_Gateway_Dibs extends WC_Payment_Gateway {
 		
-	public function __construct() { 
-		global $woocommerce;
+		public function __construct() { 
+			global $woocommerce;
 		
-	} 
+		} 
     
 
 	
-} // Close class WC_Gateway_Dibs
+	} // Close class WC_Gateway_Dibs
 
 
-// Include our Dibs credit card class
-require_once 'class-dibs-cc.php';
+	/**
+	 * Include the WooCommerce Compatibility Utility class
+	 * The purpose of this class is to provide a single point of compatibility functions for dealing with supporting multiple versions of WooCommerce (currently 2.0.x and 2.1)
+	 */
+	require_once 'classes/class-wc-dibs-compatibility.php';
+	
+	// Include our Dibs credit card class
+	require_once 'class-dibs-cc.php';
 
-// Include our Dibs Invoice class
-require_once 'class-dibs-invoice.php';
+	// Include our Dibs Invoice class
+	require_once 'class-dibs-invoice.php';
 
 
 } // Close init_dibs_gateway
@@ -95,8 +101,7 @@ class WC_Gateway_Dibs_Extra {
 		add_action('init', array(&$this, 'check_callback'));
 		
 		// Add Invoice fee via the new Fees API
-		add_action( 'woocommerce_checkout_process', array($this, 'add_fee_to_cart') );
-		add_action( 'woocommerce_calculate_totals', array( $this, 'calculate_totals' ) );
+		add_action( 'woocommerce_before_calculate_totals', array( $this, 'calculate_totals' ), 10, 1 );
 		
 	}
 
@@ -136,97 +141,65 @@ class WC_Gateway_Dibs_Extra {
 	 
 	public function calculate_totals( $totals ) {
     	global $woocommerce;
-		$available_gateways = $woocommerce->payment_gateways->get_available_payment_gateways();
+		if(is_checkout() || defined('WOOCOMMERCE_CHECKOUT') ) {
 		
-		$current_gateway = '';
-		if ( ! empty( $available_gateways ) ) {
-			// Chosen Method
-			if ( isset( $woocommerce->session->chosen_payment_method ) && isset( $available_gateways[ $woocommerce->session->chosen_payment_method ] ) ) {
-				$current_gateway = $available_gateways[ $woocommerce->session->chosen_payment_method ];
-			} elseif ( isset( $available_gateways[ get_option( 'woocommerce_default_gateway' ) ] ) ) {
-            	$current_gateway = $available_gateways[ get_option( 'woocommerce_default_gateway' ) ];
-			} else {
-            	$current_gateway =  current( $available_gateways );
+			$available_gateways = $woocommerce->payment_gateways->get_available_payment_gateways();
+		
+			$current_gateway = '';
+			if ( ! empty( $available_gateways ) ) {
+				// Chosen Method
+				if ( isset( $woocommerce->session->chosen_payment_method ) && isset( $available_gateways[ $woocommerce->session->chosen_payment_method ] ) ) {
+					$current_gateway = $available_gateways[ $woocommerce->session->chosen_payment_method ];
+				} elseif ( isset( $available_gateways[ get_option( 'woocommerce_default_gateway' ) ] ) ) {
+            		$current_gateway = $available_gateways[ get_option( 'woocommerce_default_gateway' ) ];
+				} else {
+            		$current_gateway =  current( $available_gateways );
 
+				}
+			
 			}
-			
-		}
 		
-		if($current_gateway->id=='dibs_invoice'){
+			if($current_gateway->id=='dibs_invoice'){
 		
-        	$current_gateway_id = $current_gateway -> id;
-        	
-			add_action( 'woocommerce_review_order_before_order_total',  array( $this, 'add_payment_gateway_extra_charges_row'));
+        		$current_gateway_id = $current_gateway -> id;
+        		$this->add_fee_to_cart();
 			
-		}
-		/*$totals = (array)$totals;
-		$totals['shipping_total'] = 200;
-		var_dump($totals);
-		*/
-		//var_dump($totals->shipping_label);
+			}
+		} // End if is checkout
 		return $totals;
 	}
 
 	
-	/**
-	 * Add the fee to the form.
-	 **/
-	 
-	function add_payment_gateway_extra_charges_row(){
-		global $woocommerce;
 		
-		$invoice_fee = new WC_Gateway_Dibs_Invoice;
-		$this->invoice_fee_price = $invoice_fee->get_dibs_invoice_fee_price();
-		$this->invoice_fee_title = $invoice_fee->get_dibs_invoice_fee_title();
-		
-		if( $this->invoice_fee_price > 0 ) {
-			//print_r($this->invoice_fee_title);
-			
-    		?>
-			<tr class="payment-extra-charge">
-        		<th><?php echo $this->invoice_fee_title;?></th>
-				<td>
-					<?php 
-						echo woocommerce_price($this->invoice_fee_price);
-					?>
-				</td>
-			</tr>
-			<?php
-		} // End if
-	} // End function
-	
-	
 	/**
-	 * Add the invoice fee to the cart if DIBS Invoice is selected payment method, if this is WC 2.0 and if invoice fee is used.
+	 * Add the invoice fee to the cart if DIBS Invoice is selected payment method and if invoice fee is used.
 	 **/
 	 function add_fee_to_cart() {
 		 global $woocommerce;
-		 	 
-		 // Only run this if Klarna invoice is the choosen payment method and this is WC +2.0
-		 if ($_POST['payment_method'] == 'dibs_invoice' && version_compare( WOOCOMMERCE_VERSION, '2.0', '>=' )) {
 		 	
-		 	$invoice_fee = new WC_Gateway_Dibs_Invoice;
-		 	$this->invoice_fee_id = $invoice_fee->get_dibs_invoice_fee_product();
+		 $invoice_fee = new WC_Gateway_Dibs_Invoice;
+		 $this->invoice_fee_id = $invoice_fee->get_dibs_invoice_fee_product();
+		 
+		 if ( $this->invoice_fee_id > 0 ) {
+		 	$product = get_product($this->invoice_fee_id);
+		 
+		 	if ( $product ) :
 		 	
-		 	if ( $this->invoice_fee_id > 0 ) {
-		 		$product = get_product($this->invoice_fee_id);
-		 	
-		 		if ( $product->exists() ) :
-		 		
-		 			// Is this a taxable product?
-		 			if ( $product->is_taxable() ) {
-			 			$product_tax = true;
-			 		} else {
-				 		$product_tax = false;
-				 	}
-    	   	 	
-				 	$woocommerce->cart->add_fee($product->get_title(),$product->get_price_excluding_tax(),$product_tax,$product->get_tax_class());
+		 		// Is this a taxable product?
+		 		if ( $product->is_taxable() ) {
+		 			$product_tax = true;
+		 		} else {
+			 		$product_tax = false;
+			 	}
+    	   		
+			 	$woocommerce->cart->add_fee($product->get_title(),$product->get_price_excluding_tax(),$product_tax,$product->get_tax_class());
     	    
-				endif;
-			} // End if invoice_fee_id > 0
+			endif;
+		} // End if invoice_fee_id > 0
 		
-		}
-	} // End function add_invoice_fee_process
+	} // End function add_fee_to_cart
+	
+	
 
 } // End class WC_Gateway_Dibs_Extra
 
