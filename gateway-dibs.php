@@ -101,7 +101,7 @@ class WC_Gateway_Dibs_Extra {
 		add_action('init', array(&$this, 'check_callback'));
 		
 		// Add Invoice fee via the new Fees API
-		add_action( 'woocommerce_before_calculate_totals', array( $this, 'calculate_totals' ), 10, 1 );
+		add_action( 'woocommerce_cart_calculate_fees', array( $this, 'calculate_totals' ), 10, 1 );
 		
 	}
 
