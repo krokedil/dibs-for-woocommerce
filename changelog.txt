@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2014.02.10 - version 1.4.3
+ * Fix: 		Improved str_replace() for $order->billing_phone sent to DIBS.
+
 2014.02.05 - version 1.4.2
  * Tweak 	- Improved invoice fee display on checkout page for Klarna invoice.
  * Fix		- WooCommerce 2.1 compatibility

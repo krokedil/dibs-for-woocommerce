@@ -283,7 +283,9 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		$args['billingPostalPlace'] = $order->billing_city;
 		$args['billingPostalCode'] = $order->billing_postcode;
 		$args['billingEmail'] = $order->billing_email;
-		$args['billingMobile'] =  str_replace('+','-', $order->billing_phone);
+		
+		$search = array('.', ' ', '(', ')', '+', '-'); 
+		$args['billingMobile'] = str_replace($search,'', $order->billing_phone);
 			
 		// Testmode
 		if ( $this->testmode == 'yes' ) {
