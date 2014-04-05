@@ -8,7 +8,7 @@ Author: Niklas Högefjord
 Author URI: http://krokedil.com
 */
 
-/*  Copyright 2011-2013  Niklas Högefjord  (email : niklas@krokedil.se)
+/*  Copyright 2011-2014  Niklas Högefjord  (email : niklas@krokedil.se)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -48,9 +48,32 @@ function init_dibs_gateway() {
 		
 		public function __construct() { 
 			global $woocommerce;
+			
+			$this->selected_currency	= '';
+			
+			// Currency
+			if ( isset($woocommerce->session->client_currency) ) {
 		
-		} 
-    
+				// If currency is set by WPML
+				$this->selected_currency = $woocommerce->session->client_currency;
+		
+			} elseif ( class_exists( 'WC_Aelia_CurrencySwitcher' ) && defined('AELIA_CS_USER_CURRENCY') ) {
+				
+				// If currency is set by WooCommerce Currency Switcher (http://dev.pathtoenlightenment.net/shop)
+				$plugin_instance = WC_Aelia_CurrencySwitcher::instance();
+				$this->selected_currency = strtoupper($plugin_instance->get_selected_currency());
+
+			} else {
+		
+				// WooCommerce selected currency
+				$this->selected_currency = get_option('woocommerce_currency');
+		
+			}
+			
+
+		
+		}
+		    
 
 	
 	} // Close class WC_Gateway_Dibs

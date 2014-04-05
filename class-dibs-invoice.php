@@ -28,14 +28,49 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		$this->title 			= ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
 		$this->description 		= ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
 		$this->merchant_id 		= ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
-		$this->key_hmac 		= html_entity_decode($this->settings['key_hmac']);
-		/*$this->capturenow 		= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';*/
+		$this->key_hmac 		= ( isset( $this->settings['key_hmac'] ) ) ? html_entity_decode($this->settings['key_hmac']) : '';
+		$this->merchant_id_no	= ( isset( $this->settings['merchant_id_no'] ) ) ? $this->settings['merchant_id_no'] : '';
+		$this->key_hmac_no 		= ( isset( $this->settings['key_hmac_no'] ) ) ? html_entity_decode($this->settings['key_hmac_no']) : '';
+		$this->merchant_id_dk	= ( isset( $this->settings['merchant_id_dk'] ) ) ? $this->settings['merchant_id_dk'] : '';
+		$this->key_hmac_dk 		= ( isset( $this->settings['key_hmac_dk'] ) ) ? html_entity_decode($this->settings['key_hmac_dk']) : '';
+		
 		$this->invoice_fee_id	= ( isset( $this->settings['invoice_fee_id'] ) ) ? $this->settings['invoice_fee_id'] : '';
 		$this->pg_calc_totals	= ( isset( $this->settings['pg_calc_totals'] ) ) ? $this->settings['pg_calc_totals'] : '';
 		$this->language 		= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
 		$this->testmode			= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
 		$this->debug			= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
 		
+		
+		 
+		// Set country based on currency. For DIBS Invoice - available in Sweden, Norway and Denmark
+		switch ( $this->selected_currency )
+		{
+		case 'DKK':
+			$this->dibs_country 	= 'DK';
+			$dibs_language			= 'da';
+			$this->merchant_id 		= $this->merchant_id_dk;
+			$this->key_hmac			= $this->key_hmac_dk;
+			break;
+		case 'NOK' :
+			$this->dibs_country 	= 'NO';
+			$dibs_language			= 'nb';
+			$this->merchant_id 		= $this->merchant_id_no;
+			$this->key_hmac			= $this->key_hmac_no;
+			break;
+		case 'SEK' :
+			$this->dibs_country 	= 'SE';
+			$dibs_language			= 'sv';
+			$this->merchant_id 		= $this->merchant_id;
+			$this->key_hmac			= $this->key_hmac;
+			break;
+		default:
+			$this->dibs_country 	= '';
+			$this->merchant_id 		= '';
+			$this->key_hmac			= '';
+		}
+		
+		// Apply filters for language
+		$this->dibs_language 		= apply_filters( 'dibs_language', $dibs_language );
 		
 		
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
@@ -54,6 +89,8 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			'CHF' => '756', // Swiss Franc
 			'TRY' => '949', // Turkish Lire
 		);
+		
+		
 		
 		// Invoice fee
 		if ( $this->invoice_fee_id == "") $this->invoice_fee_id = 0;
@@ -91,7 +128,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		
 		
 		// Check if the currency is supported
-		if ( !isset($this->dibs_currency[get_option('woocommerce_currency')]) ) {
+		if ( !isset($this->dibs_currency[$this->selected_currency]) ) {
 			$this->enabled = "no";
 		} else {
 			$this->enabled = $this->settings['enabled'];
@@ -109,6 +146,36 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		
 		
 	} // End construct
+	
+	
+	
+	/**
+	 * Check if this gateway is enabled and available in the user's country
+	 */
+		
+	function is_available() {
+		
+		global $woocommerce;
+		if ($this->enabled=="yes") :
+						
+			// Base country check
+			if (!in_array(get_option('woocommerce_default_country'), array('SE', 'NO', 'DK'))) return false;
+			
+			// Required fields check
+			if (empty($this->merchant_id) || empty($this->key_hmac)) return false;
+			
+			// Checkout form check
+			if (isset($woocommerce->cart->total)) {
+				// Only activate the payment gateway if the customers country is the same as the shop country ($this->dibs_country)
+				if ( $woocommerce->customer->get_country() == true && $woocommerce->customer->get_country() != $this->dibs_country ) return false;
+			} // End Checkout form check
+			
+			return true;
+					
+		endif;	
+	
+		return false;
+	}
 	
 	
 	/**
@@ -136,15 +203,39 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 							'default' => __("Pay via DIBS Invoice.", 'woothemes')
 						),
 			'merchant_id' => array(
-							'title' => __( 'DIBS Merchant ID', 'woothemes' ), 
+							'title' => __( 'DIBS Merchant ID - Sweden', 'woothemes' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS Merchant ID; this is needed in order to take payment.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS Merchant ID for Sweden.', 'woothemes' ), 
 							'default' => ''
 						),
 			'key_hmac' => array(
-							'title' => __( 'HMAC Key (k)', 'woothemes' ), 
+							'title' => __( 'HMAC Key (k) - Sweden', 'woothemes' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS HMAC Key (k).', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS HMAC Key (k) for Sweden.', 'woothemes' ), 
+							'default' => ''
+						),
+			'merchant_id_no' => array(
+							'title' => __( 'DIBS Merchant ID - Norway', 'woothemes' ), 
+							'type' => 'text', 
+							'description' => __( 'Please enter your DIBS Merchant ID for Norway.', 'woothemes' ), 
+							'default' => ''
+						),
+			'key_hmac_no' => array(
+							'title' => __( 'HMAC Key (k) - Norway', 'woothemes' ), 
+							'type' => 'text', 
+							'description' => __( 'Please enter your DIBS HMAC Key (k) for Norway.', 'woothemes' ), 
+							'default' => ''
+						),
+			'merchant_id_dk' => array(
+							'title' => __( 'DIBS Merchant ID - Denmark', 'woothemes' ), 
+							'type' => 'text', 
+							'description' => __( 'Please enter your DIBS Merchant ID for Denmark.', 'woothemes' ), 
+							'default' => ''
+						),
+			'key_hmac_dk' => array(
+							'title' => __( 'HMAC Key (k) - Denmark', 'woothemes' ), 
+							'type' => 'text', 
+							'description' => __( 'Please enter your DIBS HMAC Key (k) for Denmark.', 'woothemes' ), 
 							'default' => ''
 						),
 			'language' => array(
@@ -205,7 +296,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
     	<p><?php _e('Link to docs perhaps?.', 'woothemes'); ?></p>
     	<table class="form-table">
     	<?php
-    		if ( isset($this->dibs_currency[get_option('woocommerce_currency')]) ) {
+    		if ( isset($this->dibs_currency[$this->selected_currency]) ) {
 				// Generate the HTML For the settings form.
 				$this->generate_settings_html();
 			} else { ?>
@@ -251,7 +342,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				'paytype' => 'ALL_INVOICES',				
 				
 				// Currency
-				'currency' => $this->dibs_currency[get_option('woocommerce_currency')],	
+				'currency' => $this->dibs_currency[$this->selected_currency],	
 				
 		);
 		
@@ -262,17 +353,15 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		$args['orderId'] = $order_id;
 				
 		// Language
-		if ($this->language == 'no') $this->language = 'nb';
+		if ($this->dibs_language == 'no') $this->dibs_language = 'nb';
 	
-		$args['language'] = $this->language;
+		$args['language'] = $this->dibs_language;
 							
 		// URLs
 		// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL
 		// We also need to make the callback url the accept/return url. If we use $this->get_return_url( $order ) the HMAC calculation doesn't add up 
 		$args['callbackUrl'] = apply_filters( 'woocommerce_dibs_invoice_callbackurl', trailingslashit(site_url('/woocommerce/dibscallback')) );
-		//$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
-		
-		$args['acceptReturnUrl'] = preg_replace( '/\\?.*/', '', $this->get_return_url( $order ) );
+		$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
 		$args['cancelreturnurl'] = trailingslashit(site_url('/woocommerce/dibscancel'));
 				
 		// Address info
@@ -516,109 +605,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 	
 
-	/**
-	* Successful Payment!
-	**/
-	function successful_request( $posted ) {
-		
-		
-		// Debug
-		if ($this->debug=='yes') :
-			
-			$tmp_log = '';
-			
-			foreach ( $posted as $key => $value ) {
-				$tmp_log .= $key . '=' . $value . "\r\n";
-			}
-		
-        	$this->log->add( 'dibs', 'Returning values from DIBS: ' . $tmp_log );	
-        endif;
-
-		
-		// Payment Window callback
-		if ( isset($posted["transaction"]) && !empty($posted['orderID']) && is_numeric($posted['orderID']) ) {	
-				
-			$order_id = $posted['orderID'];
-			
-			$order = new WC_Order( $order_id );
-			
-			// Prepare redirect url
-			if( WC_Dibs_Compatibility::is_wc_version_gte_2_1() ) {
-	    		$redirect_url = WC_Dibs_Compatibility::get_checkout_order_received_url($order);
-			} else {
-	    		$redirect_url = add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
-			}
-			
-			
-			// Check order not already completed or processing 
-			// (to avoid multiple callbacks from DIBS - IPN & return-to-shop callback
-	        if ( $order->status == 'completed' || $order->status == 'processing' ) {
-		        
-		        if ( $this->debug == 'yes' ) {
-		        	$this->log->add( 'dibs', 'Aborting, Order #' . $order_id . ' is already complete.' );
-		        }
-		        
-		        wp_redirect( $redirect_url ); 
-		        exit;
-		    }
-			
-			// Verify HMAC
-			require_once('calculateMac.php');
-			$logfile = '';
-  			$MAC = calculateMac($posted, $this->key_hmac, $logfile);
-  			
-  			// Debug
-  			if ($this->debug=='yes') :
-  				$this->log->add( 'dibs', 'HMac check...' . json_encode($posted) );
-  			endif;
-  	
-			if($posted['MAC'] != $MAC) {
-				//$order->add_order_note( __('HMAC check failed for Dibs callback with order_id: ', 'woocommerce') .$posted['transaction'] );
-				$order->update_status('failed', sprintf(__('HMAC check failed for Dibs callback with order_id: %s.', 'woocommerce'), strtolower($posted['transaction']) ) );
-				
-				// Debug
-				if ($this->debug=='yes') :
-					$this->log->add( 'dibs', 'Calculated HMac: ' . $MAC );
-				endif;
-				
-				exit;
-			}
-				
-			switch (strtolower($posted['status'])) :
-	            case 'accepted' :
-	            case 'pending' :
-	            
-	            	// Order completed
-					$order->add_order_note( sprintf(__('DIBS payment completed. DIBS transaction number: %s.', 'woocommerce'), $posted['transaction'] ));
-					$order->payment_complete();
-					
-					
-				break;
-				
-				case 'declined' :
-				case 'error' :
-				
-					// Order failed
-	                $order->update_status('failed', sprintf(__('Payment %s via IPN.', 'woocommerce'), strtolower($posted['transaction']) ) );
-	                
-	            break;
-	            
-	            default:
-	            	// No action
-	            break;
-	        endswitch;
-	        
-	        // Return to Thank you page if this is a buyer-return-to-shop callback
-			wp_redirect( $redirect_url );
-			
-			exit;
-			
-		}
-		
-	}
-	
-	
-	
 	
 	
 	/**
@@ -631,14 +617,14 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		global $woocommerce;
 		
 		// Payment Window callback
-		if ( isset($posted['orderID']) && is_numeric($posted['orderID']) ) {
+		if ( isset($posted['orderId']) && is_numeric($posted['orderId']) ) {
 		
 			// Verify HMAC
 			require_once('calculateMac.php');
 			$logfile = '';
   			$MAC = calculateMac($posted, $this->key_hmac, $logfile);
   			
-  			$order_id = $posted['orderID'];
+  			$order_id = $posted['orderId'];
   			
   			$order = new WC_Order( $order_id );
   			

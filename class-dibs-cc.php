@@ -38,6 +38,10 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$this->testmode			= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
 		$this->debug			= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
 		
+		
+		// Apply filters for language
+		$this->dibs_language 		= apply_filters( 'dibs_language', $this->language );
+		
 		// Actions
 		//add_action( 'woocommerce_api_wc_gateway_dibs', array($this, 'check_callback') );
 		//add_action('valid-dibs-callback', array(&$this, 'successful_request') );
@@ -67,7 +71,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		);
 		
 		// Check if the currency is supported
-		if ( !isset($this->dibs_currency[get_option('woocommerce_currency')]) ) {
+		if ( !isset($this->dibs_currency[$this->selected_currency]) ) {
 			$this->enabled = "no";
 		} else {
 			$this->enabled = $this->settings['enabled'];
@@ -174,7 +178,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
     	<p><?php _e('DIBS works by sending the user to <a href="http://www.dibspayment.com/">DIBS</a> to enter their payment information.', 'woothemes'); ?></p>
     	<table class="form-table">
     	<?php
-    		if ( isset($this->dibs_currency[get_option('woocommerce_currency')]) ) {
+    		if ( isset($this->dibs_currency[$this->selected_currency]) ) {
 				// Generate the HTML For the settings form.
 				$this->generate_settings_html();
 			} else { ?>
@@ -227,7 +231,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				
 				
 				// Currency
-				'currency' => $this->dibs_currency[get_option('woocommerce_currency')],	
+				'currency' => $this->dibs_currency[$this->selected_currency],	
 				
 		);
 		
@@ -239,12 +243,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['paytype'] = 'ALL_CARDS, ALL_NETBANKS';
 			
 			// Order ID
-			$args['orderID'] = $order_id;
+			$args['orderId'] = $order_id;
 					
 			// Language
-			if ($this->language == 'no') $this->language = 'nb';
+			if ($this->dibs_language == 'no') $this->dibs_language = 'nb';
 
-			$args['language'] = $this->language;
+			$args['language'] = $this->dibs_language;
 							
 			// URLs
 			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL
@@ -252,7 +256,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['callbackUrl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit(site_url('/woocommerce/dibscallback')) );
 			//$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
 			
-			$args['acceptReturnUrl'] = preg_replace( '/\\?.*/', '', $this->get_return_url( $order ) );
+			//$args['acceptReturnUrl'] = preg_replace( '/\\?.*/', '', $this->get_return_url( $order ) );
+			$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
 			$args['cancelreturnurl'] = trailingslashit(site_url('/woocommerce/dibscancel'));
 					
 			// Address info
@@ -365,7 +370,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['orderid'] = $order->get_order_number();
 		
 			// Language
-			$args['lang'] =  $this->language;
+			$args['lang'] =  $this->dibs_language;
 			
 			//'uniqueoid' => $order->order_key,
 			$args['uniqueoid'] = $order_id;
@@ -375,7 +380,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			// URLs
 			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL 
 			$args['callbackurl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit(site_url('/woocommerce/dibscallback')) );
-			$args['accepturl'] = $this->get_return_url( $order );
+			$args['accepturl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
 			$args['cancelurl'] = trailingslashit(site_url('/woocommerce/dibscancel'));
 			
 			// Testmode
@@ -402,7 +407,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$merchant = $this->merchant_id;
 			//$orderid = $order_id;
 			$orderid = $order->get_order_number();
-			$currency = $this->dibs_currency[get_option('woocommerce_currency')];
+			$currency = $this->dibs_currency[$this->selected_currency];
 			$amount = $order->order_total * 100;	
 			$postvars = 'merchant=' . $merchant . '&orderid=' . $orderid . '&currency=' . $currency . '&amount=' . $amount;
 		
@@ -561,11 +566,15 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            	case '5' :
 	            		// Order completed
 	            		$order->add_order_note( __('DIBS payment completed. DIBS transaction number: ', 'woocommerce') . $posted['transact'] );
+	            		// Store Transaction number as post meta
+					add_post_meta( $order_id, 'dibs_transaction_no', $posted['transaction']);
 	            		$order->payment_complete();
 	            	break;
 	            	case '12' :
 	            		// Order completed
 	            		$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs'), $posted['transact'] ) );
+	            		// Store Transaction number as post meta
+					add_post_meta( $order_id, 'dibs_transaction_no', $posted['transaction']);
 	            		$order->payment_complete();
 	            	break;
 	            	case '0' :
@@ -589,14 +598,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			wp_redirect( $redirect_url );
 			exit;
 			
-		} 
+		} // End Flexwin callback
+		
 		
 		// Payment Window callback
-		if ( isset($posted["transaction"]) && !empty($posted['orderID']) && is_numeric($posted['orderID']) ) {	
+		if ( isset($posted["transaction"]) && !empty($posted['orderId']) ) {	
 			
+			if ( $this->debug == 'yes' ) {
+				$this->log->add( 'dibs', 'Payment Window callback.' );
+			}
 			
   			
-			$order_id = $posted['orderID'];
+			$order_id = $posted['orderId'];
 			
 			$order = new WC_Order( $order_id );
 			
@@ -647,20 +660,21 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 				
 			switch (strtolower($posted['status'])) :
-	            case 'accepted' :
-	            
+	            case 'accepted' :    
 	            
 	            	// Order completed
 					$order->add_order_note( sprintf(__('DIBS payment completed. DIBS transaction number: %s.', 'woocommerce'), $posted['transaction'] ));
+					// Store Transaction number as post meta
+					add_post_meta( $order_id, 'dibs_transaction_no', $posted['transaction']);
 					$order->payment_complete();
-					
 					
 					break;
 					
 				case 'pending' :
-					// No action
 	            	// On-hold until we sort this out with DIBS
 	            	$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs'), $posted['transaction'] ) );
+	            	// Store Transaction number as post meta
+					add_post_meta( $order_id, 'dibs_transaction_no', $posted['transaction']);
 				
 				case 'declined' :
 				case 'error' :
@@ -694,14 +708,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		global $woocommerce;
 		
 		// Payment Window callback
-		if ( isset($posted['orderID']) && is_numeric($posted['orderID']) ) {
+		if ( isset($posted['orderId']) && is_numeric($posted['orderId']) ) {
 		
 			// Verify HMAC
 			require_once('calculateMac.php');
 			$logfile = '';
   			$MAC = calculateMac($posted, $this->key_hmac, $logfile);
   			
-  			$order_id = $posted['orderID'];
+  			$order_id = $posted['orderId'];
   			
   			$order = new WC_Order( $order_id );
   			
