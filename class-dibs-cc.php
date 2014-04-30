@@ -26,23 +26,28 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$this->init_settings();
 		
 		// Define user set variables
-		$this->title 			= ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
-		$this->description 		= ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
-		$this->merchant_id 		= ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
-		$this->key_1 			= html_entity_decode($this->settings['key_1']);
-		$this->key_2 			= html_entity_decode($this->settings['key_2']);
-		$this->key_hmac 		= html_entity_decode($this->settings['key_hmac']);
-		$this->payment_method 	= ( isset( $this->settings['payment_method'] ) ) ? $this->settings['payment_method'] : '';
-		$this->capturenow 		= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';
-		$this->language 		= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
-		$this->testmode			= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
-		$this->debug			= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
+		$this->title 				= ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
+		$this->description 			= ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
+		$this->merchant_id 			= ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
+		$this->key_1 				= html_entity_decode($this->settings['key_1']);
+		$this->key_2 				= html_entity_decode($this->settings['key_2']);
+		$this->key_hmac 			= html_entity_decode($this->settings['key_hmac']);
+		$this->payment_method 		= ( isset( $this->settings['payment_method'] ) ) ? $this->settings['payment_method'] : '';
+		$this->pay_type_cards 		= ( isset( $this->settings['pay_type_cards'] ) ) ? $this->settings['pay_type_cards'] : 'yes';
+		$this->pay_type_netbanks 	= ( isset( $this->settings['pay_type_netbanks'] ) ) ? $this->settings['pay_type_netbanks'] : 'yes';
+		$this->pay_type_paypal 		= ( isset( $this->settings['pay_type_paypal'] ) ) ? $this->settings['pay_type_paypal'] : '';
+		$this->capturenow 			= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';
+		$this->language 			= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
+		$this->testmode				= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
+		$this->debug				= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
 		
 		
 		// Apply filters for language
 		$this->dibs_language 		= apply_filters( 'dibs_language', $this->language );
 		
+		
 		// Actions
+		
 		//add_action( 'woocommerce_api_wc_gateway_dibs', array($this, 'check_callback') );
 		//add_action('valid-dibs-callback', array(&$this, 'successful_request') );
 		add_action('woocommerce_receipt_dibs', array(&$this, 'receipt_page'));
@@ -135,6 +140,27 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 								'description' => __( 'Choose payment method integration.', 'woothemes' ),
 								'default' => 'flexwin',
 								),
+			'pay_type_cards' => array(
+							'title' => __( 'Paytype - All Cards', 'woothemes' ), 
+							'type' => 'checkbox', 
+							'label' => __( 'Include the paytype ALL_CARDS sent to DIBS.', 'woothemes' ), 
+							'description' => __( 'This is used to control the payment methods available in the payment window (when using Payment Window as the payment method).', 'woothemes' ), 
+							'default' => 'yes'
+						),
+			'pay_type_netbanks' => array(
+							'title' => __( 'Paytype - All Netbanks', 'woothemes' ), 
+							'type' => 'checkbox', 
+							'label' => __( 'Include the paytype ALL_NETBANKS sent to DIBS.', 'woothemes' ),
+							'description' => __( 'This is used to control the payment methods available in the payment window (when using Payment Window as the payment method).', 'woothemes' ),
+							'default' => 'yes'
+						),
+			'pay_type_paypal' => array(
+							'title' => __( 'Paytype - PayPal', 'woothemes' ), 
+							'type' => 'checkbox', 
+							'label' => __( 'Include the paytype PAYPAL sent to DIBS.', 'woothemes' ), 
+							'description' => __( 'This is used to control the payment methods available in the payment window (when using Payment Window as the payment method).', 'woothemes' ),
+							'default' => 'no'
+						),
 			'language' => array(
 								'title' => __( 'Language', 'woothemes' ), 
 								'type' => 'select',
@@ -240,7 +266,15 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		if ($this->payment_method == 'paymentwindow') {
 			
 			// Paytype
-			$args['paytype'] = 'ALL_CARDS, ALL_NETBANKS';
+			$paytypes = '';
+			if( $this->pay_type_cards == 'yes' ) $paytypes = 'ALL_CARDS';
+			if( $this->pay_type_netbanks == 'yes' ) $paytypes .= ',' . 'ALL_NETBANKS';
+			if( $this->pay_type_paypal == 'yes' ) $paytypes .= ',' . 'PAYPAL';
+			
+			if( !empty($paytypes)) {
+				
+				$args['paytype'] = $paytypes;
+			}
 			
 			// Order ID
 			$args['orderId'] = $order_id;
@@ -277,10 +311,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				$args['test'] = '1';
 			}
 			
-			// Instant capture
-			if ( $this->capturenow == 'yes' ) {
+			
+ 			// Instant capture if selected in settings
+ 			if ( $this->capturenow == 'yes' ) {
 				$args['capturenow'] = '1';
 			}
+ 			
 			
 			// Pass all order rows individually
 			if( 'rr' == 'notyet') {
@@ -548,7 +584,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		        	$this->log->add( 'dibs', 'Aborting, Order #' . $order_id . ' is already complete.' );
 		        }
 		        
-		        wp_redirect( add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id')))) );
+		        wp_redirect( $redirect_url );
 	        	exit;
 		    }
 	            
@@ -776,5 +812,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		} // End Flexwin
 	
 	} // End function cancel_order()
+	
 
 } // End class

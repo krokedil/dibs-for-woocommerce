@@ -1,11 +1,15 @@
 *** DIBS Changelog ***
 
+2014.04.05 - version 1.4.5
+ * Fix			- 2.1 compatibility in $redirect_url for Flexwin callback (when order status is set to completed or processing).
+ * Tweak		- Added setting for Paytype (Payment Window).
+ 
 2014.04.05 - version 1.4.4
- * Feature	- Added support for multiple currencies support with  WooCommerce Currency Switcher (http://dev.pathtoenlightenment.net).
- * Feature	- Added support for multiple currencies support with  WPML's new multiple currencies feature, independent of the site’s languages.
- * Tweak	- Added apply_filters for language sent to DIBS.
- * Tweak	- Added DIBS reservation number to order as post meta on payment complete.
- * Fix		- Changed accepturl & acceptReturnUrl to /woocommerce/dibscallback. DIBS doesn't like querystrings. 
+ * Feature		- Added support for multiple currencies support with  WooCommerce Currency Switcher (http://dev.pathtoenlightenment.net).
+ * Feature		- Added support for multiple currencies support with  WPML's new multiple currencies feature, independent of the site’s languages.
+ * Tweak		- Added apply_filters for language sent to DIBS.
+ * Tweak		- Added DIBS reservation number to order as post meta on payment complete.
+ * Fix			- Changed accepturl & acceptReturnUrl to /woocommerce/dibscallback. DIBS doesn't like querystrings. 
  
 2014.02.10 - version 1.4.3
  * Fix: 		Improved str_replace() for $order->billing_phone sent to DIBS.

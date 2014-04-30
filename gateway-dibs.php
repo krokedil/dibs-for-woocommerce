@@ -3,12 +3,12 @@
 Plugin Name: WooCommerce DIBS FlexWin Gateway
 Plugin URI: http://woocommerce.com
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 1.4.4
-Author: Niklas Högefjord
+Version: 1.4.5
+Author: Krokedil
 Author URI: http://krokedil.com
 */
 
-/*  Copyright 2011-2014  Niklas Högefjord  (email : niklas@krokedil.se)
+/*  Copyright 2011-2014  Krokedil Produktionsbyrå AB  (email : info@krokedil.se)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -69,13 +69,9 @@ function init_dibs_gateway() {
 				$this->selected_currency = get_option('woocommerce_currency');
 		
 			}
-			
-
 		
 		}
 		    
-
-	
 	} // Close class WC_Gateway_Dibs
 
 
@@ -90,7 +86,14 @@ function init_dibs_gateway() {
 
 	// Include our Dibs Invoice class
 	require_once 'class-dibs-invoice.php';
-
+	
+	
+	// Check if we should include the Dibs subscriptions class
+	/*
+	if ( class_exists( 'WC_Subscriptions_Order' ) ) {
+		require_once 'classes/class-dibs-subscriptions.php';
+	}
+	*/
 
 } // Close init_dibs_gateway
 
