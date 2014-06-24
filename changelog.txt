@@ -1,5 +1,10 @@
 *** DIBS Changelog ***
 
+2014.06.24 		- version 1.5
+* Feature		- Subscription support
+* Fix			- WPML improvements
+* Tweak			- Added apply_filters dibs_checkout_form (to the checkout form args before adding them as form fields).
+
 2014.04.05 - version 1.4.5
  * Fix			- 2.1 compatibility in $redirect_url for Flexwin callback (when order status is set to completed or processing).
  * Tweak		- Added setting for Paytype (Payment Window).
@@ -12,11 +17,11 @@
  * Fix			- Changed accepturl & acceptReturnUrl to /woocommerce/dibscallback. DIBS doesn't like querystrings. 
  
 2014.02.10 - version 1.4.3
- * Fix: 		Improved str_replace() for $order->billing_phone sent to DIBS.
+ * Fix: 		- Improved str_replace() for $order->billing_phone sent to DIBS.
 
 2014.02.05 - version 1.4.2
- * Tweak 	- Improved invoice fee display on checkout page for Klarna invoice.
- * Fix		- WooCommerce 2.1 compatibility
+ * Tweak 		- Improved invoice fee display on checkout page for Klarna invoice.
+ * Fix			- WooCommerce 2.1 compatibility
   
 2014.01.20 - version 1.4.1
  * Feature:		Added setting for Order total calculation made by the gateway (DIBS Invoice). Useful when selling products that uses tax with 3 or 4 decimals.

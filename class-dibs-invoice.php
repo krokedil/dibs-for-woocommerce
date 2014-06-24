@@ -523,6 +523,10 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		// Prepare the form
 		$fields = '';
 		$tmp_log = '';
+		
+		// Apply filters to the $args array
+		$args = apply_filters('dibs_checkout_form', $args, 'dibs_invoice');
+		
 		foreach ($args as $key => $value) {
 			$fields .= '<input type="hidden" name="'.$key.'" value="'.$value.'" />';
 			

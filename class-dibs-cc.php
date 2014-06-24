@@ -45,9 +45,29 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		// Apply filters for language
 		$this->dibs_language 		= apply_filters( 'dibs_language', $this->language );
 		
+		// Subscription support
+		$this->supports = array( 
+			'products', 
+			'subscriptions',
+			'subscription_cancellation', 
+			'subscription_suspension', 
+			'subscription_reactivation',
+			'subscription_amount_changes',
+			'subscription_date_changes',
+			'subscription_payment_method_change'
+		);
+		
+		
+		// Subscriptions
+		add_action( 'scheduled_subscription_payment_' . $this->id, array( $this, 'scheduled_subscription_payment' ), 10, 3 );
+		
+		// When a subscriber or store manager cancel's a subscription in the store, suspend it with DIBS
+		//add_action( 'cancelled_subscription_' . $this->id, array( $this, 'delete_agreement' ), 10, 2 );
+		
+		//woocommerce_subscriptions_changed_failing_payment_method_{your-gateway}
+		add_action( 'woocommerce_subscriptions_changed_failing_payment_method_' . $this->id, array( $this, 'update_failing_payment_method' ), 10, 2 );
 		
 		// Actions
-		
 		//add_action( 'woocommerce_api_wc_gateway_dibs', array($this, 'check_callback') );
 		//add_action('valid-dibs-callback', array(&$this, 'successful_request') );
 		add_action('woocommerce_receipt_dibs', array(&$this, 'receipt_page'));
@@ -252,9 +272,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				// Merchant
 				'merchant' => $this->merchant_id,
 				
-				// Order
-				'amount' => strval($order->order_total * 100),
-				
 				
 				// Currency
 				'currency' => $this->dibs_currency[$this->selected_currency],	
@@ -312,10 +329,37 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 			
 			
- 			// Instant capture if selected in settings
- 			if ( $this->capturenow == 'yes' ) {
-				$args['capturenow'] = '1';
-			}
+ 			
+ 			// What kind of payment is this - subscription payment or regular payment
+ 			if ( class_exists( 'WC_Subscriptions_Order' ) && WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
+ 				
+ 				// Subscription payment
+ 				$args['createTicketAndAuth'] = '1';
+ 				
+ 				if( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
+					$price = 1;
+				} else {
+					$price = WC_Subscriptions_Order::get_total_initial_payment( $order );
+				}
+				
+				// Price
+				$args['amount'] = intval($price*100);
+ 				
+ 			
+ 			
+ 			} else {
+ 			
+	 			// Regular payment
+	 			
+	 			// Instant capture if selected in settings
+	 			if ( $this->capturenow == 'yes' ) {
+					$args['capturenow'] = '1';
+				}
+				
+				// Price
+				$args['amount'] = intval($order->order_total * 100);
+ 			}
+ 			
  			
 			
 			// Pass all order rows individually
@@ -451,6 +495,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		}
 						
 		
+		// Apply filters to the $args array
+		$args = apply_filters('dibs_checkout_form', $args, 'dibs_cc');
 		
 		// Prepare the form
 		$fields = '';
@@ -603,14 +649,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            		// Order completed
 	            		$order->add_order_note( __('DIBS payment completed. DIBS transaction number: ', 'woocommerce') . $posted['transact'] );
 	            		// Store Transaction number as post meta
-					add_post_meta( $order_id, 'dibs_transaction_no', $posted['transaction']);
+					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
 	            		$order->payment_complete();
 	            	break;
 	            	case '12' :
 	            		// Order completed
 	            		$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs'), $posted['transact'] ) );
 	            		// Store Transaction number as post meta
-					add_post_meta( $order_id, 'dibs_transaction_no', $posted['transaction']);
+					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
 	            		$order->payment_complete();
 	            	break;
 	            	case '0' :
@@ -701,7 +747,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            	// Order completed
 					$order->add_order_note( sprintf(__('DIBS payment completed. DIBS transaction number: %s.', 'woocommerce'), $posted['transaction'] ));
 					// Store Transaction number as post meta
-					add_post_meta( $order_id, 'dibs_transaction_no', $posted['transaction']);
+					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
+					
+					if ($posted['ticket']) {
+						add_post_meta( $order_id, '_dibs_ticket', $posted['ticket']);
+						$order->add_order_note( sprintf(__('DIBS subscription ticket number: %s.', 'woocommerce'), $posted['ticket'] ));
+					}
+					
 					$order->payment_complete();
 					
 					break;
@@ -710,7 +762,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            	// On-hold until we sort this out with DIBS
 	            	$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs'), $posted['transaction'] ) );
 	            	// Store Transaction number as post meta
-					add_post_meta( $order_id, 'dibs_transaction_no', $posted['transaction']);
+					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
 				
 				case 'declined' :
 				case 'error' :
@@ -812,6 +864,110 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		} // End Flexwin
 	
 	} // End function cancel_order()
+	
+	
+	
+	/**
+	 * scheduled_subscription_payment function.
+	 * 
+	 * @param $amount_to_charge float The amount to charge.
+	 * @param $order WC_Order The WC_Order object of the order which the subscription was purchased in.
+	 * @param $product_id int The ID of the subscription product for which this payment relates.
+	 * @access public
+	 * @return void
+	 */
+	function scheduled_subscription_payment( $amount_to_charge, $order, $product_id ) {
+		
+		$result = $this->process_subscription_payment( $order, $amount_to_charge );
+		
+		if (  $result == false ) {
+		
+			// Debug
+			if ($this->debug=='yes') $this->log->add( 'dibs', 'Scheduled subscription payment failed for order ' . $order->id );
+			
+			WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $order, $product_id );
+
+		} else {
+			
+			// Debug
+			if ($this->debug=='yes') $this->log->add( 'dibs', 'Scheduled subscription payment succeeded for order ' . $order->id );
+			
+			WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
+
+		}
+
+	} // End function
+	
+	
+	/**
+	* process_subscription_payment function.
+	*
+	* Since we use a Merchant handled subscription, we need to generate the 
+	* recurrence request.
+	*/
+	  		
+	function process_subscription_payment( $order = '', $amount = 0 ) {
+		global $woocommerce;
+		
+		
+		require_once('dibs-subscriptions.php');
+		require_once('calculateMac.php');
+		$logfile = '';
+			
+		$dibs_ticket = get_post_meta( $order->id, '_dibs_ticket', true);
+		//$currency = get_option('woocommerce_currency');
+		
+		$order_items = $order->get_items();
+		$_product = $order->get_product_from_item( array_shift( $order_items ) );
+				
+		$params = array	(
+						'merchantId' 	=> $this->merchant_id,
+						'currency' 		=> $order->get_order_currency(),
+						'amount' 		=> number_format($amount, 2, '.', '')*100,
+						'ticketId' 		=> $dibs_ticket,
+						//'orderId' 	=> $order->get_order_number(),
+						'orderId' 		=> $order->id
+					);
+		
+		
+		// Calculate the MAC for the form key-values to be posted to DIBS.
+  		$MAC = calculateMac($params, $this->key_hmac);
+		
+		// Add MAC to the $params array
+  		$params['MAC'] = $MAC;
+  		
+  		$response = postToDIBS('AuthorizeTicket',$params);
+  		
+  		if($response['status'] == "ACCEPT") {
+			$order->add_order_note( sprintf(__('DIBS subscription payment completed. Transaction Id: %s.', 'dibs'), $response['transactionId']) );
+			return true;
+		
+		} else {
+			$order->add_order_note( sprintf(__('DIBS subscription payment failed. Decline reason: %s.', 'dibs'), $response['declineReason']) );
+			return false;
+			
+		}
+		
+	
+	} // End function
+	
+	
+	/**
+	 * Update the customer token IDs for a subscription after a customer used the gateway to successfully complete the payment
+	 * for an automatic renewal payment which had previously failed.
+	 *
+	 * @param WC_Order $original_order The original order in which the subscription was purchased.
+	 * @param WC_Order $renewal_order The order which recorded the successful payment (to make up for the failed automatic payment).
+	 * @return void
+	 */
+	function update_failing_payment_method( $original_order, $renewal_order ) {
+		
+		update_post_meta( $original_order->id, '_dibs_ticket', get_post_meta( $renewal_order->id, '_dibs_ticket', true ) );
+	}
+	
+	
+	
+	
 	
 
 } // End class
