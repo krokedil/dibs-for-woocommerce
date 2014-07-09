@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2014.07.10 		- version 1.5.1
+* Fix			- Missing amount sent to DIBS when using the Flexwin payment method.
+
 2014.06.24 		- version 1.5
 * Feature		- Subscription support
 * Fix			- WPML improvements

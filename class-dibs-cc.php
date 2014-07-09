@@ -446,6 +446,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			
 			// Payment Method - Flexwin
 			
+			// Price
+			$args['amount'] = intval($order->order_total * 100);
+			
 			//'orderid' => $order_id,
 			$args['orderid'] = $order->get_order_number();
 		
