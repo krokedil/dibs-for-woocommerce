@@ -281,7 +281,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 			
 			// Order ID
-			$args['orderId'] = $order_id;
+			$args['orderId'] = ltrim( $order->get_order_number(), '#');
 					
 			// Language
 			if ($this->dibs_language == 'no') $this->dibs_language = 'nb';
@@ -437,7 +437,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['amount'] = intval($order->order_total * 100);
 			
 			//'orderid' => $order_id,
-			$args['orderid'] = $order->get_order_number();
+			$args['orderid'] = ltrim( $order->get_order_number(), '#');
 		
 			// Language
 			$args['lang'] =  $this->dibs_language;
@@ -476,7 +476,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$key2 = $this->key_2;
 			$merchant = $this->merchant_id;
 			//$orderid = $order_id;
-			$orderid = $order->get_order_number();
+			$orderid = ltrim( $order->get_order_number(), '#');
 			$currency = $this->dibs_currency[$this->selected_currency];
 			$amount = $order->order_total * 100;	
 			$postvars = 'merchant=' . $merchant . '&orderid=' . $orderid . '&currency=' . $currency . '&amount=' . $amount;
@@ -671,7 +671,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 			
   			
-			$order_id = $posted['orderId'];
+			$order_id = $this->get_order_id( $posted['orderId'] );
 			
 			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 			
@@ -725,7 +725,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 					// Store Transaction number as post meta
 					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
 					
-					if ($posted['ticket']) {
+					if (isset($posted['ticket'])) {
 						add_post_meta( $order_id, '_dibs_ticket', $posted['ticket']);
 						$order->add_order_note( sprintf(__('DIBS subscription ticket number: %s.', 'woocommerce'), $posted['ticket'] ));
 					}
@@ -772,14 +772,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		global $woocommerce;
 		
 		// Payment Window callback
-		if ( isset($posted['orderId']) && is_numeric($posted['orderId']) ) {
+		if ( isset($posted['orderId']) ) {
 		
 			// Verify HMAC
 			require_once('calculateMac.php');
 			$logfile = '';
   			$MAC = calculateMac($posted, $this->key_hmac, $logfile);
   			
-  			$order_id = $posted['orderId'];
+  			$order_id = $this->get_order_id( $posted['orderId'] );
   			
   			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
   			
@@ -942,8 +942,46 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 	
 	
-	
-	
+	/**
+	 * Get the order ID. Check to see if SON and SONP is enabled and
+	 *
+	 * @global type $wc_seq_order_number
+	 * @global type $wc_seq_order_number_pro
+	 * @param type $order_number
+	 * @return type
+	 */
+	private function get_order_id( $order_number ) {
+
+		// Get Order ID by order_number() if the Sequential Order Number plugin is installed
+		if ( class_exists( 'WC_Seq_Order_Number' ) ) {
+
+			global $wc_seq_order_number;
+
+			$order_id = $wc_seq_order_number->find_order_by_order_number( $order_number );
+
+			if ( 0 === $order_id ) {
+				$order_id = $order_number;
+			}
+			
+		// Get Order ID by order_number() if the Sequential Order Number Pro plugin is installed
+		} elseif ( class_exists( 'WC_Seq_Order_Number_Pro' ) ) {
+			
+			global $wc_seq_order_number_pro;
+
+			$order_id = $wc_seq_order_number_pro->find_order_by_order_number( $order_number );
+
+			if ( 0 === $order_id ) {
+				$order_id = $order_number;
+			}
+
+		} else {
+		
+			$order_id = $order_number;
+		}
+
+		return $order_id;
+
+	} // end function
 	
 
 } // End class
