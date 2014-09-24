@@ -15,7 +15,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		$this->method_title 		= __('DIBS Invoice', 'klarna');
         $this->icon 				= apply_filters( 'woocommerce_dibs_invoice_icon', plugins_url(basename(dirname(__FILE__))."/images/dibs.png") );
         $this->has_fields 			= false;
-        $this->log 					= WC_Dibs_Compatibility::new_wc_logger();
+        $this->log 					= new WC_Logger();
 		$this->paymentwindow_url 	= 'https://sat1.dibspayment.com/dibspaymentwindow/entrypoint';
         
 		// Load the form fields.
@@ -136,7 +136,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		
 		
 		// Actions
-		//add_action( 'woocommerce_api_wc_gateway_dibs', array($this, 'check_callback') );
 		add_action('valid-dibs-callback', array(&$this, 'successful_request') );
 		add_action('woocommerce_receipt_dibs_invoice', array(&$this, 'receipt_page'));
 		
@@ -329,7 +328,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
     public function generate_dibs_form( $order_id ) {
 		global $woocommerce;
 		
-		$order = new WC_Order( $order_id );
+		$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 		
 		$payment_gateway_total_cost_calculation = '';
 		
@@ -436,13 +435,13 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		endforeach; endif;
 		
 		// Shipping Cost
-		if (WC_Dibs_Compatibility::get_total_shipping($order)>0) :
+		if ($order->get_total_shipping()>0) :
 			
-			$tmp_shipping = 'st;' . '1' . ';' . __('Shipping cost', 'dibs') . ';' . WC_Dibs_Compatibility::get_total_shipping($order)*100 . ';' . $order->order_shipping_tax*100 . ';' . '0';
+			$tmp_shipping = 'st;' . '1' . ';' . __('Shipping cost', 'dibs') . ';' . $order->get_total_shipping()*100 . ';' . $order->order_shipping_tax*100 . ';' . '0';
 
 			$args['oiRow'.$item_loop] = $tmp_shipping;
 			
-			$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation + (WC_Dibs_Compatibility::get_total_shipping($order) + $order->order_shipping_tax);
+			$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation + ($order->get_total_shipping() + $order->order_shipping_tax);
 			$item_loop++;
 
 		endif;
@@ -540,7 +539,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
         endif;
 		
 		
-		WC_Dibs_Compatibility::wc_enqueue_js( '
+		wc_enqueue_js( '
 			jQuery("body").block({
 					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce' ) ) . '",
 					baseZ: 99999,
@@ -579,15 +578,11 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	 **/
 	function process_payment( $order_id ) {
 		
-		$order = new WC_order( $order_id );
+		$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 		
 		// Prepare redirect url
-		if( WC_Dibs_Compatibility::is_wc_version_gte_2_1() ) {
-	    	$redirect_url = $order->get_checkout_payment_url( true );
-		} else {
-	    	$redirect_url = add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(get_option('woocommerce_pay_page_id'))));
-		}
-		
+		$redirect_url = $order->get_checkout_payment_url( true );
+				
 		return array(
 			'result' 	=> 'success',
 			'redirect'	=> $redirect_url
@@ -630,7 +625,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
   			
   			$order_id = $posted['orderId'];
   			
-  			$order = new WC_Order( $order_id );
+  			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
   			
   			
 
@@ -640,15 +635,15 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				$order->cancel_order( __('Order cancelled by customer.', 'dibs') );
 
 				// Message
-				WC_Dibs_Compatibility::wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
+				wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
 
 			 } elseif ($order->status!='pending') {
 
-				WC_Dibs_Compatibility::wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
+				wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
 
 			} else {
 
-				WC_Dibs_Compatibility::wc_add_notice(__('Invalid order.', 'dibs'), 'error');
+				wc_add_notice(__('Invalid order.', 'dibs'), 'error');
 
 			}
 

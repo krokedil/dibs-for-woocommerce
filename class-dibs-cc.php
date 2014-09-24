@@ -14,7 +14,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$this->id					= 'dibs';
         $this->icon 				= apply_filters( 'woocommerce_dibs_icon', plugins_url(basename(dirname(__FILE__))."/images/dibs.png") );
         $this->has_fields 			= false;
-        $this->log 					= WC_Dibs_Compatibility::new_wc_logger();
+        $this->log 					= new WC_Logger();
         
         $this->flexwin_url 			= 'https://payment.architrade.com/paymentweb/start.action';
         $this->paymentwindow_url 	= 'https://sat1.dibspayment.com/dibspaymentwindow/entrypoint';
@@ -57,25 +57,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			'subscription_payment_method_change'
 		);
 		
-		
 		// Subscriptions
 		add_action( 'scheduled_subscription_payment_' . $this->id, array( $this, 'scheduled_subscription_payment' ), 10, 3 );
-		
-		// When a subscriber or store manager cancel's a subscription in the store, suspend it with DIBS
-		//add_action( 'cancelled_subscription_' . $this->id, array( $this, 'delete_agreement' ), 10, 2 );
-		
-		//woocommerce_subscriptions_changed_failing_payment_method_{your-gateway}
 		add_action( 'woocommerce_subscriptions_changed_failing_payment_method_' . $this->id, array( $this, 'update_failing_payment_method' ), 10, 2 );
 		
 		// Actions
-		//add_action( 'woocommerce_api_wc_gateway_dibs', array($this, 'check_callback') );
-		//add_action('valid-dibs-callback', array(&$this, 'successful_request') );
 		add_action('woocommerce_receipt_dibs', array(&$this, 'receipt_page'));
-		
-		/* 1.6.6 */
-		add_action( 'woocommerce_update_options_payment_gateways', array( &$this, 'process_admin_options' ) );
- 
-		/* 2.0.0 */
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
@@ -184,7 +171,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			'language' => array(
 								'title' => __( 'Language', 'woothemes' ), 
 								'type' => 'select',
-								'options' => array('en'=>'English', 'da'=>'Danish', 'de'=>'German', 'es'=>'Spanish', 'fi'=>'Finnish', 'fo'=>'Faroese', 'fr'=>'French', 'it'=>'Italian', 'nl'=>'Dutch', 'no'=>'Norwegian', 'pl'=>'Polish (simplified)', 'sv'=>'Swedish', 'kl'=>'Greenlandic'),
+								'options' => array('en'=>'English', 'da'=>'Danish', 'de'=>'German', 'es'=>'Spanish', 'fi'=>'Finnish', 'fo'=>'Faroese (only Flexwin)', 'fr'=>'French', 'it'=>'Italian', 'nl'=>'Dutch', 'no'=>'Norwegian', 'pl'=>'Polish (simplified)', 'sv'=>'Swedish', 'kl'=>'Greenlandic (only Flexwin)', 'pt_PT'=>'Portuguese (only Payment window)'),
 								'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'woothemes' ), 
 								'default' => 'sv'
 							),
@@ -257,7 +244,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
     public function generate_dibs_form( $order_id ) {
 		global $woocommerce;
 		
-		$order = new WC_Order( $order_id );
+		$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 		
 		// Post the form to the right address
 		if ($this->payment_method == 'paymentwindow') {
@@ -517,7 +504,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
         endif;
 		
 		
-		WC_Dibs_Compatibility::wc_enqueue_js( '
+		wc_enqueue_js( '
 			jQuery("body").block({
 					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce' ) ) . '",
 					baseZ: 99999,
@@ -555,18 +542,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 **/
 	function process_payment( $order_id ) {
 		
-		$order = new WC_order( $order_id );
-		
-		// Prepare redirect url
-		if( WC_Dibs_Compatibility::is_wc_version_gte_2_1() ) {
-	    	$redirect_url = $order->get_checkout_payment_url( true );
-		} else {
-	    	$redirect_url = add_query_arg('order', $order->id, add_query_arg('key', $order->order_key, get_permalink(get_option('woocommerce_pay_page_id'))));
-		}
+		$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 			
 		return array(
 			'result' 	=> 'success',
-			'redirect'	=> $redirect_url
+			'redirect'	=> $order->get_checkout_payment_url( true )
 		);
 		
 	}
@@ -616,15 +596,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			
 			$order_id = (int) $posted['uniqueoid'];
 			
-			$order = new WC_Order( $order_id );
+			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 			
 			// Prepare redirect url
-			if( WC_Dibs_Compatibility::is_wc_version_gte_2_1() ) {
-	    		$redirect_url = WC_Dibs_Compatibility::get_checkout_order_received_url($order);
-			} else {
-	    		$redirect_url = add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
-			}
 			
+	    	$redirect_url = $order->get_checkout_order_received_url();
+
 			// Check order not already completed or processing 
 			// (to avoid multiple callbacks from DIBS - IPN & return-to-shop callback
 	        if ( $order->status == 'completed' || $order->status == 'processing' ) {
@@ -696,14 +673,10 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   			
 			$order_id = $posted['orderId'];
 			
-			$order = new WC_Order( $order_id );
+			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 			
 			// Prepare redirect url
-			if( WC_Dibs_Compatibility::is_wc_version_gte_2_1() ) {
-	    		$redirect_url = WC_Dibs_Compatibility::get_checkout_order_received_url($order);
-			} else {
-	    		$redirect_url = add_query_arg('key', $order->order_key, add_query_arg('order', $order_id, get_permalink(get_option('woocommerce_thanks_page_id'))));
-			}
+			$redirect_url = $order->get_checkout_order_received_url();
 			
 			// Debug
   			if ($this->debug=='yes') :
@@ -808,7 +781,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   			
   			$order_id = $posted['orderId'];
   			
-  			$order = new WC_Order( $order_id );
+  			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
   			
   			
 
@@ -818,15 +791,15 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				$order->cancel_order( __('Order cancelled by customer.', 'dibs') );
 
 				// Message
-				WC_Dibs_Compatibility::wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
+				wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
 
 			 } elseif ($order->status!='pending') {
 
-				WC_Dibs_Compatibility::wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
+				wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
 
 			} else {
 
-				WC_Dibs_Compatibility::wc_add_notice(__('Invalid order.', 'dibs'), 'error');
+				wc_add_notice(__('Invalid order.', 'dibs'), 'error');
 
 			}
 			
@@ -841,7 +814,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			
 			$order_id = (int) $posted['uniqueoid'];
 			
-			$order = new WC_Order( $order_id );
+			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
   			
   			if ($order->id == $order_id && $order->status=='pending') {
 
@@ -849,15 +822,15 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				$order->cancel_order( __('Order cancelled by customer.', 'dibs') );
 
 				// Message
-				WC_Dibs_Compatibility::wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
+				wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
 
 			 } elseif ($order->status!='pending') {
 
-				WC_Dibs_Compatibility::wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
+				wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
 
 			} else {
 
-				WC_Dibs_Compatibility::wc_add_notice(__('Invalid order.', 'dibs'), 'error');
+				wc_add_notice(__('Invalid order.', 'dibs'), 'error');
 
 			}
 
