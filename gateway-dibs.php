@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce DIBS FlexWin Gateway
 Plugin URI: http://woocommerce.com
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 1.5.1
+Version: 1.5.2
 Author: Krokedil
 Author URI: http://krokedil.com
 */
@@ -50,33 +50,7 @@ function init_dibs_gateway() {
 			global $woocommerce;
 			
 			// Currency
-			$this->selected_currency	= '';
-			$wpml_currency				= '';
-			
-			if ( class_exists( 'WCML_Multi_Currency_Support' ) ) {
-				
-				// If currency is set by WPML
-				$wpml_currency = WCML_Multi_Currency_Support::get_client_currency();
-				
-				if ( !empty($wpml_currency) ) {
-					$this->selected_currency = WCML_Multi_Currency_Support::get_client_currency();
-				} else {
-					// WooCommerce selected currency
-					$this->selected_currency = get_option('woocommerce_currency');
-				}
-				
-			} elseif ( class_exists( 'WC_Aelia_CurrencySwitcher' ) && defined('AELIA_CS_USER_CURRENCY') ) {
-				
-				// If currency is set by WooCommerce Currency Switcher (http://dev.pathtoenlightenment.net/shop)
-				$plugin_instance = WC_Aelia_CurrencySwitcher::instance();
-				$this->selected_currency = strtoupper($plugin_instance->get_selected_currency());
-
-			} else {
-		
-				// WooCommerce selected currency
-				$this->selected_currency = get_option('woocommerce_currency');
-		
-			}
+			$this->selected_currency = get_woocommerce_currency();
 		
 		}
 		    

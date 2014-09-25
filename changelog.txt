@@ -1,5 +1,12 @@
 *** DIBS Changelog ***
 
+2014.09.25 		- version 1.5.2
+* Misc			- WooCommerce 2.2 Compatibility
+* Misc			- Dropped support for 2.0.x
+* Feature		- Support for Sequential orders Pro (Payment Window).
+* Tweak			- Better multi currency support. Use of get_woocommerce_currency() instead of specific functions in WooCommerce Currency Switcher & WPML.
+* Tweak			- Added Portuguese as selectable language for the DIBS payment window.
+
 2014.07.10 		- version 1.5.1
 * Fix			- Missing amount sent to DIBS when using the Flexwin payment method.
 
