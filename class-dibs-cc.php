@@ -276,9 +276,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			if( $this->pay_type_paypal == 'yes' ) $paytypes .= ',' . 'PAYPAL';
 			
 			if( !empty($paytypes)) {
-				
-				$args['paytype'] = $paytypes;
+				$args['paytype'] = apply_filters( 'woocommerce_dibs_paytypes', $paytypes );
 			}
+			
 			
 			// Order ID
 			$args['orderId'] = ltrim( $order->get_order_number(), '#');
@@ -432,6 +432,16 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		} else {
 			
 			// Payment Method - Flexwin
+			
+			// Paytype
+			$paytypes = '';
+			if( $this->pay_type_cards == 'yes' ) $paytypes = 'ALL_CARDS';
+			if( $this->pay_type_netbanks == 'yes' ) $paytypes .= ',' . 'ALL_NETBANKS';
+			if( $this->pay_type_paypal == 'yes' ) $paytypes .= ',' . 'PAYPAL';
+			
+			if( !empty($paytypes)) {
+				$args['paytype'] = apply_filters( 'woocommerce_dibs_paytypes', $paytypes );
+			}
 			
 			// Price
 			$args['amount'] = intval($order->order_total * 100);

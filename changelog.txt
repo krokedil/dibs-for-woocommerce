@@ -1,5 +1,9 @@
 *** DIBS Changelog ***
 
+2014.10.02 		- version 1.5.3
+* Tweak			- Added Paytype parameters to Flexwin payment method.
+* Tweak			- Added apply_filters woocommerce_dibs_paytypes for possibility to override paytypes (other than the available ones via the plugin settings) sent to DIBS.
+
 2014.09.25 		- version 1.5.2
 * Misc			- WooCommerce 2.2 Compatibility
 * Misc			- Dropped support for 2.0.x
