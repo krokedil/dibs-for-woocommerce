@@ -230,6 +230,31 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
     } // End admin_options()
 
     
+    
+    /**
+	 * Check if this gateway is enabled and available in the user's country
+	 */
+		
+	function is_available() {
+		
+		global $woocommerce;
+		
+		if ($this->enabled=="yes") :
+			
+			// Checkout form check
+			if (class_exists( 'WC_Subscriptions_Order' )) {
+				// Flexwin not available for subscription products
+				if ( WC_Subscriptions_Cart::cart_contains_subscription() && $this->payment_method == 'flexwin' ) return false;
+			}
+			
+			return true;
+					
+		endif;	
+	
+		return false;
+	}
+	
+	
     /**
 	 * There are no payment fields for dibs, but we want to show the description if set.
 	 **/
