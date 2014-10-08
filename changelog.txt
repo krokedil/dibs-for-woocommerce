@@ -1,5 +1,9 @@
 *** DIBS Changelog ***
 
+2014.10.08 		- version 1.5.4
+* Fix			- Removed selectable Paytype parameters sent to Flexwin via settings. Flexwin doesn't have an ALL_CARDS parameter. The filter woocommerce_dibs_paytypes is still available.
+* Fix			- DIBS not available as payment gateway for subscription payments if Flexwin is used as payment method.
+
 2014.10.02 		- version 1.5.3
 * Tweak			- Added Paytype parameters to Flexwin payment method.
 * Tweak			- Added apply_filters woocommerce_dibs_paytypes for possibility to override paytypes (other than the available ones via the plugin settings) sent to DIBS.
