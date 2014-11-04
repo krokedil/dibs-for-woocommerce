@@ -51,12 +51,26 @@ function init_dibs_gateway() {
 			
 			// Currency
 			$this->selected_currency = get_woocommerce_currency();
-		
+			
 		}
 		    
 	} // Close class WC_Gateway_Dibs
 
+	
+	/*
+	 * Constants
+	 */
+	 
+	// Plugin Folder Path
+	if ( ! defined( 'WC_DIBS_PLUGIN_DIR' ) ) {
+		define( 'WC_DIBS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+	}
 
+	// Plugin Folder URL
+	if ( ! defined( 'WC_DIBS_PLUGIN_URL' ) ) {
+		define( 'WC_DIBS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+	}
+			
 	/**
 	 * Include the WooCommerce Compatibility Utility class
 	 * The purpose of this class is to provide a single point of compatibility functions for dealing with supporting multiple versions of WooCommerce (currently 2.0.x and 2.1)
@@ -69,13 +83,12 @@ function init_dibs_gateway() {
 	// Include our Dibs Invoice class
 	require_once 'class-dibs-invoice.php';
 	
-	
-	// Check if we should include the Dibs subscriptions class
-	/*
-	if ( class_exists( 'WC_Subscriptions_Order' ) ) {
-		require_once 'classes/class-dibs-subscriptions.php';
+	// Check if we should include the Dibs manual modification class
+	if ( defined( 'WC_DIBS_DEBUG' ) && true === WC_DIBS_DEBUG ) {
+		require_once( 'includes/class-wc-dibs-manual-modification.php' );
 	}
-	*/
+
+	
 
 } // Close init_dibs_gateway
 
