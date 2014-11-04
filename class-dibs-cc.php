@@ -62,7 +62,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		add_action( 'woocommerce_subscriptions_changed_failing_payment_method_' . $this->id, array( $this, 'update_failing_payment_method' ), 10, 2 );
 		
 		// Actions
-		add_action('woocommerce_receipt_dibs', array(&$this, 'receipt_page'));
+		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
@@ -99,98 +99,98 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
     
     	$this->form_fields = array(
 			'enabled' => array(
-							'title' => __( 'Enable/Disable', 'woothemes' ), 
+							'title' => __( 'Enable/Disable', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable DIBS', 'woothemes' ), 
+							'label' => __( 'Enable DIBS', 'woocommerce-gateway-dibs' ), 
 							'default' => 'yes'
 						), 
 			'title' => array(
-							'title' => __( 'Title', 'woothemes' ), 
+							'title' => __( 'Title', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'This controls the title which the user sees during checkout.', 'woothemes' ), 
-							'default' => __( 'DIBS', 'woothemes' )
+							'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-gateway-dibs' ), 
+							'default' => __( 'DIBS', 'woocommerce-gateway-dibs' )
 						),
 			'description' => array(
-							'title' => __( 'Description', 'woothemes' ), 
+							'title' => __( 'Description', 'woocommerce-gateway-dibs' ), 
 							'type' => 'textarea', 
-							'description' => __( 'This controls the description which the user sees during checkout.', 'woothemes' ), 
-							'default' => __("Pay via DIBS using credit card or bank transfer.", 'woothemes')
+							'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-gateway-dibs' ), 
+							'default' => __("Pay via DIBS using credit card or bank transfer.", 'woocommerce-gateway-dibs')
 						),
 			'merchant_id' => array(
-							'title' => __( 'DIBS Merchant ID', 'woothemes' ), 
+							'title' => __( 'DIBS Merchant ID', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS Merchant ID; this is needed in order to take payment.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS Merchant ID; this is needed in order to take payment.', 'woocommerce-gateway-dibs' ), 
 							'default' => ''
 						),
 			'key_1' => array(
-							'title' => __( 'MD5 k1', 'woothemes' ), 
+							'title' => __( 'MD5 k1', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS MD5 k1; this is only needed when using Flexwin as the payment method.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS MD5 k1; this is only needed when using Flexwin as the payment method.', 'woocommerce-gateway-dibs' ), 
 							'default' => ''
 						),
 			'key_2' => array(
-							'title' => __( 'MD5 k2', 'woothemes' ), 
+							'title' => __( 'MD5 k2', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS MD5 k2; this is only needed when using Flexwin as the payment method.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS MD5 k2; this is only needed when using Flexwin as the payment method.', 'woocommerce-gateway-dibs' ), 
 							'default' => ''
 						),
 			'key_hmac' => array(
-							'title' => __( 'HMAC Key (k)', 'woothemes' ), 
+							'title' => __( 'HMAC Key (k)', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS HMAC Key (k); this is only needed when using Payment Window as the payment method.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS HMAC Key (k); this is only needed when using Payment Window as the payment method.', 'woocommerce-gateway-dibs' ), 
 							'default' => ''
 						),
 			'payment_method' => array(
-								'title' => __( 'Payment Method', 'woothemes' ), 
+								'title' => __( 'Payment Method', 'woocommerce-gateway-dibs' ), 
 								'type' => 'select',
-								'options' => array('flexwin'=>__( 'Flexwin', 'woothemes' ), 'paymentwindow'=>__( 'Payment Window', 'woothemes' )),
-								'description' => __( 'Choose payment method integration.', 'woothemes' ),
+								'options' => array('flexwin'=>__( 'Flexwin', 'woocommerce-gateway-dibs' ), 'paymentwindow'=>__( 'Payment Window', 'woocommerce-gateway-dibs' )),
+								'description' => __( 'Choose payment method integration.', 'woocommerce-gateway-dibs' ),
 								'default' => 'flexwin',
 								),
 			'pay_type_cards' => array(
-							'title' => __( 'Paytype - All Cards', 'woothemes' ), 
+							'title' => __( 'Paytype - All Cards', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Include the paytype ALL_CARDS sent to DIBS.', 'woothemes' ), 
-							'description' => __( 'This is used to control the payment methods available in the payment window (when using Payment Window as the payment method).', 'woothemes' ), 
+							'label' => __( 'Include the paytype ALL_CARDS sent to DIBS.', 'woocommerce-gateway-dibs' ), 
+							'description' => __( 'This is used to control the payment methods available in the payment window (when using Payment Window as the payment method).', 'woocommerce-gateway-dibs' ), 
 							'default' => 'yes'
 						),
 			'pay_type_netbanks' => array(
-							'title' => __( 'Paytype - All Netbanks', 'woothemes' ), 
+							'title' => __( 'Paytype - All Netbanks', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Include the paytype ALL_NETBANKS sent to DIBS.', 'woothemes' ),
-							'description' => __( 'This is used to control the payment methods available in the payment window (when using Payment Window as the payment method).', 'woothemes' ),
+							'label' => __( 'Include the paytype ALL_NETBANKS sent to DIBS.', 'woocommerce-gateway-dibs' ),
+							'description' => __( 'This is used to control the payment methods available in the payment window (when using Payment Window as the payment method).', 'woocommerce-gateway-dibs' ),
 							'default' => 'yes'
 						),
 			'pay_type_paypal' => array(
-							'title' => __( 'Paytype - PayPal', 'woothemes' ), 
+							'title' => __( 'Paytype - PayPal', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Include the paytype PAYPAL sent to DIBS.', 'woothemes' ), 
-							'description' => __( 'This is used to control the payment methods available in the payment window (when using Payment Window as the payment method).', 'woothemes' ),
+							'label' => __( 'Include the paytype PAYPAL sent to DIBS.', 'woocommerce-gateway-dibs' ), 
+							'description' => __( 'This is used to control the payment methods available in the payment window (when using Payment Window as the payment method).', 'woocommerce-gateway-dibs' ),
 							'default' => 'no'
 						),
 			'language' => array(
-								'title' => __( 'Language', 'woothemes' ), 
+								'title' => __( 'Language', 'woocommerce-gateway-dibs' ), 
 								'type' => 'select',
 								'options' => array('en'=>'English', 'da'=>'Danish', 'de'=>'German', 'es'=>'Spanish', 'fi'=>'Finnish', 'fo'=>'Faroese (only Flexwin)', 'fr'=>'French', 'it'=>'Italian', 'nl'=>'Dutch', 'no'=>'Norwegian', 'pl'=>'Polish (simplified)', 'sv'=>'Swedish', 'kl'=>'Greenlandic (only Flexwin)', 'pt_PT'=>'Portuguese (only Payment window)'),
-								'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'woothemes' ), 
+								'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'woocommerce-gateway-dibs' ), 
 								'default' => 'sv'
 							),
 			'capturenow' => array(
-							'title' => __( 'Instant capture (capturenow)', 'woothemes' ), 
+							'title' => __( 'Instant capture (capturenow)', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'If checked the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this function.', 'woothemes' ), 
+							'label' => __( 'If checked the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this function.', 'woocommerce-gateway-dibs' ), 
 							'default' => 'no'
 						),
 			'testmode' => array(
-							'title' => __( 'Test Mode', 'woothemes' ), 
+							'title' => __( 'Test Mode', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable DIBS Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'woothemes' ), 
+							'label' => __( 'Enable DIBS Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'woocommerce-gateway-dibs' ), 
 							'default' => 'yes'
 						),
 			'debug' => array(
-								'title' => __( 'Debug', 'woothemes' ), 
+								'title' => __( 'Debug', 'woocommerce-gateway-dibs' ), 
 								'type' => 'checkbox', 
-								'label' => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'woothemes' ), 
+								'label' => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'woocommerce-gateway-dibs' ), 
 								'default' => 'no'
 							)
 			);
@@ -207,8 +207,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	public function admin_options() {
 
     	?>
-    	<h3><?php _e('DIBS', 'woothemes'); ?></h3>
-    	<p><?php _e('DIBS works by sending the user to <a href="http://www.dibspayment.com/">DIBS</a> to enter their payment information.', 'woothemes'); ?></p>
+    	<h3><?php _e('DIBS', 'woocommerce-gateway-dibs'); ?></h3>
+    	<p><?php printf(__('Documentation <a href="%s" target="_blank">can be found here</a>.', 'woocommerce-gateway-dibs'), 'http://docs.woothemes.com/document/dibs/' ); ?></p>
     	<table class="form-table">
     	<?php
     		if ( isset($this->dibs_currency[$this->selected_currency]) ) {
@@ -219,7 +219,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				<th scope="row" class="titledesc">DIBS disabled</th>
 				<td class="forminp">
 				<fieldset><legend class="screen-reader-text"><span>DIBS disabled</span></legend>
-				<?php _e('DIBS does not support your store currency.', 'woocommerce'); ?><br>
+				<?php _e('DIBS does not support your store currency.', 'woocommerce-gateway-dibs'); ?><br>
 				</fieldset></td>
 				</tr>
 			<?php
@@ -425,7 +425,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				// Shipping Cost
 				if ($order->get_shipping()>0) :
 					
-					$tmp_shipping = '1' . ';' . __('Shipping cost', 'dibs') . ';' . $order->order_shipping*100 . ';' . $order->order_shipping_tax*100 . ';' . '0';
+					$tmp_shipping = '1' . ';' . __('Shipping cost', 'woocommerce-gateway-dibs') . ';' . $order->order_shipping*100 . ';' . $order->order_shipping_tax*100 . ';' . '0';
 
 					$args['oiRow'.$item_loop] = $tmp_shipping;
 					
@@ -437,7 +437,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				// Discount
 				if ($order->get_order_discount()>0) :
 					
-					$tmp_discount = '1' . ';' . __('Discount', 'dibs') . ';' . -$order->get_order_discount() . ';' . '0' . ';' . '0';
+					$tmp_discount = '1' . ';' . __('Discount', 'woocommerce-gateway-dibs') . ';' . -$order->get_order_discount() . ';' . '0' . ';' . '0';
 
 					$args['oiRow'.$item_loop] = $tmp_discount;
 
@@ -539,7 +539,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		
 		wc_enqueue_js( '
 			jQuery("body").block({
-					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce' ) ) . '",
+					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce-gateway-dibs' ) ) . '",
 					baseZ: 99999,
 					overlayCSS:
 					{
@@ -564,7 +564,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		
 		return '<form action="'.$dibs_adr.'" method="post" id="dibs_cc_payment_form">
 				' . $fields . '
-				<input type="submit" class="button-alt" id="submit_dibs_cc_payment_form" value="'.__('Pay via dibs', 'woothemes').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancel order &amp; restore cart', 'woothemes').'</a>
+				<input type="submit" class="button-alt" id="submit_dibs_cc_payment_form" value="'.__('Pay via dibs', 'woocommerce-gateway-dibs').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancel order &amp; restore cart', 'woocommerce-gateway-dibs').'</a>
 			</form>';
 		
 	}
@@ -590,7 +590,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 **/
 	function receipt_page( $order ) {
 		
-		echo '<p>'.__('Thank you for your order, please click the button below to pay with DIBS.', 'woothemes').'</p>';
+		echo '<p>'.__('Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs').'</p>';
 		
 		echo $this->generate_dibs_form( $order );
 		
@@ -650,7 +650,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			// Verify MD5
 			if($posted['authkey'] != $md5) {
 				// MD5 check failed
-				$order->update_status('failed', sprintf(__('MD5 check failed. DIBS transaction ID: %s', 'woocommerce'), strtolower($posted['transaction']) ) );
+				$order->update_status('failed', sprintf(__('MD5 check failed. DIBS transaction ID: %s', 'woocommerce-gateway-dibs'), strtolower($posted['transaction']) ) );
 				
 			}	
 			
@@ -660,14 +660,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            	case '2' :
 	            	case '5' :
 	            		// Order completed
-	            		$order->add_order_note( __('DIBS payment completed. DIBS transaction number: ', 'woocommerce') . $posted['transact'] );
+	            		$order->add_order_note( __('DIBS payment completed. DIBS transaction number: ', 'woocommerce-gateway-dibs') . $posted['transact'] );
 	            		// Store Transaction number as post meta
 					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
 	            		$order->payment_complete();
 	            	break;
 	            	case '12' :
 	            		// Order completed
-	            		$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs'), $posted['transact'] ) );
+	            		$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'woocommerce-gateway-dibs'), $posted['transact'] ) );
 	            		// Store Transaction number as post meta
 					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
 	            		$order->payment_complete();
@@ -677,7 +677,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            	case '4' :
 	            	case '17' :
 	            		// Order failed
-	            		$order->update_status('failed', sprintf(__('DIBS payment %s not approved. Status code %s.', 'woocommerce'), strtolower($posted['transaction']), $posted['statuscode'] ) );
+	            		$order->update_status('failed', sprintf(__('DIBS payment %s not approved. Status code %s.', 'woocommerce-gateway-dibs'), strtolower($posted['transaction']), $posted['statuscode'] ) );
 	            	break;
 	            	
 	            	default:
@@ -739,8 +739,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   			endif;
   	
 			if($posted['MAC'] != $MAC) {
-				//$order->add_order_note( __('HMAC check failed for Dibs callback with order_id: ', 'woocommerce') .$posted['transaction'] );
-				$order->update_status('failed', sprintf(__('HMAC check failed for Dibs callback with order_id: %s.', 'woocommerce'), strtolower($posted['transaction']) ) );
+				//$order->add_order_note( __('HMAC check failed for Dibs callback with order_id: ', 'woocommerce-gateway-dibs') .$posted['transaction'] );
+				$order->update_status('failed', sprintf(__('HMAC check failed for Dibs callback with order_id: %s.', 'woocommerce-gateway-dibs'), strtolower($posted['transaction']) ) );
 				
 				// Debug
 				if ($this->debug=='yes') :
@@ -754,13 +754,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            case 'accepted' :    
 	            
 	            	// Order completed
-					$order->add_order_note( sprintf(__('DIBS payment completed. DIBS transaction number: %s.', 'woocommerce'), $posted['transaction'] ));
+					$order->add_order_note( sprintf(__('DIBS payment completed. DIBS transaction number: %s.', 'woocommerce-gateway-dibs'), $posted['transaction'] ));
 					// Store Transaction number as post meta
 					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
 					
 					if (isset($posted['ticket'])) {
 						add_post_meta( $order_id, '_dibs_ticket', $posted['ticket']);
-						$order->add_order_note( sprintf(__('DIBS subscription ticket number: %s.', 'woocommerce'), $posted['ticket'] ));
+						$order->add_order_note( sprintf(__('DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs'), $posted['ticket'] ));
 					}
 					
 					$order->payment_complete();
@@ -769,7 +769,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 					
 				case 'pending' :
 	            	// On-hold until we sort this out with DIBS
-	            	$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs'), $posted['transaction'] ) );
+	            	$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'woocommerce-gateway-dibs'), $posted['transaction'] ) );
 	            	// Store Transaction number as post meta
 					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
 				
@@ -777,7 +777,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				case 'error' :
 				
 					// Order failed
-	                $order->update_status('failed', sprintf(__('Payment %s via IPN.', 'woocommerce'), strtolower($posted['transaction']) ) );
+	                $order->update_status('failed', sprintf(__('Payment %s via IPN.', 'woocommerce-gateway-dibs'), strtolower($posted['transaction']) ) );
 	                
 					break;
 	            
@@ -821,18 +821,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   			if ($posted['MAC'] == $MAC && $order->id == $order_id && $order->status=='pending') {
 
 				// Cancel the order + restore stock
-				$order->cancel_order( __('Order cancelled by customer.', 'dibs') );
+				$order->cancel_order( __('Order cancelled by customer.', 'woocommerce-gateway-dibs') );
 
 				// Message
-				wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
+				wc_add_notice(__('Your order was cancelled.', 'woocommerce-gateway-dibs'), 'error');
 
 			 } elseif ($order->status!='pending') {
 
-				wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
+				wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'woocommerce-gateway-dibs'), 'error');
 
 			} else {
 
-				wc_add_notice(__('Invalid order.', 'dibs'), 'error');
+				wc_add_notice(__('Invalid order.', 'woocommerce-gateway-dibs'), 'error');
 
 			}
 			
@@ -852,18 +852,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   			if ($order->id == $order_id && $order->status=='pending') {
 
 				// Cancel the order + restore stock
-				$order->cancel_order( __('Order cancelled by customer.', 'dibs') );
+				$order->cancel_order( __('Order cancelled by customer.', 'woocommerce-gateway-dibs') );
 
 				// Message
-				wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
+				wc_add_notice(__('Your order was cancelled.', 'woocommerce-gateway-dibs'), 'error');
 
 			 } elseif ($order->status!='pending') {
 
-				wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
+				wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'woocommerce-gateway-dibs'), 'error');
 
 			} else {
 
-				wc_add_notice(__('Invalid order.', 'dibs'), 'error');
+				wc_add_notice(__('Invalid order.', 'woocommerce-gateway-dibs'), 'error');
 
 			}
 
@@ -948,11 +948,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   		$response = postToDIBS('AuthorizeTicket',$params);
   		
   		if($response['status'] == "ACCEPT") {
-			$order->add_order_note( sprintf(__('DIBS subscription payment completed. Transaction Id: %s.', 'dibs'), $response['transactionId']) );
+			$order->add_order_note( sprintf(__('DIBS subscription payment completed. Transaction Id: %s.', 'woocommerce-gateway-dibs'), $response['transactionId']) );
 			return true;
 		
 		} else {
-			$order->add_order_note( sprintf(__('DIBS subscription payment failed. Decline reason: %s.', 'dibs'), $response['declineReason']) );
+			$order->add_order_note( sprintf(__('DIBS subscription payment failed. Decline reason: %s.', 'woocommerce-gateway-dibs'), $response['declineReason']) );
 			return false;
 			
 		}

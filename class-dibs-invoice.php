@@ -12,7 +12,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		parent::__construct();
 		
 		$this->id					= 'dibs_invoice';
-		$this->method_title 		= __('DIBS Invoice', 'klarna');
+		$this->method_title 		= __('DIBS Invoice', 'woocommerce-gateway-dibs');
         $this->icon 				= apply_filters( 'woocommerce_dibs_invoice_icon', plugins_url(basename(dirname(__FILE__))."/images/dibs.png") );
         $this->has_fields 			= false;
         $this->log 					= new WC_Logger();
@@ -184,97 +184,97 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
     
     	$this->form_fields = array(
 			'enabled' => array(
-							'title' => __( 'Enable/Disable', 'woothemes' ), 
+							'title' => __( 'Enable/Disable', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable DIBS Invoice', 'woothemes' ), 
+							'label' => __( 'Enable DIBS Invoice', 'woocommerce-gateway-dibs' ), 
 							'default' => 'yes'
 						), 
 			'title' => array(
-							'title' => __( 'Title', 'woothemes' ), 
+							'title' => __( 'Title', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'This controls the title which the user sees during checkout.', 'woothemes' ), 
-							'default' => __( 'DIBS Invoice', 'woothemes' )
+							'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-gateway-dibs' ), 
+							'default' => __( 'DIBS Invoice', 'woocommerce-gateway-dibs' )
 						),
 			'description' => array(
-							'title' => __( 'Description', 'woothemes' ), 
+							'title' => __( 'Description', 'woocommerce-gateway-dibs' ), 
 							'type' => 'textarea', 
-							'description' => __( 'This controls the description which the user sees during checkout.', 'woothemes' ), 
-							'default' => __("Pay via DIBS Invoice.", 'woothemes')
+							'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-gateway-dibs' ), 
+							'default' => __("Pay via DIBS Invoice.", 'woocommerce-gateway-dibs')
 						),
 			'merchant_id' => array(
-							'title' => __( 'DIBS Merchant ID - Sweden', 'woothemes' ), 
+							'title' => __( 'DIBS Merchant ID - Sweden', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS Merchant ID for Sweden.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS Merchant ID for Sweden.', 'woocommerce-gateway-dibs' ), 
 							'default' => ''
 						),
 			'key_hmac' => array(
-							'title' => __( 'HMAC Key (k) - Sweden', 'woothemes' ), 
+							'title' => __( 'HMAC Key (k) - Sweden', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS HMAC Key (k) for Sweden.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS HMAC Key (k) for Sweden.', 'woocommerce-gateway-dibs' ), 
 							'default' => ''
 						),
 			'merchant_id_no' => array(
-							'title' => __( 'DIBS Merchant ID - Norway', 'woothemes' ), 
+							'title' => __( 'DIBS Merchant ID - Norway', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS Merchant ID for Norway.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS Merchant ID for Norway.', 'woocommerce-gateway-dibs' ), 
 							'default' => ''
 						),
 			'key_hmac_no' => array(
-							'title' => __( 'HMAC Key (k) - Norway', 'woothemes' ), 
+							'title' => __( 'HMAC Key (k) - Norway', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS HMAC Key (k) for Norway.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS HMAC Key (k) for Norway.', 'woocommerce-gateway-dibs' ), 
 							'default' => ''
 						),
 			'merchant_id_dk' => array(
-							'title' => __( 'DIBS Merchant ID - Denmark', 'woothemes' ), 
+							'title' => __( 'DIBS Merchant ID - Denmark', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS Merchant ID for Denmark.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS Merchant ID for Denmark.', 'woocommerce-gateway-dibs' ), 
 							'default' => ''
 						),
 			'key_hmac_dk' => array(
-							'title' => __( 'HMAC Key (k) - Denmark', 'woothemes' ), 
+							'title' => __( 'HMAC Key (k) - Denmark', 'woocommerce-gateway-dibs' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS HMAC Key (k) for Denmark.', 'woothemes' ), 
+							'description' => __( 'Please enter your DIBS HMAC Key (k) for Denmark.', 'woocommerce-gateway-dibs' ), 
 							'default' => ''
 						),
 			'language' => array(
-								'title' => __( 'Language', 'woothemes' ), 
+								'title' => __( 'Language', 'woocommerce-gateway-dibs' ), 
 								'type' => 'select',
 								'options' => array('en'=>'English', 'da'=>'Danish', 'de'=>'German', 'es'=>'Spanish', 'fi'=>'Finnish', 'fo'=>'Faroese', 'fr'=>'French', 'it'=>'Italian', 'nl'=>'Dutch', 'no'=>'Norwegian', 'pl'=>'Polish (simplified)', 'sv'=>'Swedish', 'kl'=>'Greenlandic'),
-								'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'woothemes' ), 
+								'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'woocommerce-gateway-dibs' ), 
 								'default' => 'sv'
 							),
 			'invoice_fee_id' => array(
-								'title' => __( 'Invoice Fee', 'woothemes' ), 
+								'title' => __( 'Invoice Fee', 'woocommerce-gateway-dibs' ), 
 								'type' => 'text', 
-								'description' => __( 'Create a hidden (simple) product that acts as the invoice fee. Enter the ID number in this textfield. Leave blank to disable. ', 'woothemes' ), 
+								'description' => __( 'Create a hidden (simple) product that acts as the invoice fee. Enter the ID number in this textfield. Leave blank to disable. ', 'woocommerce-gateway-dibs' ), 
 								'default' => ''
 							),
 			'pg_calc_totals' => array(
-							'title' => __( 'Totals calculation', 'woothemes' ), 
+							'title' => __( 'Totals calculation', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox',
-							'label' => __( 'Let the payment gateway calculate totals', 'woothemes' ),
-							'description' => __( 'Order total sent to DIBS is calculated by the payment gateway, not by WooCommerce. This can be useful when having prices/tax amounts that use 3 or 4 decimals since DIBS process prices with 2 decimals. Both Order total and each order row is passed to DIBS. If they do not add up DIBS will cancel the payment. ', 'woothemes' ), 
+							'label' => __( 'Let the payment gateway calculate totals', 'woocommerce-gateway-dibs' ),
+							'description' => __( 'Order total sent to DIBS is calculated by the payment gateway, not by WooCommerce. This can be useful when having prices/tax amounts that use 3 or 4 decimals since DIBS process prices with 2 decimals. Both Order total and each order row is passed to DIBS. If they do not add up DIBS will cancel the payment. ', 'woocommerce-gateway-dibs' ), 
 							'default' => 'no'
 						), 
 							/*
 			'capturenow' => array(
-							'title' => __( 'Instant capture (capturenow)', 'woothemes' ), 
+							'title' => __( 'Instant capture (capturenow)', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'If checked the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this function.', 'woothemes' ), 
+							'label' => __( 'If checked the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this function.', 'woocommerce-gateway-dibs' ), 
 							'default' => 'no'
 						),
 						*/
 			'testmode' => array(
-							'title' => __( 'Test Mode', 'woothemes' ), 
+							'title' => __( 'Test Mode', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable DIBS Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'woothemes' ), 
+							'label' => __( 'Enable DIBS Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'woocommerce-gateway-dibs' ), 
 							'default' => 'yes'
 						),
 			'debug' => array(
-								'title' => __( 'Debug', 'woothemes' ), 
+								'title' => __( 'Debug', 'woocommerce-gateway-dibs' ), 
 								'type' => 'checkbox', 
-								'label' => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'woothemes' ), 
+								'label' => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'woocommerce-gateway-dibs' ), 
 								'default' => 'no'
 							)
 			);
@@ -291,8 +291,8 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	public function admin_options() {
 
     	?>
-    	<h3><?php _e('DIBS Invoice', 'woothemes'); ?></h3>
-    	<p><?php _e('Link to docs perhaps?.', 'woothemes'); ?></p>
+    	<h3><?php _e('DIBS Invoice', 'woocommerce-gateway-dibs'); ?></h3>
+    	<p><?php printf(__('Documentation <a href="%s" target="_blank">can be found here</a>.', 'woocommerce-gateway-dibs'), 'http://docs.woothemes.com/document/dibs/' ); ?></p>
     	<table class="form-table">
     	<?php
     		if ( isset($this->dibs_currency[$this->selected_currency]) ) {
@@ -303,7 +303,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				<th scope="row" class="titledesc">DIBS Invoice disabled</th>
 				<td class="forminp">
 				<fieldset><legend class="screen-reader-text"><span>DIBS Invoice disabled</span></legend>
-				<?php _e('DIBS does not support your store currency.', 'woocommerce'); ?><br>
+				<?php _e('DIBS does not support your store currency.', 'woocommerce-gateway-dibs'); ?><br>
 				</fieldset></td>
 				</tr>
 			<?php
@@ -437,7 +437,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		// Shipping Cost
 		if ($order->get_total_shipping()>0) :
 			
-			$tmp_shipping = 'st;' . '1' . ';' . __('Shipping cost', 'dibs') . ';' . $order->get_total_shipping()*100 . ';' . $order->order_shipping_tax*100 . ';' . '0';
+			$tmp_shipping = 'st;' . '1' . ';' . __('Shipping cost', 'woocommerce-gateway-dibs') . ';' . $order->get_total_shipping()*100 . ';' . $order->order_shipping_tax*100 . ';' . '0';
 
 			$args['oiRow'.$item_loop] = $tmp_shipping;
 			
@@ -449,7 +449,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		// Discount
 		if ($order->get_order_discount()>0) :
 			
-			$tmp_discount = 'st;' . '1' . ';' . __('Discount', 'dibs') . ';' . -number_format($order->get_order_discount(), 2, '.', '')*100 . ';' . '0' . ';' . '0';
+			$tmp_discount = 'st;' . '1' . ';' . __('Discount', 'woocommerce-gateway-dibs') . ';' . -number_format($order->get_order_discount(), 2, '.', '')*100 . ';' . '0' . ';' . '0';
 
 			$args['oiRow'.$item_loop] = $tmp_discount;
 			
@@ -541,7 +541,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		
 		wc_enqueue_js( '
 			jQuery("body").block({
-					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce' ) ) . '",
+					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce-gateway-dibs' ) ) . '",
 					baseZ: 99999,
 					overlayCSS:
 					{
@@ -567,7 +567,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		
 		return '<form action="'.$this->paymentwindow_url.'" method="post" id="dibs_invoice_payment_form">
 				' . $fields . '
-				<input type="submit" class="button-alt" id="submit_dibs_invoice_payment_form" value="'.__('Pay via dibs', 'woothemes').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancel order &amp; restore cart', 'woothemes').'</a>
+				<input type="submit" class="button-alt" id="submit_dibs_invoice_payment_form" value="'.__('Pay via dibs', 'woocommerce-gateway-dibs').'" /> <a class="button cancel" href="'.$order->get_cancel_order_url().'">'.__('Cancel order &amp; restore cart', 'woocommerce-gateway-dibs').'</a>
 			</form>';
 		
 	}
@@ -596,7 +596,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	 **/
 	function receipt_page( $order ) {
 		
-		echo '<p>'.__('Thank you for your order, please click the button below to pay with DIBS.', 'woothemes').'</p>';
+		echo '<p>'.__('Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs').'</p>';
 		
 		echo $this->generate_dibs_form( $order );
 		
@@ -632,18 +632,18 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
   			if ($posted['MAC'] == $MAC && $order->id == $order_id && $order->status=='pending') {
 
 				// Cancel the order + restore stock
-				$order->cancel_order( __('Order cancelled by customer.', 'dibs') );
+				$order->cancel_order( __('Order cancelled by customer.', 'woocommerce-gateway-dibs') );
 
 				// Message
-				wc_add_notice(__('Your order was cancelled.', 'dibs'), 'error');
+				wc_add_notice(__('Your order was cancelled.', 'woocommerce-gateway-dibs'), 'error');
 
 			 } elseif ($order->status!='pending') {
 
-				wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs'), 'error');
+				wc_add_notice(__('Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'woocommerce-gateway-dibs'), 'error');
 
 			} else {
 
-				wc_add_notice(__('Invalid order.', 'dibs'), 'error');
+				wc_add_notice(__('Invalid order.', 'woocommerce-gateway-dibs'), 'error');
 
 			}
 
