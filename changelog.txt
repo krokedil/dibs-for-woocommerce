@@ -1,5 +1,11 @@
 *** DIBS Changelog ***
 
+2014.11.04 		- version 1.5.5
+* Feature		- added textdomain woocommerce-gateway-dibs (instead of woothemes).
+* Feature		- Added Manual Modification class that adds a metabox to single order page if the constant WC_DIBS_DEBUG is true. Useful when Ticket number and Transaction number needs to be edited manually.
+* Tweak			- Removed intval for price sent to DIBS (in class WC_Gateway_Dibs_CC).
+* Fix			- Strip n° (french translation) in get_order_number() for Order ID sent to DIBS (Payment window).
+
 2014.10.08 		- version 1.5.4
 * Fix			- Removed selectable Paytype parameters sent to Flexwin via settings. Flexwin doesn't have an ALL_CARDS parameter. The filter woocommerce_dibs_paytypes is still available.
 * Fix			- DIBS not available as payment gateway for subscription payments if Flexwin is used as payment method.
