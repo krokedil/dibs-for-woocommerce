@@ -305,13 +305,15 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 			
 			// Order ID
-			$args['orderId'] = ltrim( $order->get_order_number(), '#');
+			$tmp_order_id = '';
+			$tmp_order_id = ltrim( $order->get_order_number(), 'n°'); 	// Strip n° (french translation)
+			$args['orderId'] = ltrim( $tmp_order_id, '#'); 				// Strip #
 					
 			// Language
 			if ($this->dibs_language == 'no') $this->dibs_language = 'nb';
 
 			$args['language'] = $this->dibs_language;
-							
+						
 			// URLs
 			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL
 			// We also need to make the callback url the accept/return url. If we use $this->get_return_url( $order ) the HMAC calculation doesn't add up
@@ -340,7 +342,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 			
 			
- 			
  			// What kind of payment is this - subscription payment or regular payment
  			if ( class_exists( 'WC_Subscriptions_Order' ) && WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
  				
@@ -354,7 +355,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				}
 				
 				// Price
-				$args['amount'] = intval($price*100);
+				$args['amount'] = $price*100;
  				
  			
  			
@@ -368,7 +369,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				}
 				
 				// Price
-				$args['amount'] = intval($order->order_total * 100);
+				$args['amount'] = $order->order_total * 100;
  			}
  			
  			
@@ -465,7 +466,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 			
 			// Price
-			$args['amount'] = intval($order->order_total * 100);
+			$args['amount'] = $order->order_total * 100;
 			
 			//'orderid' => $order_id,
 			$args['orderid'] = ltrim( $order->get_order_number(), '#');
@@ -507,6 +508,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$key2 = $this->key_2;
 			$merchant = $this->merchant_id;
 			//$orderid = $order_id;
+			
 			$orderid = ltrim( $order->get_order_number(), '#');
 			$currency = $this->dibs_currency[$this->selected_currency];
 			$amount = $order->order_total * 100;	
