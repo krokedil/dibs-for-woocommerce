@@ -947,12 +947,23 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   		
   		$response = postToDIBS('AuthorizeTicket',$params);
   		
-  		if($response['status'] == "ACCEPT") {
+  		if(isset($response['status']) && $response['status'] == "ACCEPT") {
+  			
+  			// Payment ok
 			$order->add_order_note( sprintf(__('DIBS subscription payment completed. Transaction Id: %s.', 'woocommerce-gateway-dibs'), $response['transactionId']) );
 			return true;
 		
+		} elseif( !empty($response['wp_remote_note']) ) {
+			
+			// WP remote post problem
+			$order->add_order_note( sprintf(__('DIBS subscription payment failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs'), $response['wp_remote_note']) );
+			return false;
+			
 		} else {
+			
+			// Payment problem
 			$order->add_order_note( sprintf(__('DIBS subscription payment failed. Decline reason: %s.', 'woocommerce-gateway-dibs'), $response['declineReason']) );
+			
 			return false;
 			
 		}
