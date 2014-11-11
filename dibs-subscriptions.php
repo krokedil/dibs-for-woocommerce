@@ -38,30 +38,29 @@
 	      echo("Wrong input paymentFunctions to postToDIBS");
 	      $postUrl = null;
 	  }
-	   
-	  //Use Curl to communicate with the server.
-	  $ch = curl_init();
-	  curl_setopt($ch, CURLOPT_URL,$postUrl);
-	  curl_setopt($ch, CURLOPT_POST, 1);
-	  curl_setopt($ch, CURLOPT_SSLVERSION, 3);
-	  curl_setopt($ch, CURLOPT_POSTFIELDS, "request=" . $json_data);
-	  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 15);
-	  $json_output = curl_exec ($ch);
-	   
-	  //Check for errors in the Curl operation
-	  if (curl_errno($ch) != 0) {
-	    error_log("Curl failed:");
-	    error_log(curl_getinfo($ch));
-	    error_log(curl_errno($ch));
-	    error_log(curl_error($ch));
-	  }
-	  curl_close ($ch);
-	   
-	  //Convert JSON server output to array of key => values
-	  $res = json_decode($json_output, true);
-	   
-	  return $res;
+	  
+	$response = wp_remote_post( $postUrl, array(
+	    'method' => 'POST',
+	    'timeout' => 45,
+	    'redirection' => 5,
+	    'httpversion' => '1.0',
+	    'blocking' => true,
+	    'headers' => array(),
+	    'body' => array('request'=>$json_data),
+	    'cookies' => array()
+	    )
+	);
+	
+	$post_back = array();
+	
+	if ( is_wp_error( $response ) ) {
+		$post_back['wp_remote_note'] = sprintf( __( 'Error: %s', 'woocommerce' ), $response->get_error_message() );
+	} else {
+		$post_back = json_decode($response['body'], true);
+	}
+	
+	return $post_back;
+	
 	}
 	
 	
