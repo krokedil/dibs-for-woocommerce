@@ -1,5 +1,9 @@
 *** DIBS Changelog ***
 
+2014.11.12 		- version 1.5.6
+* Tweak			- Switched to wp_remote_post (instead of cURL) when connecting to DIBS (AuthorizeTicket) on recurring payments.
+* Tweak			- Better reporting when wp_remote_post fails due to server issues.
+
 2014.11.04 		- version 1.5.5
 * Feature		- added textdomain woocommerce-gateway-dibs (instead of woothemes).
 * Feature		- Added Manual Modification class that adds a metabox to single order page if the constant WC_DIBS_DEBUG is true. Useful when Ticket number and Transaction number needs to be edited manually.
