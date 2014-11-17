@@ -947,7 +947,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   		
   		$response = postToDIBS('AuthorizeTicket',$params);
   		
-  		if(isset($response['status']) && $response['status'] == "ACCEPT") {
+  		if( isset($response['status']) && ( $response['status'] == "ACCEPT" || $response['status'] == "ACCEPTED" ) ) {
   			
   			// Payment ok
 			$order->add_order_note( sprintf(__('DIBS subscription payment completed. Transaction Id: %s.', 'woocommerce-gateway-dibs'), $response['transactionId']) );
