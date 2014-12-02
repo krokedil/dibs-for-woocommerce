@@ -53,19 +53,6 @@ function init_dibs_gateway() {
 			$this->selected_currency = get_woocommerce_currency();
 			
 		}
-
-		/**
-		 * Get the transaction URL.
-		 *
-		 * @param  WC_Order $order
-		 *
-		 * @return string
-		 */
-		public function get_transaction_url( $order ) {
-			$this->view_transaction_url = $order;
-
-			return parent::get_transaction_url( $order );
-		}	
 		    
 	} // Close class WC_Gateway_Dibs
 
