@@ -662,14 +662,16 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            		// Order completed
 	            		$order->add_order_note( __('DIBS payment completed. DIBS transaction number: ', 'woocommerce-gateway-dibs') . $posted['transact'] );
 	            		// Store Transaction number as post meta
-					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
+						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction'] );
+						add_post_meta( $order_id, '_transaction_id', $posted['transaction'] );
 	            		$order->payment_complete();
 	            	break;
 	            	case '12' :
 	            		// Order completed
 	            		$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'woocommerce-gateway-dibs'), $posted['transact'] ) );
 	            		// Store Transaction number as post meta
-					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
+						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction'] );
+						add_post_meta( $order_id, '_transaction_id', $posted['transaction'] );
 	            		$order->payment_complete();
 	            	break;
 	            	case '0' :
@@ -757,7 +759,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 					$order->add_order_note( sprintf(__('DIBS payment completed. DIBS transaction number: %s.', 'woocommerce-gateway-dibs'), $posted['transaction'] ));
 					// Store Transaction number as post meta
 					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
-					
+					add_post_meta( $order_id, '_transaction_id', $posted['transaction'] );
+
 					if (isset($posted['ticket'])) {
 						add_post_meta( $order_id, '_dibs_ticket', $posted['ticket']);
 						$order->add_order_note( sprintf(__('DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs'), $posted['ticket'] ));
@@ -772,7 +775,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            	$order->update_status('on-hold', sprintf(__('DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'woocommerce-gateway-dibs'), $posted['transaction'] ) );
 	            	// Store Transaction number as post meta
 					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
-				
+					add_post_meta( $order_id, '_transaction_id', $posted['transaction'] );
+
 				case 'declined' :
 				case 'error' :
 				
@@ -1026,6 +1030,5 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		return $order_id;
 
 	} // end function
-	
 
 } // End class

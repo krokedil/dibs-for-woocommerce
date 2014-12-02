@@ -112,6 +112,7 @@ class WC_Dibs_Manual_Modification {
 		$dibs_transaction = sanitize_text_field( $_POST['woocommerce_dibs_transaction'] );
 		
 		update_post_meta( $post_id, '_dibs_transaction_no', $dibs_transaction );
+		update_post_meta( $post_id, '_transaction_id', $dibs_transaction );
 		update_post_meta( $post_id, '_dibs_ticket', $dibs_ticket );
 		
 	} // End function
