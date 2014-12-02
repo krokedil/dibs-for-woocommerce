@@ -921,8 +921,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	  		
 	function process_subscription_payment( $order = '', $amount = 0 ) {
 		global $woocommerce;
-		
-		
+			
 		require_once('dibs-subscriptions.php');
 		require_once('calculateMac.php');
 		$logfile = '';
@@ -1030,5 +1029,68 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		return $order_id;
 
 	} // end function
+
+	/**
+	 * Can the order be refunded via Dibs?
+	 * @param  WC_Order $order
+	 * @return bool
+	 */
+	public function can_refund_order( $order ) {
+		return $order && $order->get_transaction_id();
+	}
+
+	/**
+	 * Process a refund if supported
+	 * @param   int $order_id
+	 * @param   float $amount
+	 * @param   string $reason
+	 * @return  bool|wp_error True or false based on success, or a WP_Error object
+	 * @link    http://tech.dibspayment.com/refundtransaction-dpw
+	 * @todo    Add transactionId to $params
+	 */
+	public function process_refund( $order_id, $amount = null, $reason = '' ) {
+		global $woocommerce;
+
+		require_once('dibs-subscriptions.php');
+		require_once('calculateMac.php');
+		$logfile = '';
+
+		$dibs_ticket = get_post_meta( $order->id, '_dibs_ticket', true);
+		// $currency = get_option('woocommerce_currency');
+
+		$order_items = $order->get_items();
+		$_product = $order->get_product_from_item( array_shift( $order_items ) );
+
+		$params = array	(
+			'merchantId' 	=> $this->merchant_id,
+			'currency' 		=> $order->get_order_currency(),
+			'amount' 		=> number_format($amount, 2, '.', '')*100,
+			'ticketId' 		=> $dibs_ticket,
+			'orderId' 		=> $order->id
+		);
+
+
+		// Calculate the MAC for the form key-values to be posted to DIBS.
+		$MAC = calculateMac( $params, $this->key_hmac );
+
+		// Add MAC to the $params array
+		$params['MAC'] = $MAC;
+
+		$response = postToDIBS( 'RefundTransaction', $params );
+
+		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" || $response['status'] == "ACCEPTED" ) ) {
+			// Payment ok
+			$order->add_order_note( sprintf( __( 'DIBS subscription payment completed. Transaction Id: %s.', 'woocommerce-gateway-dibs' ), $response['transactionId'] ) );
+			return true;
+		} elseif( !empty($response['wp_remote_note']) ) {
+			// WP remote post problem
+			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ), $response['wp_remote_note'] ) );
+			return false;
+		} else {
+			// Payment problem
+			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['declineReason'] ) );
+			return false;
+		}
+	}
 
 } // End class
