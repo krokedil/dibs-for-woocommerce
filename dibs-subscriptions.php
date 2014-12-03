@@ -48,8 +48,7 @@ function postToDIBS( $paymentFunction, $params ) {
 		'headers'     => array(),
 		'body'        => array( 'request' => $json_data ),
 		'cookies'     => array()
-		)
-	);
+	) );
 	
 	$post_back = array();
 	
