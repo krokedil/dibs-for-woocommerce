@@ -1050,12 +1050,10 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @todo    Add transactionId to $params
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
-		return true;
-
 		$order = wc_get_order( $order_id );
 
 		if ( ! $this->can_refund_order( $order ) ) {
-			$this->log( 'Refund Failed: No transaction ID' );
+			// $this->log( 'Refund Failed: No transaction ID' );
 			return false;
 		}
 		require_once('dibs-subscriptions.php');
@@ -1063,8 +1061,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 		$params = array	(
 			'merchantId'    => $this->merchant_id,
-			'transactionId' => $order->get_transaction_id,
-			'amount'        => 200,
+			'transactionId' => $order->get_transaction_id(),
+			'amount'        => 2000,
 		);
 
 		// Calculate the MAC for the form key-values to be posted to DIBS.
@@ -1075,7 +1073,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 		$response = postToDIBS( 'RefundTransaction', $params );
 
-
   		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" ) ) {
   			// Refund ok
 			$order->add_order_note( sprintf(
@@ -1083,7 +1080,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				$response['transactionId']
 			) );
 
-			return true;
+			return false;
 		} elseif ( ! empty( $response['wp_remote_note'] ) ) {
 			// WP remote post problem
 			$order->add_order_note( sprintf(
