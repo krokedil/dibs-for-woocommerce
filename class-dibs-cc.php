@@ -65,7 +65,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		// Actions
 		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-		
+
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
 		$this->dibs_currency = array(
 			'DKK' => '208', // Danish Kroner
@@ -1050,8 +1050,17 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @todo    Add transactionId to $params
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
+		/**
+		 * 1. Check if order can be refunded
+		 * 2. Check if transaction is captured in DIBS
+		 * 3. Attempt to refund DIBS transaction
+		 * 4. Add order note with refund details
+		 */
+
+
 		$order = wc_get_order( $order_id );
 
+		// Check if order can be refunded
 		if ( ! $this->can_refund_order( $order ) ) {
 			// $this->log( 'Refund Failed: No transaction ID' );
 			return false;
@@ -1062,7 +1071,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$params = array	(
 			'merchantId'    => $this->merchant_id,
 			'transactionId' => $order->get_transaction_id(),
-			'amount'        => 2000,
+			'amount'        => $amount,
 		);
 
 		// Calculate the MAC for the form key-values to be posted to DIBS.
@@ -1072,6 +1081,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   		$params['MAC'] = $MAC;
 
 		$response = postToDIBS( 'RefundTransaction', $params );
+
+		$response_string = '';
+		foreach ($response as $key => $value) {
+			$response_string .= $key . ': ' . $value . "\n";
+		}
 
   		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" ) ) {
   			// Refund ok
@@ -1153,11 +1167,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			
 		}
 		*/
-
-
-
-
-
 	}
 
 } // End class
