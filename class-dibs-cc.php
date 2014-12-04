@@ -1050,17 +1050,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @todo    Add transactionId to $params
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
-		/**
-		 * 1. Check if order can be refunded
-		 * 2. Check if transaction is captured in DIBS
-		 * 3. Attempt to refund DIBS transaction
-		 * 4. Add order note with refund details
-		 */
-
-
 		$order = wc_get_order( $order_id );
 
-		// Check if order can be refunded
 		if ( ! $this->can_refund_order( $order ) ) {
 			// $this->log( 'Refund Failed: No transaction ID' );
 			return false;
@@ -1071,7 +1062,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$params = array	(
 			'merchantId'    => $this->merchant_id,
 			'transactionId' => $order->get_transaction_id(),
-			'amount'        => $amount,
+			'amount'        => $amount * 100,
 		);
 
 		// Calculate the MAC for the form key-values to be posted to DIBS.
@@ -1082,19 +1073,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 		$response = postToDIBS( 'RefundTransaction', $params );
 
-		$response_string = '';
-		foreach ($response as $key => $value) {
-			$response_string .= $key . ': ' . $value . "\n";
-		}
-
   		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" ) ) {
   			// Refund ok
 			$order->add_order_note( sprintf(
-				__( 'DIBS refund completed. Transaction Id: %s.', 'woocommerce-gateway-dibs' ),
-				$response['transactionId']
+				__( '%s refunded via DIBS.', 'woocommerce-gateway-dibs' ),
+				$amount
 			) );
 
-			return false;
+			return true;
 		} elseif ( ! empty( $response['wp_remote_note'] ) ) {
 			// WP remote post problem
 			$order->add_order_note( sprintf(
@@ -1167,6 +1153,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			
 		}
 		*/
+
+
+
+
+
 	}
 
 } // End class
