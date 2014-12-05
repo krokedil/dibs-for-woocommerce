@@ -1047,7 +1047,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @param   string $reason
 	 * @return  bool|wp_error True or false based on success, or a WP_Error object
 	 * @link    http://tech.dibspayment.com/refundtransaction-dpw
-	 * @todo    Add transactionId to $params
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 
