@@ -1050,15 +1050,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @todo    Add transactionId to $params
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
+
 		$order = wc_get_order( $order_id );
 
 		if ( ! $this->can_refund_order( $order ) ) {
-			// $this->log( 'Refund Failed: No transaction ID' );
+			$this->log->add( 'Refund Failed: No transaction ID' );
 			return false;
 		}
+
 		require_once('dibs-subscriptions.php');
 		require_once('calculateMac.php');
-
+		
+		// Refund request parameters
 		$params = array	(
 			'merchantId'    => $this->merchant_id,
 			'transactionId' => $order->get_transaction_id(),
@@ -1066,97 +1069,51 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		);
 
 		// Calculate the MAC for the form key-values to be posted to DIBS.
-  		$MAC = calculateMac( $params, $this->key_hmac );
+		$MAC = calculateMac( $params, $this->key_hmac );
 		
 		// Add MAC to the $params array
-  		$params['MAC'] = $MAC;
+		$params['MAC'] = $MAC;
 
 		$response = postToDIBS( 'RefundTransaction', $params );
 
   		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" ) ) {
-  			// Refund ok
-			$order->add_order_note( sprintf(
-				__( '%s refunded via DIBS.', 'woocommerce-gateway-dibs' ),
-				$amount
-			) );
+  			// Refund OK
+			$refund_note = sprintf(
+				__( '%s refunded successfully via DIBS', 'woocommerce-gateway-dibs' ),
+				wc_price( $amount )
+			);
+			if ( '' != $reason ) {
+				$refund_note .= sprintf(
+					__( ', reason: %s.', 'woocommerce-gateway-dibs' ),
+					$reason
+				);
+			}
+
+			$order->add_order_note( $refund_note );
+			$this->log->add( 'dibs', $refund_note );
 
 			return true;
 		} elseif ( ! empty( $response['wp_remote_note'] ) ) {
 			// WP remote post problem
-			$order->add_order_note( sprintf(
+			$refund_note = sprintf(
 				__( 'DIBS refund failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ),
 				$response['wp_remote_note']
-			) );
+			);
+
+			$order->add_order_note( $refund_note );
+			$this->log->add( 'dibs', $refund_note );
 
 			return false;
 		} else {
 			// Refund problem
-			$order->add_order_note( sprintf(
+			$order->add_order_note( __( 'DIBS refund failed.', 'woocommerce-gateway-dibs' ) );
+			$this->log->add( sprintf(
 				__( 'DIBS refund failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ),
 				$response['declineReason']
 			) );
 			
 			return false;
 		}
-
-
-		/*
-		
-		global $woocommerce;
-			
-		require_once('dibs-subscriptions.php');
-		require_once('calculateMac.php');
-		$logfile = '';
-			
-		$dibs_ticket = get_post_meta( $order->id, '_dibs_ticket', true);
-		//$currency = get_option('woocommerce_currency');
-		
-		$order_items = $order->get_items();
-		$_product = $order->get_product_from_item( array_shift( $order_items ) );
-				
-		$params = array	(
-						'merchantId' 	=> $this->merchant_id,
-						'currency' 		=> $order->get_order_currency(),
-						'amount' 		=> number_format($amount, 2, '.', '')*100,
-						'ticketId' 		=> $dibs_ticket,
-						//'orderId' 	=> $order->get_order_number(),
-						'orderId' 		=> $order->id
-					);
-		
-		
-		// Calculate the MAC for the form key-values to be posted to DIBS.
-  		$MAC = calculateMac($params, $this->key_hmac);
-		
-		// Add MAC to the $params array
-  		$params['MAC'] = $MAC;
-  		
-  		$response = postToDIBS('AuthorizeTicket',$params);
-  		
-  		if( isset($response['status']) && ( $response['status'] == "ACCEPT" || $response['status'] == "ACCEPTED" ) ) {
-  			
-  			// Payment ok
-			$order->add_order_note( sprintf(__('DIBS subscription payment completed. Transaction Id: %s.', 'woocommerce-gateway-dibs'), $response['transactionId']) );
-			return true;
-		
-		} elseif( !empty($response['wp_remote_note']) ) {
-			
-			// WP remote post problem
-			$order->add_order_note( sprintf(__('DIBS subscription payment failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs'), $response['wp_remote_note']) );
-			return false;
-			
-		} else {
-			
-			// Payment problem
-			$order->add_order_note( sprintf(__('DIBS subscription payment failed. Decline reason: %s.', 'woocommerce-gateway-dibs'), $response['declineReason']) );
-			
-			return false;
-			
-		}
-		*/
-
-
-
-
 
 	}
 

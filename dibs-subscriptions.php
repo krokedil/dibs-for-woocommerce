@@ -13,25 +13,25 @@ function postToDIBS( $paymentFunction, $params ) {
 
 	// Set correct POST URL corresponding to the payment function requested
 	switch ( $paymentFunction ) {
-		case 'AuthorizeCard':
+		case 'AuthorizeCard' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/AuthorizeCard';
 			break;
-		case 'AuthorizeTicket':
+		case 'AuthorizeTicket' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/AuthorizeTicket';
 			break;
-		case 'CancelTransaction':
+		case 'CancelTransaction' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CancelTransaction';
 			break;
-		case 'CaptureTransaction':
+		case 'CaptureTransaction' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CaptureTransaction';
 			break;
-		case 'CreateTicket':
+		case 'CreateTicket' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CreateTicket';
 			break;
-		case 'RefundTransaction':
+		case 'RefundTransaction' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/RefundTransaction';
 			break;
-		case 'Ping':
+		case 'Ping' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/Ping';
 			break;
 		default:
