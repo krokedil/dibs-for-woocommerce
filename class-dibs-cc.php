@@ -65,6 +65,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		// Actions
 		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
+		add_action( 'woocommerce_order_status_completed', array( $this, 'capture_payment_on_order_completion' ), 10, 1 );
 
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
 		$this->dibs_currency = array(
@@ -1113,6 +1114,37 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			
 			return false;
 		}
+
+	}
+
+	/**
+	 * Capture payment in DIBS if option is enabled
+	 * @link    http://tech.dibspayment.com/D2/Integrate/DPW/API/Payment_functions/CaptureTransaction
+	 */
+	function capture_payment_on_order_completion( $order_id ) {
+
+		$order = new WC_Order( $order_id );
+		$order->add_order_note( 'Test status change hook' );
+
+		/*
+		require_once('dibs-subscriptions.php');
+		require_once('calculateMac.php');
+		
+		// Refund request parameters
+		$params = array	(
+			'merchantId'    => $this->merchant_id,
+			'transactionId' => $order->get_transaction_id(),
+			'amount'        => $amount * 100,
+		);
+
+		// Calculate the MAC for the form key-values to be posted to DIBS.
+		$MAC = calculateMac( $params, $this->key_hmac );
+		
+		// Add MAC to the $params array
+		$params['MAC'] = $MAC;
+
+		$response = postToDIBS( 'CaptureTransaction', $params );
+		*/
 
 	}
 
