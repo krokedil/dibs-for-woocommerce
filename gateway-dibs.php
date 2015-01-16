@@ -128,6 +128,9 @@ class WC_Gateway_Dibs_Extra {
 		
 		// Add Invoice fee via the new Fees API
 		add_action( 'woocommerce_cart_calculate_fees', array( $this, 'calculate_totals' ), 10, 1 );
+
+		// Capture payment when order is set to Completed
+		add_action( 'woocommerce_order_status_completed', array( $this, 'capture_order_on_completion' ), 10, 1 );
 		
 	}
 
@@ -225,7 +228,62 @@ class WC_Gateway_Dibs_Extra {
 		
 	} // End function add_fee_to_cart
 	
-	
+	/**
+	 * Capture payment in DIBS if option is enabled
+	 * @link    http://tech.dibspayment.com/D2/Integrate/DPW/API/Payment_functions/CaptureTransaction
+	 */
+	function capture_order_on_completion( $order_id ) {
+
+		$dibs_cc = new WC_Gateway_Dibs_CC;
+		$order = new WC_Order( $order_id );
+
+		// Check if capture on completed option is selected
+		if ( 'complete' == $dibs_cc->get_capturenow() ) {
+
+			// Check if DIBS transaction number exists
+			if ( get_post_meta( $order_id, '_dibs_transaction_no', true ) ) {
+
+				// Check if payment has already been captured
+				if ( 'yes' != get_post_meta( $order_id, '_dibs_order_captured', true ) ) {
+				
+					$merchant_id = $dibs_cc->get_merchant_id();
+
+					require_once( 'dibs-subscriptions.php' );
+					require_once( 'calculateMac.php' );
+					
+					// Refund request parameters
+					$params = array	(
+						'merchantId'    => $merchant_id,
+						'transactionId' => get_post_meta( $order_id, '_dibs_transaction_no', true ),
+						'amount'        => get_post_meta( $order_id, '_order_total', true ) * 100,
+					);
+
+					// Calculate the MAC for the form key-values to be posted to DIBS.
+					$MAC = calculateMac( $params, $dibs_cc->key_hmac );
+					
+					// Add MAC to the $params array
+					$params['MAC'] = $MAC;
+
+					$response = postToDIBS( 'CaptureTransaction', $params );
+
+			  		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" ) ) {
+						add_post_meta( $order_id, '_dibs_order_captured', 'yes' );
+						$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
+					} elseif ( ! empty($response['wp_remote_note'] ) ) {
+						// WP remote post problem
+						$order->add_order_note( sprintf( __( 'DIBS transaction capture failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ), $response['wp_remote_note'] ) );
+					} else {
+						// DIBS capture problem
+						$order->add_order_note( sprintf( __( 'DIBS transaction capture failed. Decline reason: %s.', 'woocommerce-gateway-dibs'), $response['declineReason'] ) );
+					}
+
+				}
+
+			}
+
+		}
+
+	}	
 
 } // End class WC_Gateway_Dibs_Extra
 

@@ -65,7 +65,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		// Actions
 		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-		add_action( 'woocommerce_order_status_completed', array( $this, 'capture_payment_on_order_completion' ), 10, 1 );
 
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
 		$this->dibs_currency = array(
@@ -178,9 +177,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 								'default' => 'sv'
 							),
 			'capturenow' => array(
-							'title' => __( 'Instant capture (capturenow)', 'woocommerce-gateway-dibs' ), 
-							'type' => 'checkbox', 
-							'label' => __( 'If checked the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this function.', 'woocommerce-gateway-dibs' ), 
+							'title' => __( 'DIBS transaction capture', 'woocommerce-gateway-dibs' ), 
+							'type' => 'select', 
+							'options' => array(
+								'yes'         => __( 'On Purchase', 'woocommerce-gateway-dibs' ),
+								'complete'    => __( 'On order completion', 'woocommerce-gateway-dibs' ),
+								'no'          => __( 'No', 'woocommerce-gateway-dibs' )
+							),
+							'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this option.', 'woocommerce-gateway-dibs' ), 
 							'default' => 'no'
 						),
 			'testmode' => array(
@@ -663,6 +667,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            	case '5' :
 	            		// Order completed
 	            		$order->add_order_note( __('DIBS payment completed. DIBS transaction number: ', 'woocommerce-gateway-dibs') . $posted['transact'] );
+	            		// Transaction captured
+	            		if ( $this->capturenow == 'yes' ) {
+							add_post_meta( $order_id, '_dibs_order_captured', 'yes' );
+	            			$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
+						}
 	            		// Store Transaction number as post meta
 						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction'] );
 						add_post_meta( $order_id, '_transaction_id', $posted['transaction'] );
@@ -759,6 +768,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            
 	            	// Order completed
 					$order->add_order_note( sprintf(__('DIBS payment completed. DIBS transaction number: %s.', 'woocommerce-gateway-dibs'), $posted['transaction'] ));
+            		// Transaction captured
+            		if ( $this->capturenow == 'yes' ) {
+						add_post_meta( $order_id, '_dibs_order_captured', 'yes' );
+            			$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
+					}
 					// Store Transaction number as post meta
 					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
 					add_post_meta( $order_id, '_transaction_id', $posted['transaction'] );
@@ -1118,34 +1132,16 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * Capture payment in DIBS if option is enabled
-	 * @link    http://tech.dibspayment.com/D2/Integrate/DPW/API/Payment_functions/CaptureTransaction
+	 * Returns merchant ID
 	 */
-	function capture_payment_on_order_completion( $order_id ) {
-
-		$order = new WC_Order( $order_id );
-		$order->add_order_note( 'Test status change hook' );
-
-		/*
-		require_once('dibs-subscriptions.php');
-		require_once('calculateMac.php');
-		
-		// Refund request parameters
-		$params = array	(
-			'merchantId'    => $this->merchant_id,
-			'transactionId' => $order->get_transaction_id(),
-			'amount'        => $amount * 100,
-		);
-
-		// Calculate the MAC for the form key-values to be posted to DIBS.
-		$MAC = calculateMac( $params, $this->key_hmac );
-		
-		// Add MAC to the $params array
-		$params['MAC'] = $MAC;
-
-		$response = postToDIBS( 'CaptureTransaction', $params );
-		*/
-
+	function get_merchant_id() {
+		return $this->merchant_id;
 	}
 
+	/**
+	 * Returns capturenow setting
+	 */
+	function get_capturenow() {
+		return $this->capturenow;
+	}
 } // End class
