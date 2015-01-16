@@ -1093,17 +1093,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" ) ) {
   			// Refund OK
 			$refund_note = sprintf(
-				__( '%s refunded successfully via DIBS', 'woocommerce-gateway-dibs' ),
+				__( '%s refunded successfully via DIBS.', 'woocommerce-gateway-dibs' ),
 				wc_price( $amount )
 			);
 			if ( '' != $reason ) {
 				$refund_note .= sprintf(
-					__( ', reason: %s.', 'woocommerce-gateway-dibs' ),
+					__( ' Reason: %s.', 'woocommerce-gateway-dibs' ),
 					$reason
 				);
 			}
 
 			$order->add_order_note( $refund_note );
+			$order->update_status( 'refunded' );
 			$this->log->add( 'dibs', $refund_note );
 
 			return true;
