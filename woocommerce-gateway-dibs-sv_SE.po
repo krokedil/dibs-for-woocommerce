@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WooCommerce DIBS FlexWin Gateway v1.5.4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-19 09:11+0100\n"
-"PO-Revision-Date: 2015-01-19 09:11+0100\n"
+"POT-Creation-Date: 2015-01-22 10:32+0100\n"
+"PO-Revision-Date: 2015-01-22 10:32+0100\n"
 "Last-Translator: Slobodan Manic <slobodan.manic@gmail.com>\n"
 "Language-Team: \n"
 "Language: sv_SE\n"
@@ -221,65 +221,71 @@ msgid "Enable logging (<code>woocommerce/logs/dibs.txt</code>)"
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:217 class-dibs-invoice.php:295
+#: class-dibs-cc.php:218 class-dibs-invoice.php:295
 #, php-format
 msgid "Documentation <a href=\"%s\" target=\"_blank\">can be found here</a>."
 msgstr ""
 
+#: class-dibs-cc.php:220
+msgid ""
+"You must set payment method to \"Payment Window\" to allow recurring "
+"payments."
+msgstr ""
+
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:228 class-dibs-invoice.php:306
+#: class-dibs-cc.php:233 class-dibs-invoice.php:306
 msgid "DIBS does not support your store currency."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:434 class-dibs-invoice.php:440
+#: class-dibs-cc.php:439 class-dibs-invoice.php:440
 msgid "Shipping cost"
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:446 class-dibs-invoice.php:452
+#: class-dibs-cc.php:451 class-dibs-invoice.php:452
 msgid "Discount"
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:548 class-dibs-invoice.php:544
+#: class-dibs-cc.php:553 class-dibs-invoice.php:544
 msgid ""
 "Thank you for your order. We are now redirecting you to DIBS to make payment."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:573 class-dibs-invoice.php:570
+#: class-dibs-cc.php:578 class-dibs-invoice.php:570
 msgid "Pay via dibs"
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:573 class-dibs-invoice.php:570
+#: class-dibs-cc.php:578 class-dibs-invoice.php:570
 msgid "Cancel order &amp; restore cart"
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:599 class-dibs-invoice.php:599
+#: class-dibs-cc.php:604 class-dibs-invoice.php:599
 msgid ""
 "Thank you for your order, please click the button below to pay with DIBS."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:659
+#: class-dibs-cc.php:664
 #, php-format
 msgid "MD5 check failed. DIBS transaction ID: %s"
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:669
+#: class-dibs-cc.php:674
 msgid "DIBS payment completed. DIBS transaction number: "
 msgstr ""
 
-#: class-dibs-cc.php:673 class-dibs-cc.php:774 gateway-dibs.php:271
+#: class-dibs-cc.php:678 class-dibs-cc.php:779 gateway-dibs.php:271
 msgid "DIBS transaction captured."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:682 class-dibs-cc.php:791
+#: class-dibs-cc.php:687 class-dibs-cc.php:796
 #, php-format
 msgid ""
 "DIBS Payment Pending. Check with DIBS for further information. DIBS "
@@ -287,94 +293,94 @@ msgid ""
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:693
+#: class-dibs-cc.php:698
 #, php-format
 msgid "DIBS payment %s not approved. Status code %s."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:756
+#: class-dibs-cc.php:761
 #, php-format
 msgid "HMAC check failed for Dibs callback with order_id: %s."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:770
+#: class-dibs-cc.php:775
 #, php-format
 msgid "DIBS payment completed. DIBS transaction number: %s."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:782
+#: class-dibs-cc.php:787
 #, php-format
 msgid "DIBS subscription ticket number: %s."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:800
+#: class-dibs-cc.php:805
 #, php-format
 msgid "Payment %s via IPN."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:844 class-dibs-cc.php:875 class-dibs-invoice.php:635
+#: class-dibs-cc.php:849 class-dibs-cc.php:880 class-dibs-invoice.php:635
 msgid "Order cancelled by customer."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:847 class-dibs-cc.php:878 class-dibs-invoice.php:638
+#: class-dibs-cc.php:852 class-dibs-cc.php:883 class-dibs-invoice.php:638
 msgid "Your order was cancelled."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:851 class-dibs-cc.php:882 class-dibs-invoice.php:642
+#: class-dibs-cc.php:856 class-dibs-cc.php:887 class-dibs-invoice.php:642
 msgid ""
 "Your order is no longer pending and could not be cancelled. Please contact "
 "us if you need assistance."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:855 class-dibs-cc.php:886 class-dibs-invoice.php:646
+#: class-dibs-cc.php:860 class-dibs-cc.php:891 class-dibs-invoice.php:646
 msgid "Invalid order."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:972
+#: class-dibs-cc.php:977
 #, php-format
 msgid "DIBS subscription payment completed. Transaction Id: %s."
 msgstr ""
 
-#: class-dibs-cc.php:978
+#: class-dibs-cc.php:983
 #, php-format
 msgid "DIBS subscription payment failed. WP Remote post problem: %s."
 msgstr ""
 
 # @ woocommerce-gateway-dibs
-#: class-dibs-cc.php:984
+#: class-dibs-cc.php:989
 #, php-format
 msgid "DIBS subscription payment failed. Decline reason: %s."
 msgstr ""
 
-#: class-dibs-cc.php:1096
+#: class-dibs-cc.php:1101
 #, php-format
 msgid "%s refunded successfully via DIBS."
 msgstr ""
 
-#: class-dibs-cc.php:1101
+#: class-dibs-cc.php:1106
 #, php-format
 msgid " Reason: %s."
 msgstr ""
 
-#: class-dibs-cc.php:1114
+#: class-dibs-cc.php:1119
 #, php-format
 msgid "DIBS refund failed. WP Remote post problem: %s."
 msgstr ""
 
-#: class-dibs-cc.php:1124
+#: class-dibs-cc.php:1129
 msgid "DIBS refund failed."
 msgstr ""
 
-#: class-dibs-cc.php:1126
+#: class-dibs-cc.php:1131
 #, php-format
 msgid "DIBS refund failed. Decline reason: %s."
 msgstr ""
