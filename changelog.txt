@@ -1,6 +1,6 @@
 *** DIBS Changelog ***
 
-2015.xx.xx 		- version 2.0
+2015.01.23 		- version 2.0
 * Feature		- Added option to capture DIBS transaction by marking order complete.
 * Feature       - Added support for refunds.
 * Enhancement   - Updated translation files.
