@@ -3,6 +3,7 @@
 2015.xx.xx 		- version 2.0
 * Feature		- Added option to capture DIBS transaction by marking order complete.
 * Feature       - Added support for refunds.
+* Enhancement   - Updated translation files.
 
 2014.11.17 		- version 1.5.7
 * Tweak			- Approving response status ACCEPTED in addition to ACCEPT from DIBS when executing recurring payments (in process_subscription_payment()). 
