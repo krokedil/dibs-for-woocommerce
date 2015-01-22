@@ -214,7 +214,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
     	?>
     	<h3><?php _e('DIBS', 'woocommerce-gateway-dibs'); ?></h3>
-    	<p><?php printf(__('Documentation <a href="%s" target="_blank">can be found here</a>.', 'woocommerce-gateway-dibs'), 'http://docs.woothemes.com/document/dibs/' ); ?></p>
+    	<p>
+    		<?php printf( __( 'Documentation <a href="%s" target="_blank">can be found here</a>.', 'woocommerce-gateway-dibs' ), 'http://docs.woothemes.com/document/dibs/' ); ?>
+    		<?php if ( class_exists( 'WC_Subscriptions_Order' ) ) { ?>
+    			<?php echo __( 'You must set payment method to "Payment Window" to allow recurring payments.', 'woocommerce-gateway-dibs' ); ?>
+    		<?php } ?>
+    	</p>
     	<table class="form-table">
     	<?php
     		if ( isset($this->dibs_currency[$this->selected_currency]) ) {
