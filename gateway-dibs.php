@@ -150,16 +150,30 @@ class WC_Gateway_Dibs_Extra {
 			return;
 		}
 			
-		// Check for both IPN callback (dibscallback) and buyer-return-to-shop callback (statuscode)
-		if ( ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscallback') !== false ) || ( ( isset($_REQUEST['statuscode']) || isset($_REQUEST['status']) ) && ( isset($_REQUEST['orderid']) || isset($_REQUEST['orderID']) ) ) ) {
+		// Check for IPN callback (dibscallback)
+		if ( ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibscallback') !== false )  )  {
+
+			header("HTTP/1.1 200 Ok");
 			
-			//$_POST = stripslashes_deep($_POST);
+			// The IPN callback and buyer-return-to-shop callback can be fired at the same time causing multiple payment_complete() calls.
+			// Let's pause this callback.
+			sleep(2);
+			
+			$callback = new WC_Gateway_Dibs_CC;
+			$callback->successful_request( stripslashes_deep($_REQUEST) );
+
+		} // End if
+		
+		// Check for buyer-return-to-shop callback
+		if ( ( strpos($_SERVER["REQUEST_URI"], 'woocommerce/dibsaccept') !== false )  )  {
+
 			header("HTTP/1.1 200 Ok");
 			
 			$callback = new WC_Gateway_Dibs_CC;
-			$callback->successful_request(stripslashes_deep($_REQUEST));
+			$callback->successful_request( stripslashes_deep($_REQUEST) );
 
 		} // End if
+		
 	} // End function check_callback()
 	
 	

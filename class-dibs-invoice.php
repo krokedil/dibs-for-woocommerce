@@ -360,7 +360,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL
 		// We also need to make the callback url the accept/return url. If we use $this->get_return_url( $order ) the HMAC calculation doesn't add up 
 		$args['callbackUrl'] = apply_filters( 'woocommerce_dibs_invoice_callbackurl', trailingslashit(site_url('/woocommerce/dibscallback')) );
-		$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
+		$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibsaccept'));
 		$args['cancelreturnurl'] = trailingslashit(site_url('/woocommerce/dibscancel'));
 				
 		// Address info

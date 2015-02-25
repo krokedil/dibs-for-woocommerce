@@ -332,7 +332,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			//$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
 			
 			//$args['acceptReturnUrl'] = preg_replace( '/\\?.*/', '', $this->get_return_url( $order ) );
-			$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
+			$args['acceptReturnUrl'] = trailingslashit(site_url('/woocommerce/dibsaccept'));
 			$args['cancelreturnurl'] = trailingslashit(site_url('/woocommerce/dibscancel'));
 					
 			// Address info
@@ -493,7 +493,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			// URLs
 			// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL 
 			$args['callbackurl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit(site_url('/woocommerce/dibscallback')) );
-			$args['accepturl'] = trailingslashit(site_url('/woocommerce/dibscallback'));
+			$args['accepturl'] = trailingslashit(site_url('/woocommerce/dibsaccept'));
 			$args['cancelurl'] = trailingslashit(site_url('/woocommerce/dibscancel'));
 			
 			// Testmode
@@ -613,8 +613,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	* Successful Payment!
 	**/
 	function successful_request( $posted ) {
-		
-		
+		$this->log->add( 'dibs', 'Type of returncall: ' . $posted['returncall'] );
 		// Debug
 		if ($this->debug=='yes') :
 			
@@ -643,7 +642,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 			
 			// Prepare redirect url
-			
 	    	$redirect_url = $order->get_checkout_order_received_url();
 
 			// Check order not already completed or processing 
@@ -765,6 +763,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 					$this->log->add( 'dibs', 'Calculated HMac: ' . $MAC );
 				endif;
 				
+				wp_redirect( $redirect_url );
 				exit;
 			}
 				
@@ -813,7 +812,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	        
 	        // Return to Thank you page if this is a buyer-return-to-shop callback
 			wp_redirect( $redirect_url );
-			
 			exit;
 			
 		}
