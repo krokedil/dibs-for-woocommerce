@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce DIBS FlexWin Gateway
 Plugin URI: http://woocommerce.com
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 2.0
+Version: 2.0.1
 Author: Krokedil
 Author URI: http://krokedil.com
 */
@@ -124,7 +124,7 @@ class WC_Gateway_Dibs_Extra {
 		
 		
 		// Actions
-		add_action('init', array(&$this, 'check_callback'));
+		add_action('init', array(&$this, 'check_callback'), 20);
 		
 		// Add Invoice fee via the new Fees API
 		add_action( 'woocommerce_cart_calculate_fees', array( $this, 'calculate_totals' ), 10, 1 );
