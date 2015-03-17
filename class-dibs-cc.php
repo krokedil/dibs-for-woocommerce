@@ -779,14 +779,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 					}
 					// Store Transaction number as post meta
 					add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction']);
-					add_post_meta( $order_id, '_transaction_id', $posted['transaction'] );
+					//add_post_meta( $order_id, '_transaction_id', $posted['transaction'] );
 
 					if (isset($posted['ticket'])) {
 						add_post_meta( $order_id, '_dibs_ticket', $posted['ticket']);
 						$order->add_order_note( sprintf(__('DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs'), $posted['ticket'] ));
 					}
 					
-					$order->payment_complete();
+					$order->payment_complete($posted['transaction']);
 					
 					break;
 					
@@ -956,8 +956,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 						'currency' 		=> $order->get_order_currency(),
 						'amount' 		=> number_format($amount, 2, '.', '')*100,
 						'ticketId' 		=> $dibs_ticket,
-						//'orderId' 	=> $order->get_order_number(),
-						'orderId' 		=> $order->id
+						'orderId' 		=> $order->get_order_number(),
+						//'orderId' 	=> $order->id
 					);
 		
 		
@@ -973,6 +973,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   			
   			// Payment ok
 			$order->add_order_note( sprintf(__('DIBS subscription payment completed. Transaction Id: %s.', 'woocommerce-gateway-dibs'), $response['transactionId']) );
+			update_post_meta( $order->id, '_transaction_id', $response['transactionId'], true );
 			return true;
 		
 		} elseif( !empty($response['wp_remote_note']) ) {
