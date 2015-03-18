@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+* Fix			- Capture bug on subscription renewal payments.
+* Tweak			- Order number sent to DIBS instead of Order ID on subscription renewal payments.
+
 2015.02.25 		- version 2.0.1
 * Fix			- Order emails not sent when orderstatus changes from Pending to Processing (executed in $order->payment_complete()).
 * Tweak			- Separate acceptReturnUrl and callbackUrl sent to DIBS to avoid triggering of payment_complete() multiple times. 
