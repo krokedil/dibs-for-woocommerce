@@ -132,8 +132,6 @@ class WC_Gateway_Dibs_Extra {
 		// Capture payment when order is set to Completed
 		add_action( 'woocommerce_order_status_completed', array( $this, 'capture_order_on_completion' ), 10, 1 );
 		
-		//add_action( 'processed_subscription_payments_for_order', array( $this, 'capture_order_on_completion' ), 10, 1 );
-		
 	}
 
 	
@@ -253,10 +251,6 @@ class WC_Gateway_Dibs_Extra {
 		if ( is_object( $order_id ) ) {
 			$order_id = $order_id->id;
 		}
-		$this->log 					= new WC_Logger();
-		$this->log->add( 'dibs', 'DIBS recurring payment order id: ' . $order_id );
-		$this->log->add( 'dibs', 'Original transactionId: ' . get_post_meta( $order_id, '_transaction_id_original', true ) );
-		$this->log->add( 'dibs', 'Renewal transactionId: ' . get_post_meta( $order_id, '_transaction_id', true ) );
 		
 		$dibs_cc = new WC_Gateway_Dibs_CC;
 		$order = new WC_Order( $order_id );

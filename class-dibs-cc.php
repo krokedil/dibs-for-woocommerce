@@ -973,7 +973,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
   			
   			// Payment ok
 			$order->add_order_note( sprintf(__('DIBS subscription payment completed. Transaction Id: %s.', 'woocommerce-gateway-dibs'), $response['transactionId']) );
-			update_post_meta( $order->id, '_transaction_id', $response['transactionId'], true );
+			update_post_meta( $order->id, '_dibs_transaction_no', $response['transactionId'] );
+			update_post_meta( $order->id, '_dibs_order_captured', 'no' );
+			
 			return true;
 		
 		} elseif( !empty($response['wp_remote_note']) ) {
@@ -990,7 +992,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			return false;
 			
 		}
-		
 	
 	} // End function
 	
