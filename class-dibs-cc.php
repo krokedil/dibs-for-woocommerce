@@ -37,6 +37,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$this->pay_type_netbanks 	= ( isset( $this->settings['pay_type_netbanks'] ) ) ? $this->settings['pay_type_netbanks'] : 'yes';
 		$this->pay_type_paypal 		= ( isset( $this->settings['pay_type_paypal'] ) ) ? $this->settings['pay_type_paypal'] : '';
 		$this->capturenow 			= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';
+		$this->decorator			= ( isset( $this->settings['decorator'] ) ) ? $this->settings['decorator'] : '';
 		$this->language 			= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
 		$this->testmode				= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
 		$this->debug				= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
@@ -187,6 +188,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 							'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this option.', 'woocommerce-gateway-dibs' ), 
 							'default' => 'no'
 						),
+			'decorator' => array(
+								'title' => __( 'Decorator', 'woocommerce-gateway-dibs' ), 
+								'type' => 'select',
+								'options' => array('responsive'=>__( 'Responsive', 'woocommerce-gateway-dibs' ), 'default'=>__( 'Default', 'woocommerce-gateway-dibs' ), 'basal'=>__( 'Basal', 'woocommerce-gateway-dibs' ), 'rich'=>__( 'Rich', 'woocommerce-gateway-dibs' ), ''=>__( 'None', 'woocommerce-gateway-dibs' )),
+								'description' => __( 'Specifies which of the pre-built decorators to use (when using Flexwin as the payment method). This will override the customer specific decorator, if one has been uploaded.', 'woocommerce-gateway-dibs' ),
+								'default' => 'responsive',
+								),
 			'testmode' => array(
 							'title' => __( 'Test Mode', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
@@ -485,6 +493,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			// Language
 			$args['lang'] =  $this->dibs_language;
 			
+			// Layout
+			if( !empty($this->decorator) ) {
+				$args['decorator'] = $this->decorator;
+			}
+			
 			//'uniqueoid' => $order->order_key,
 			$args['uniqueoid'] = $order_id;
 			
@@ -613,7 +626,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	* Successful Payment!
 	**/
 	function successful_request( $posted ) {
-		$this->log->add( 'dibs', 'Type of returncall: ' . $posted['returncall'] );
+		
 		// Debug
 		if ($this->debug=='yes') :
 			
