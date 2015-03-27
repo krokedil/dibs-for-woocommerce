@@ -282,7 +282,7 @@ class WC_Gateway_Dibs_Extra {
 					$params['MAC'] = $MAC;
 
 					$response = postToDIBS( 'CaptureTransaction', $params );
-					$this->log->add( 'dibs', 'Capture response: ' . var_export($response, true) );
+					
 			  		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" ) ) {
 						add_post_meta( $order_id, '_dibs_order_captured', 'yes' );
 						$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
