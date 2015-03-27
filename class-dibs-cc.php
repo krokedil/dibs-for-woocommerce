@@ -626,7 +626,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	* Successful Payment!
 	**/
 	function successful_request( $posted ) {
-		$this->log->add( 'dibs', 'Type of returncall: ' . $posted['returncall'] );
+		
 		// Debug
 		if ($this->debug=='yes') :
 			
