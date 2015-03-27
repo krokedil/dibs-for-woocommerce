@@ -1,5 +1,7 @@
 *** DIBS Changelog ***
 
+2015.03.27 		- version 2.1
+* Feature		- Added responsive view to Flexwin payment window.
 * Fix			- Capture bug on subscription renewal payments.
 * Tweak			- Order number sent to DIBS instead of Order ID on subscription renewal payments.
 
