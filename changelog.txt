@@ -1,9 +1,9 @@
 *** DIBS Changelog ***
 
-2015.03.27 		- version 2.1
+2015.04.01 		- version 2.1
 * Feature		- Added responsive view to Flexwin payment window.
-* Fix			- Capture bug on subscription renewal payments.
 * Tweak			- Order number sent to DIBS instead of Order ID on subscription renewal payments.
+* Fix			- Capture bug on subscription renewal payments.
 
 2015.02.25 		- version 2.0.1
 * Fix			- Order emails not sent when orderstatus changes from Pending to Processing (executed in $order->payment_complete()).
