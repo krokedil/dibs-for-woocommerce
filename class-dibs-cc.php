@@ -689,8 +689,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	            			$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
 						}
 	            		// Store Transaction number as post meta
-						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transaction'] );
-						add_post_meta( $order_id, '_transaction_id', $posted['transaction'] );
+						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
+						add_post_meta( $order_id, '_transaction_id', $posted['transact'] );
 	            		$order->payment_complete();
 	            	break;
 	            	case '12' :
