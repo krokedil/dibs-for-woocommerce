@@ -12,7 +12,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		parent::__construct();
 		
 		$this->id					= 'dibs';
-        $this->icon 				= apply_filters( 'woocommerce_dibs_icon', plugins_url(basename(dirname(__FILE__))."/images/dibs.png") );
         $this->has_fields 			= false;
         $this->log 					= new WC_Logger();
         
@@ -249,6 +248,16 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
     } // End admin_options()
 
     
+    /**
+	 * get_icon function.
+	 *
+	 * @return string
+	 */
+	public function get_icon() {
+		$icon = '';
+		$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/combo/horiz/DIBS_checkout_kombo_horizontal_04.png" alt="DIBS - Payments made easy" width="145"/>';
+		return apply_filters( 'wc_dibs_icon_html', $icon_html );
+	}
     
     /**
 	 * Check if this gateway is enabled and available in the user's country

@@ -315,6 +315,32 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
     
     /**
+	 * get_icon function.
+	 *
+	 * @return string
+	 */
+	public function get_icon() {
+		$icon_html = '';
+		
+		switch ( get_woocommerce_currency() ) {
+			case 'NOK':
+				$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/single/horiz/DIBS_checkout_single_faktura.png" alt="DIBS - Payments made easy" width="100"/>';
+				break;
+			case 'SEK' :
+				$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/single/horiz/DIBS_checkout_single_faktura.png" alt="DIBS - Payments made easy" width="100"/>';
+				break;
+			case 'DKK' :
+				$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/single/horiz/DIBS_checkout_single_faktura.png" alt="DIBS - Payments made easy" width="100"/>';
+				break;
+			default:
+				$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/single/horiz/DIBS_checkout_single_invoice.png" alt="DIBS - Payments made easy" width="100"/>';
+		}
+		
+		return apply_filters( 'wc_dibs_invoice_icon_html', $icon_html );
+	}
+	
+	
+    /**
 	 * There are no payment fields for dibs, but we want to show the description if set.
 	 **/
     function payment_fields() {
