@@ -254,7 +254,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @return string
 	 */
 	public function get_icon() {
-		$icon = '';
+		$icon_html = '';
 		$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/combo/horiz/DIBS_checkout_kombo_horizontal_04.png" alt="DIBS - Payments made easy" width="145"/>';
 		return apply_filters( 'wc_dibs_icon_html', $icon_html );
 	}

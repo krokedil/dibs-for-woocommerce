@@ -13,7 +13,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		
 		$this->id					= 'dibs_invoice';
 		$this->method_title 		= __('DIBS Invoice', 'woocommerce-gateway-dibs');
-        $this->icon 				= apply_filters( 'woocommerce_dibs_invoice_icon', plugins_url(basename(dirname(__FILE__))."/images/dibs.png") );
         $this->has_fields 			= false;
         $this->log 					= new WC_Logger();
 		$this->paymentwindow_url 	= 'https://sat1.dibspayment.com/dibspaymentwindow/entrypoint';
