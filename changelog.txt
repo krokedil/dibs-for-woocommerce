@@ -1,5 +1,9 @@
 *** DIBS Changelog ***
 
+2015.04.10 		- version 2.1.1
+* Tweak			- Loading payment gateway icons dynamically from DIBS.
+* Tweak			- Removed filter woocommerce_dibs_icon & woocommerce_dibs_invoice_icon in favor of wc_dibs_icon_html & wc_dibs_invoice_icon_html
+
 2015.04.01 		- version 2.1
 * Feature		- Added responsive view to Flexwin payment window.
 * Tweak			- Order number sent to DIBS instead of Order ID on subscription renewal payments.
