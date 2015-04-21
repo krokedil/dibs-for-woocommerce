@@ -64,6 +64,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			break;
 		default:
 			$this->dibs_country 	= '';
+			$dibs_language			= '';
 			$this->merchant_id 		= '';
 			$this->key_hmac			= '';
 		}
