@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2015.04.21 		- version 2.1.2
+* Tweak			- Fixes an undefined variable notice in Invoice class.
+
 2015.04.10 		- version 2.1.1
 * Tweak			- Loading payment gateway icons dynamically from DIBS.
 * Tweak			- Removed filter woocommerce_dibs_icon & woocommerce_dibs_invoice_icon in favor of wc_dibs_icon_html & wc_dibs_invoice_icon_html
