@@ -1149,7 +1149,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		} else {
 			// Refund problem
 			$order->add_order_note( __( 'DIBS refund failed.', 'woocommerce-gateway-dibs' ) );
-			$this->log->add( sprintf(
+			$this->log->add( 'dibs', sprintf(
 				__( 'DIBS refund failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ),
 				$response['declineReason']
 			) );
