@@ -25,21 +25,23 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$this->init_settings();
 		
 		// Define user set variables
-		$this->title 				= ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
-		$this->description 			= ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
-		$this->merchant_id 			= ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
-		$this->key_1 				= html_entity_decode($this->settings['key_1']);
-		$this->key_2 				= html_entity_decode($this->settings['key_2']);
-		$this->key_hmac 			= html_entity_decode($this->settings['key_hmac']);
-		$this->payment_method 		= ( isset( $this->settings['payment_method'] ) ) ? $this->settings['payment_method'] : '';
-		$this->pay_type_cards 		= ( isset( $this->settings['pay_type_cards'] ) ) ? $this->settings['pay_type_cards'] : 'yes';
-		$this->pay_type_netbanks 	= ( isset( $this->settings['pay_type_netbanks'] ) ) ? $this->settings['pay_type_netbanks'] : 'yes';
-		$this->pay_type_paypal 		= ( isset( $this->settings['pay_type_paypal'] ) ) ? $this->settings['pay_type_paypal'] : '';
-		$this->capturenow 			= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';
-		$this->decorator			= ( isset( $this->settings['decorator'] ) ) ? $this->settings['decorator'] : '';
-		$this->language 			= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
-		$this->testmode				= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
-		$this->debug				= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
+		$this->title 					= ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
+		$this->description 				= ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
+		$this->merchant_id 				= ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
+		$this->key_1 					= html_entity_decode($this->settings['key_1']);
+		$this->key_2 					= html_entity_decode($this->settings['key_2']);
+		$this->key_hmac 				= html_entity_decode($this->settings['key_hmac']);
+		$this->payment_method 			= ( isset( $this->settings['payment_method'] ) ) ? $this->settings['payment_method'] : '';
+		$this->pay_type_cards 			= ( isset( $this->settings['pay_type_cards'] ) ) ? $this->settings['pay_type_cards'] : 'yes';
+		$this->pay_type_netbanks 		= ( isset( $this->settings['pay_type_netbanks'] ) ) ? $this->settings['pay_type_netbanks'] : 'yes';
+		$this->pay_type_paypal 			= ( isset( $this->settings['pay_type_paypal'] ) ) ? $this->settings['pay_type_paypal'] : '';
+		$this->capturenow 				= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';
+		$this->decorator				= ( isset( $this->settings['decorator'] ) ) ? $this->settings['decorator'] : '';
+		$this->language 				= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
+		$this->alternative_icon			= ( isset( $this->settings['alternative_icon'] ) ) ? $this->settings['alternative_icon'] : '';
+		$this->alternative_icon_width	= ( isset( $this->settings['alternative_icon_width'] ) ) ? $this->settings['alternative_icon_width'] : '';
+		$this->testmode					= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
+		$this->debug					= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
 		
 		
 		// Apply filters for language
@@ -176,6 +178,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 								'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'woocommerce-gateway-dibs' ), 
 								'default' => 'sv'
 							),
+			'alternative_icon' => array(
+							'title' => __( 'Alternative payment icon', 'woocommerce-gateway-dibs' ), 
+							'type' => 'text', 
+							'description' => sprintf(__( 'Add the URL to an alternative payment icon that the user sees during checkout. Leave blank to use the default image. Alternative payment method logos can be found <a href="%s" target="_blank">here</a>.', 'woocommerce-gateway-dibs' ), 'http://tech.dibspayment.com/logos#check-out-logos'), 
+							'default' => ''
+						),
+			'alternative_icon_width' => array(
+							'title' => __( 'Icon width', 'woocommerce-gateway-dibs-masterpass' ), 
+							'type' => 'text', 
+							'description' => __( 'The width of the Alternative payment icon.', 'woocommerce-gateway-dibs-masterpass' ), 
+							'default' => ''
+						),
 			'capturenow' => array(
 							'title' => __( 'DIBS transaction capture', 'woocommerce-gateway-dibs' ), 
 							'type' => 'select', 
@@ -255,7 +269,16 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 */
 	public function get_icon() {
 		$icon_html = '';
-		$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/combo/horiz/DIBS_checkout_kombo_horizontal_04.png" alt="DIBS - Payments made easy" width="145"/>';
+		$icon_src = '';
+		$icon_width = '';
+		if( $this->alternative_icon ) {
+			$icon_src = $this->alternative_icon;
+			$icon_width = $this->alternative_icon_width;
+		} else {
+			$icon_src = 'https://cdn.dibspayment.com/logo/checkout/combo/horiz/DIBS_checkout_kombo_horizontal_04.png';
+			$icon_width = '145';
+		}
+		$icon_html = '<img src="' . $icon_src . '" alt="DIBS - Payments made easy" style="max-width:' . $icon_width . 'px"/>';
 		return apply_filters( 'wc_dibs_icon_html', $icon_html );
 	}
     
