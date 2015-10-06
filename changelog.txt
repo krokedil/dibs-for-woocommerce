@@ -1,5 +1,9 @@
 *** DIBS Changelog ***
 
+2015.10.06 		- version 2.1.3
+* Tweak			- Added setting for changing/overriding the default DIBS cc payment method icon.
+* Fix			- Move translation files to 'languages' folder.
+				
 2015.04.21 		- version 2.1.2
 * Tweak			- Fixes an undefined variable notice in Invoice class.
 
