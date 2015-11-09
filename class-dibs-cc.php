@@ -310,7 +310,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * There are no payment fields for dibs, but we want to show the description if set.
 	 **/
     function payment_fields() {
-    	if ($this->description) echo wpautop(wptexturize($this->description));
+    	if ($this->description) echo wpautop(wptexturize(__($this->description,'woocommerce-gateway-dibs')));
     }
 
    
