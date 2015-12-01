@@ -244,7 +244,7 @@ class WC_Gateway_Dibs_Extra {
 	
 	/**
 	 * Capture payment in DIBS if option is enabled
-	 * @link    http://tech.dibspayment.com/D2/Integrate/DPW/API/Payment_functions/CaptureTransaction
+	 * @link    http://tech.dibspayment.com/D2_capturecgi
 	 */
 	function capture_order_on_completion( $order_id ) {
 		
@@ -263,27 +263,31 @@ class WC_Gateway_Dibs_Extra {
 				
 				// Check if payment has already been captured
 				if ( 'yes' != get_post_meta( $order_id, '_dibs_order_captured', true ) ) {				
+					
 					$merchant_id = $dibs_cc->get_merchant_id();
-
+					$key1 = $dibs_cc->get_key_1();
+					$key2 = $dibs_cc->get_key_2();
+					$transact = get_post_meta( $order_id, '_dibs_transaction_no', true );
+					$amount = get_post_meta( $order_id, '_order_total', true ) * 100;
+					
+					$postvars = 'merchant=' . $merchant_id . '&orderid=' . $order->get_order_number() . '&transact=' . $transact . '&amount=' . $amount;
+					$md5key = MD5($key2 . MD5($key1 . $postvars));
+					
 					require_once( 'dibs-subscriptions.php' );
-					require_once( 'calculateMac.php' );
 					
-					// Refund request parameters
+					// Capture parameters
 					$params = array	(
-						'merchantId'    => $merchant_id,
-						'transactionId' => get_post_meta( $order_id, '_dibs_transaction_no', true ),
-						'amount'        => get_post_meta( $order_id, '_order_total', true ) * 100,
+						'amount'        => $amount,
+						'md5key'        => $md5key,
+						'merchant'    	=> $merchant_id,
+						'orderid'    	=> $order->get_order_number(),
+						'transact' 		=> $transact
 					);
-
-					// Calculate the MAC for the form key-values to be posted to DIBS.
-					$MAC = calculateMac( $params, $dibs_cc->key_hmac );
 					
-					// Add MAC to the $params array
-					$params['MAC'] = $MAC;
-
-					$response = postToDIBS( 'CaptureTransaction', $params );
+					// Post request to DIBS
+					$response = postToDIBS( 'CaptureTransaction', $params, false );
 					
-			  		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" ) ) {
+			  		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" || $response['status'] == "ACCEPTED" ) ) {
 						add_post_meta( $order_id, '_dibs_order_captured', 'yes' );
 						$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
 					} elseif ( ! empty($response['wp_remote_note'] ) ) {

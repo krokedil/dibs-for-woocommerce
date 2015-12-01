@@ -7,9 +7,9 @@
 * @param array $params A set of parameters to be posted in key => value format
 * @return array
 */
-function postToDIBS( $paymentFunction, $params ) {
+function postToDIBS( $paymentFunction, $params, $send_as_json = true ) {
 	// Create JSON string from array of key => values
-	$json_data = json_encode( $params );
+	
 
 	// Set correct POST URL corresponding to the payment function requested
 	switch ( $paymentFunction ) {
@@ -23,7 +23,8 @@ function postToDIBS( $paymentFunction, $params ) {
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CancelTransaction';
 			break;
 		case 'CaptureTransaction' :
-			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CaptureTransaction';
+			//$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CaptureTransaction';
+			$postUrl = 'https://payment.architrade.com/cgi-bin/capture.cgi';
 			break;
 		case 'CreateTicket' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CreateTicket';
@@ -38,24 +39,46 @@ function postToDIBS( $paymentFunction, $params ) {
 			echo( 'Wrong input paymentFunctions to postToDIBS' );
 			$postUrl = null;
 	}
-
-	$response = wp_remote_post( $postUrl, array(
-		'method'      => 'POST',
-		'timeout'     => 45,
-		'redirection' => 5,
-		'httpversion' => '1.0',
-		'blocking'    => true,
-		'headers'     => array(),
-		'body'        => array( 'request' => $json_data ),
-		'cookies'     => array()
-	) );
+	
+	if( false == $send_as_json ) {
+		$response = wp_remote_post( $postUrl, array(
+			'method'      => 'POST',
+			'timeout'     => 45,
+			'redirection' => 5,
+			'httpversion' => '1.0',
+			'blocking'    => true,
+			'headers'     => array(),
+			'body'        => $params,
+			'cookies'     => array()
+		) );
+	} else {
+		$response = wp_remote_post( $postUrl, array(
+			'method'      => 'POST',
+			'timeout'     => 45,
+			'redirection' => 5,
+			'httpversion' => '1.0',
+			'blocking'    => true,
+			'headers'     => array(),
+			'body'        => array( 'request' => json_encode( $params ) ),
+			'cookies'     => array()
+		) );
+	}
+	
 	
 	$post_back = array();
 	
 	if ( is_wp_error( $response ) ) {
 		$post_back['wp_remote_note'] = sprintf( __( 'Error: %s', 'woocommerce' ), $response->get_error_message() );
 	} else {
-		$post_back = json_decode($response['body'], true);
+		if( false == $send_as_json ) {
+			$converted_response = array();
+			parse_str($response['body'], $converted_response);
+			
+			$post_back = $converted_response;
+		} else {
+			$post_back = json_decode($response['body'], true);
+		}
+		
 	}
 	
 	return $post_back;

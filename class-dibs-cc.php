@@ -1195,4 +1195,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	function get_capturenow() {
 		return $this->capturenow;
 	}
+	
+	/**
+	 * Returns MD5 key 1
+	 */
+	function get_key_1() {
+		return $this->key_1;
+	}
+	
+	/**
+	 * Returns MD5 key 2
+	 */
+	function get_key_2() {
+		return $this->key_2;
+	}
 } // End class
