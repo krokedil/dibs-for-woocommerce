@@ -399,6 +399,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
  				// Subscription payment
  				$args['createTicketAndAuth'] = '1';
  				
+ 				// Instant capture if selected in settings
+	 			if ( $this->capturenow == 'yes' ) {
+					$args['capturenow'] = '1';
+				}
+				
  				if( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
 					$price = 1;
 				} else {
