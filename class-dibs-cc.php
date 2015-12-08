@@ -198,7 +198,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 								'complete'    => __( 'On order completion', 'woocommerce-gateway-dibs' ),
 								'no'          => __( 'No', 'woocommerce-gateway-dibs' )
 							),
-							'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this option.', 'woocommerce-gateway-dibs' ), 
+							'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account.', 'woocommerce-gateway-dibs' ), 
 							'default' => 'no'
 						),
 			'decorator' => array(
