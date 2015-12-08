@@ -198,7 +198,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 								'complete'    => __( 'On order completion', 'woocommerce-gateway-dibs' ),
 								'no'          => __( 'No', 'woocommerce-gateway-dibs' )
 							),
-							'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this option.', 'woocommerce-gateway-dibs' ), 
+							'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account.', 'woocommerce-gateway-dibs' ), 
 							'default' => 'no'
 						),
 			'decorator' => array(
@@ -399,6 +399,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
  				// Subscription payment
  				$args['createTicketAndAuth'] = '1';
  				
+ 				// Instant capture if selected in settings
+	 			if ( $this->capturenow == 'yes' ) {
+					$args['capturenow'] = '1';
+				}
+				
  				if( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
 					$price = 1;
 				} else {
@@ -1194,5 +1199,19 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 */
 	function get_capturenow() {
 		return $this->capturenow;
+	}
+	
+	/**
+	 * Returns MD5 key 1
+	 */
+	function get_key_1() {
+		return $this->key_1;
+	}
+	
+	/**
+	 * Returns MD5 key 2
+	 */
+	function get_key_2() {
+		return $this->key_2;
 	}
 } // End class
