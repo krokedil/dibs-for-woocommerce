@@ -40,7 +40,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$this->language 				= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
 		$this->alternative_icon			= ( isset( $this->settings['alternative_icon'] ) ) ? $this->settings['alternative_icon'] : '';
 		$this->alternative_icon_width	= ( isset( $this->settings['alternative_icon_width'] ) ) ? $this->settings['alternative_icon_width'] : '';
-		$this->testmode					= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';	
+		$this->api_username				= ( isset( $this->settings['api_username'] ) ) ? $this->settings['api_username'] : '';
+		$this->api_password				= ( isset( $this->settings['api_password'] ) ) ? $this->settings['api_password'] : '';
+		$this->testmode					= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';
 		$this->debug					= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
 		
 		
@@ -208,6 +210,31 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 								'description' => __( 'Specifies which of the pre-built decorators to use (when using Flexwin as the payment method). This will override the customer specific decorator, if one has been uploaded.', 'woocommerce-gateway-dibs' ),
 								'default' => 'responsive',
 								),
+			'api_settings_title' => array(
+							'title' => __( 'API Credentials', 'woocommerce-gateway-dibs' ), 
+							'type' => 'title',
+							'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %shere%s.', 'woocommerce-gateway-dibs' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
+						),
+			'api_username' => array(
+							'title' => __( 'API Username', 'woocommerce-gateway-dibs' ), 
+							'type' => 'text', 
+							'description' => __( 'Get your API credentials from DIBS.', 'woocommerce-gateway-dibs' ),
+							'default'     => '',
+							'desc_tip'    => true,
+							'placeholder' => __( 'Optional', 'woocommerce-gateway-dibs' )
+						),
+			'api_password' => array(
+							'title' => __( 'API Password', 'woocommerce-gateway-dibs' ), 
+							'type' => 'text', 
+							'description' => __( 'Get your API credentials from DIBS.', 'woocommerce-gateway-dibs' ),
+							'default'     => '',
+							'desc_tip'    => true,
+							'placeholder' => __( 'Optional', 'woocommerce-gateway-dibs' )
+						),
+			'test_mode_settings_title' => array(
+							'title' => __( 'Test Mode Settings', 'woocommerce-gateway-dibs' ), 
+							'type' => 'title', 
+						),
 			'testmode' => array(
 							'title' => __( 'Test Mode', 'woocommerce-gateway-dibs' ), 
 							'type' => 'checkbox', 
@@ -1116,7 +1143,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @param   float $amount
 	 * @param   string $reason
 	 * @return  bool|wp_error True or false based on success, or a WP_Error object
-	 * @link    http://tech.dibspayment.com/refundtransaction-dpw
+	 * @link    http://tech.dibspayment.com/D2_refundcgi
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 
@@ -1126,26 +1153,46 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$this->log->add( 'Refund Failed: No transaction ID' );
 			return false;
 		}
+		
+		if ( ! $this->api_username || ! $this->api_password ) {
+			$order->add_order_note( 'Refund Failed: Missing API Credentials' );
+			return false;
+		}
 
 		require_once('dibs-subscriptions.php');
-		require_once('calculateMac.php');
 		
-		// Refund request parameters
+		$amount_smallest_unit = $amount * 100;
+		$transact = $order->get_transaction_id();
+		$merchant_id = $this->merchant_id;
+		$postvars = 'merchant=' . $merchant_id . '&orderid=' . $order->get_order_number() . '&transact=' . $transact . '&amount=' . $amount_smallest_unit;
+		$md5key = MD5($this->key_2 . MD5($this->key_1 . $postvars));
+		
+		// Refund parameters
 		$params = array	(
-			'merchantId'    => $this->merchant_id,
-			'transactionId' => $order->get_transaction_id(),
-			'amount'        => $amount * 100,
+			'amount'        => $amount_smallest_unit,
+			'currency'		=> $order->get_order_currency(),
+			'md5key'        => $md5key,
+			'merchant'    	=> $merchant_id,
+			'orderid'    	=> $order->get_order_number(),
+			'textreply' 	=> 'yes',
+			'transact' 		=> $transact
 		);
-
-		// Calculate the MAC for the form key-values to be posted to DIBS.
-		$MAC = calculateMac( $params, $this->key_hmac );
 		
-		// Add MAC to the $params array
-		$params['MAC'] = $MAC;
+		$response = postToDIBS( 'RefundTransaction', $params, false, $this->api_username, $this->api_password );
+		
+		// WP remote post problem
+		if ( is_wp_error( $response ) ) {
+			$refund_note = sprintf(
+				__( 'DIBS refund failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ),
+				$response['wp_remote_note']
+			);
 
-		$response = postToDIBS( 'RefundTransaction', $params );
-
-  		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" ) ) {
+			$order->add_order_note( $refund_note );
+			//$this->log->add( 'dibs', $refund_note );
+			return false;
+		}
+		
+  		if ( isset( $response['status'] ) && ( $response['status'] == 'ACCEPT' || $response['status'] == 'ACCEPTED' ) ) {
   			// Refund OK
 			$refund_note = sprintf(
 				__( '%s refunded successfully via DIBS.', 'woocommerce-gateway-dibs' ),
@@ -1159,29 +1206,23 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 
 			$order->add_order_note( $refund_note );
-			$order->update_status( 'refunded' );
-			$this->log->add( 'dibs', $refund_note );
-
-			return true;
-		} elseif ( ! empty( $response['wp_remote_note'] ) ) {
-			// WP remote post problem
-			$refund_note = sprintf(
-				__( 'DIBS refund failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ),
-				$response['wp_remote_note']
-			);
-
-			$order->add_order_note( $refund_note );
-			$this->log->add( 'dibs', $refund_note );
-
-			return false;
-		} else {
-			// Refund problem
-			$order->add_order_note( __( 'DIBS refund failed.', 'woocommerce-gateway-dibs' ) );
-			$this->log->add( sprintf(
-				__( 'DIBS refund failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ),
-				$response['declineReason']
-			) );
 			
+			// Maybe change status to Refunded
+			if( $order->order_total == $amount ) {
+				$order->update_status( 'refunded' );
+			}
+			return true;
+			
+		} else {
+			
+			// Refund problem
+			$order->add_order_note( 
+				sprintf(
+				__( 'DIBS refund failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ),
+				$response['message']
+			)
+			 );
+			 
 			return false;
 		}
 

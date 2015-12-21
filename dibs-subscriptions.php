@@ -7,7 +7,7 @@
 * @param array $params A set of parameters to be posted in key => value format
 * @return array
 */
-function postToDIBS( $paymentFunction, $params, $send_as_json = true ) {
+function postToDIBS( $paymentFunction, $params, $send_as_json = true, $username = false, $password = false ) {
 	// Create JSON string from array of key => values
 	
 
@@ -30,7 +30,8 @@ function postToDIBS( $paymentFunction, $params, $send_as_json = true ) {
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CreateTicket';
 			break;
 		case 'RefundTransaction' :
-			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/RefundTransaction';
+			//$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/RefundTransaction';
+			$postUrl = 'https://' . $username . ':' . $password . '@payment.architrade.com/cgi-adm/refund.cgi';
 			break;
 		case 'Ping' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/Ping';
