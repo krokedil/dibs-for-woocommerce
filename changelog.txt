@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2016.01.07 		- version 2.1.5
+* Tweak			- Updated refunds so it works with Flexwin as well. Now API Credentials from DIBS is needed.
+
 2015.12.08 		- version 2.1.4
 * Tweak			- Added capturenow/instant capture even for subscription payments.
 * Tweak			- Changed capture_order_on_completion() so it works with both Payment Window and Flexwin.
