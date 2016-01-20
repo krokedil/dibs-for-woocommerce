@@ -60,18 +60,21 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			'subscription_amount_changes',
 			'subscription_date_changes',
 			'subscription_payment_method_change',
+			'multiple_subscriptions',
 			'refunds'
 		);
 
 		// Subscriptions
-		add_action( 'scheduled_subscription_payment_' . $this->id, array(
-			$this,
-			'scheduled_subscription_payment'
-		), 10, 3 );
-		add_action( 'woocommerce_subscriptions_changed_failing_payment_method_' . $this->id, array(
-			$this,
-			'update_failing_payment_method'
-		), 10, 2 );
+		if ( class_exists( 'WC_Subscriptions_Order' ) ) {
+			add_action( 'woocommerce_scheduled_subscription_payment_' . $this->id, array(
+				$this,
+				'scheduled_subscription_payment'
+			), 10, 2 );
+			add_action( 'woocommerce_subscriptions_changed_failing_payment_method_' . $this->id, array(
+				$this,
+				'update_failing_payment_method'
+			), 10, 2 );
+		}
 
 		// Actions
 		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
@@ -1029,18 +1032,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @access public
 	 * @return void
 	 */
-	function scheduled_subscription_payment( $amount_to_charge, $order, $product_id ) {
+	function scheduled_subscription_payment( $amount_to_charge, $order ) {
 
 		$result = $this->process_subscription_payment( $order, $amount_to_charge );
 
-		if ( $result == false ) {
+		if ( false == $result ) {
 
 			// Debug
 			if ( $this->debug == 'yes' ) {
 				$this->log->add( 'dibs', 'Scheduled subscription payment failed for order ' . $order->id );
 			}
 
-			WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $order, $product_id );
+			WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $order );
 
 		} else {
 
@@ -1050,6 +1053,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 
 			WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
+			$order->payment_complete();
 
 		}
 
@@ -1064,17 +1068,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 */
 
 	function process_subscription_payment( $order = '', $amount = 0 ) {
-		global $woocommerce;
 
 		require_once( 'dibs-subscriptions.php' );
 		require_once( 'calculateMac.php' );
-		$logfile = '';
 
-		$dibs_ticket = get_post_meta( $order->id, '_dibs_ticket', true );
-		//$currency = get_option('woocommerce_currency');
+		$dibs_ticket = get_post_meta( WC_Subscriptions_Renewal_Order::get_parent_order_id( $order->id ), '_dibs_ticket', true );
 
 		$order_items = $order->get_items();
-		$_product    = $order->get_product_from_item( array_shift( $order_items ) );
 
 		$params = array(
 			'merchantId' => $this->merchant_id,
@@ -1082,7 +1082,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			'amount'     => number_format( $amount, 2, '.', '' ) * 100,
 			'ticketId'   => $dibs_ticket,
 			'orderId'    => $order->get_order_number(),
-			//'orderId' 	=> $order->id
+			// 'orderId' 	=> $order->id
 		);
 
 
@@ -1132,7 +1132,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @return void
 	 */
 	function update_failing_payment_method( $original_order, $renewal_order ) {
-
 		update_post_meta( $original_order->id, '_dibs_ticket', get_post_meta( $renewal_order->id, '_dibs_ticket', true ) );
 	}
 
