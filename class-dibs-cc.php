@@ -1201,13 +1201,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$order = wc_get_order( $order_id );
 
 		if ( ! $this->can_refund_order( $order ) ) {
-			$this->log->add( 'Refund Failed: No transaction ID' );
+			$this->log->add( 'Refund Failed: No transaction ID.' );
+			$order->add_order_note( __( 'Refund Failed: No transaction ID.', 'woocommerce-gateway-dibs' ) );
 
 			return false;
 		}
 
 		if ( ! $this->api_username || ! $this->api_password ) {
-			$order->add_order_note( 'Refund Failed: Missing API Credentials' );
+			$order->add_order_note( __( 'Refund Failed: Missing API Credentials.', 'woocommerce-gateway-dibs' ) );
 
 			return false;
 		}
