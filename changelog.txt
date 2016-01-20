@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2016.01.xx		- version 2.1.6
+* Feature       - Adds multiple subscription support.
+
 2016.01.07 		- version 2.1.5
 * Tweak			- Updated refunds so it works with Flexwin as well. Now API Credentials from DIBS is needed.
 
