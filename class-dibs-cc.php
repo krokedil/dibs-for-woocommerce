@@ -1169,7 +1169,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$order_id = $order_number;
 		}
 
-		return $order_id;
+		return apply_filters( 'wc_dibs_get_order_id', $order_id );
 
 	} // end function
 
