@@ -801,16 +801,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 						}
 						// Store Transaction number as post meta
 						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
-						add_post_meta( $order_id, '_transaction_id', $posted['transact'] );
-						$order->payment_complete();
+						$order->payment_complete( $posted['transact'] );
 						break;
 					case '12' :
 						// Order completed
 						$order->update_status( 'on-hold', sprintf( __( 'DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'woocommerce-gateway-dibs' ), $posted['transact'] ) );
 						// Store Transaction number as post meta
 						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
-						add_post_meta( $order_id, '_transaction_id', $posted['transact'] );
-						$order->payment_complete();
+						$order->payment_complete( $posted['transact'] );
 						break;
 					case '0' :
 					case '1' :
@@ -1052,7 +1050,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 
 			WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
-			$order->payment_complete();
+			$order->payment_complete( $result );
 
 		}
 
@@ -1100,7 +1098,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			update_post_meta( $order->id, '_dibs_transaction_no', $response['transactionId'] );
 			update_post_meta( $order->id, '_dibs_order_captured', 'no' );
 
-			return true;
+			return $response['transactionId'];
 
 		} elseif ( ! empty( $response['wp_remote_note'] ) ) {
 
