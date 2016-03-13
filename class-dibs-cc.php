@@ -431,9 +431,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 
 			// Order ID
-			$tmp_order_id    = '';
-			$tmp_order_id    = ltrim( $order->get_order_number(), 'n°' );    // Strip n° (french translation)
-			$args['orderId'] = ltrim( $tmp_order_id, '#' );                // Strip #
+			$prefix = 'n°'; // Strip n° (french translation)
+			$tmp_order_id = $order->get_order_number();
+			
+			if (substr($tmp_order_id, 0, strlen($prefix)) == $prefix) {
+			    $tmp_order_id = substr($tmp_order_id, strlen($prefix));
+			}
+
+			$args['orderId'] = ltrim( $tmp_order_id, '#'); // Strip #
 
 			// Language
 			if ( $this->dibs_language == 'no' ) {
@@ -841,7 +846,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				$this->log->add( 'dibs', 'Payment Window callback.' );
 			}
 
-
 			$order_id = $this->get_order_id( $posted['orderId'] );
 
 			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
@@ -1050,7 +1054,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 
 			WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
-			$order->payment_complete( $result );
+			$order->payment_complete();
 
 		}
 
@@ -1082,7 +1086,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			// 'orderId' 	=> $order->id
 		);
 
-
 		// Calculate the MAC for the form key-values to be posted to DIBS.
 		$MAC = calculateMac( $params, $this->key_hmac );
 
@@ -1096,6 +1099,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			// Payment ok
 			$order->add_order_note( sprintf( __( 'DIBS subscription payment completed. Transaction Id: %s.', 'woocommerce-gateway-dibs' ), $response['transactionId'] ) );
 			update_post_meta( $order->id, '_dibs_transaction_no', $response['transactionId'] );
+			update_post_meta( $order->id, '_transaction_id', $response['transactionId'] );
 			update_post_meta( $order->id, '_dibs_order_captured', 'no' );
 
 			return $response['transactionId'];
