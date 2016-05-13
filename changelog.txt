@@ -1,8 +1,14 @@
 *** DIBS Changelog ***
 
-2016.01.28             - version 2.1.6
-* Feature              - Adds multiple subscription support.
-* Fix                  - Fixes WC Sequential Order Numbers Pro compatibility.
+2016.05.13		- version 2.1.7
+* Tweak			- Added filter 'wc_dibs_get_order_id' in helper function for retrieving order ID (get_order_id) from order number. Useful for third party plugins.
+* Tweak			- Added $order as third parameter in filter dibs_checkout_form.
+* Fix			- Add DIBS transaction number to WC _transaction_id even for subscription renewal payments.
+* Fix			- PHP notice fix in helper get_order_id()(WC Sequential Order Numbers Pro compatibility).
+
+2016.01.28		- version 2.1.6
+* Feature		- Adds multiple subscription support.
+* Fix			- Fixes WC Sequential Order Numbers Pro compatibility.
 
 2016.01.07 		- version 2.1.5
 * Tweak			- Updated refunds so it works with Flexwin as well. Now API Credentials from DIBS is needed.
