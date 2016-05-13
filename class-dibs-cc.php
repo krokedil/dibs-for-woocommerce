@@ -1162,7 +1162,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			// Get Order ID by order_number() if the Sequential Order Number Pro plugin is installed
 		} elseif ( class_exists( 'WC_Seq_Order_Number_Pro' ) ) {
 
-			$order_id = WC_Seq_Order_Number_Pro::find_order_by_order_number( $order_number );
+			$order_id = wc_seq_order_number_pro()->find_order_by_order_number( $order_number );
 
 			if ( 0 === $order_id ) {
 				$order_id = $order_number;
