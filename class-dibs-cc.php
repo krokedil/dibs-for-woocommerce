@@ -660,7 +660,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 
 		// Apply filters to the $args array
-		$args = apply_filters( 'dibs_checkout_form', $args, 'dibs_cc' );
+		$args = apply_filters( 'dibs_checkout_form', $args, 'dibs_cc', $order );
 
 		// Prepare the form
 		$fields  = '';
