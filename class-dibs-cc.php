@@ -358,14 +358,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 		if ( $this->enabled == "yes" ) :
 
-			// Checkout form check
-			if ( class_exists( 'WC_Subscriptions_Order' ) ) {
-				// Flexwin not available for subscription products
-				if ( WC_Subscriptions_Cart::cart_contains_subscription() && $this->payment_method == 'flexwin' ) {
-					return false;
-				}
-			}
-
 			return true;
 
 		endif;
@@ -600,12 +592,46 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			if ( ! empty( $paytypes ) ) {
 				$args['paytype'] = $paytypes;
 			}
+			
+			
+			// What kind of payment is this - subscription payment or regular payment
+			if ( class_exists( 'WC_Subscriptions_Order' ) && WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
 
-			// Price
-			$args['amount'] = $order->order_total * 100;
+				// Subscription payment
+				$args['maketicket'] = '1';
 
-			//'orderid' => $order_id,
-			$args['orderid'] = ltrim( $order->get_order_number(), '#' );
+
+				if ( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
+					$price = 1;
+				} else {
+					$price = WC_Subscriptions_Order::get_total_initial_payment( $order );
+				}
+
+				// Price
+				$args['amount'] = $price * 100;
+
+
+			} else {
+				// Price
+				$args['amount'] = $order->order_total * 100;
+				
+				// Instant capture if selected in settings
+				if ( $this->capturenow == 'yes' ) {
+					$args['capturenow'] = 'yes';
+				}
+			}
+			
+			
+			// Order number
+			$prefix = 'n°'; // Strip n° (french translation)
+			$tmp_order_id = $order->get_order_number();
+			
+			if (substr($tmp_order_id, 0, strlen($prefix)) == $prefix) {
+			    $tmp_order_id = substr($tmp_order_id, strlen($prefix));
+			}
+
+			$args['orderid'] = ltrim( $tmp_order_id, '#'); // Strip #
+			
 
 			// Language
 			$args['lang'] = $this->dibs_language;
@@ -616,7 +642,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 
 			//'uniqueoid' => $order->order_key,
-			$args['uniqueoid'] = $order_id;
+			//$args['uniqueoid'] = $order_id;
 
 			$args['ordertext'] = 'Name: ' . $order->billing_first_name . ' ' . $order->billing_last_name . '. Address: ' . $order->billing_address_1 . ', ' . $order->billing_postcode . ' ' . $order->billing_city;
 
@@ -631,10 +657,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				$args['test'] = 'yes';
 			}
 
-			// Instant capture
-			if ( $this->capturenow == 'yes' ) {
-				$args['capturenow'] = 'yes';
-			}
 
 			// IP
 			if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
@@ -650,12 +672,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$merchant = $this->merchant_id;
 			//$orderid = $order_id;
 
-			$orderid  = ltrim( $order->get_order_number(), '#' );
+			
 			$currency = $this->dibs_currency[ $this->selected_currency ];
 			$amount   = $order->order_total * 100;
-			$postvars = 'merchant=' . $merchant . '&orderid=' . $orderid . '&currency=' . $currency . '&amount=' . $amount;
-
-			$args['md5key'] = MD5( $key2 . MD5( $key1 . $postvars ) );
+			$postvars = 'merchant=' . $merchant . '&orderid=' . $args['orderid'] . '&currency=' . $currency . '&amount=' . $amount;
+			
+			if( !isset( $args['maketicket'] ) ) {
+				$args['md5key'] = MD5( $key2 . MD5( $key1 . $postvars ) );
+			}
 		}
 
 
@@ -754,10 +778,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 			$this->log->add( 'dibs', 'Returning values from DIBS: ' . $tmp_log );
 		endif;
-
+		
+		
 
 		// Flexwin callback
-		if ( isset( $posted['transact'] ) && ! empty( $posted['uniqueoid'] ) && is_numeric( $posted['uniqueoid'] ) ) {
+		if ( isset( $posted['transact'] ) && isset( $posted['orderid'] ) ) {
 
 			// Verify MD5 checksum
 			// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/	
@@ -766,13 +791,19 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$vars = 'transact=' . $posted['transact'] . '&amount=' . $posted['amount'] . '&currency=' . $posted['currency'];
 			$md5  = MD5( $key2 . MD5( $key1 . $vars ) );
 
-			$order_id = (int) $posted['uniqueoid'];
+			$order_id = $this->get_order_id( $posted['orderid'] );
 
-			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
+			$order = wc_get_order( $order_id );
 
 			// Prepare redirect url
 			$redirect_url = $order->get_checkout_order_received_url();
-
+			
+			// Should we add Ticket id? This might be returned in a separate callback
+			if ( isset( $posted['ticket'] ) ) {
+				add_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
+				$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
+			}
+		
 			// Check order not already completed or processing 
 			// (to avoid multiple callbacks from DIBS - IPN & return-to-shop callback
 			if ( $order->status == 'completed' || $order->status == 'processing' ) {
@@ -806,6 +837,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 						}
 						// Store Transaction number as post meta
 						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
+						
+						if ( isset( $posted['ticket'] ) ) {
+							add_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
+							$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
+						}
 						$order->payment_complete( $posted['transact'] );
 						break;
 					case '12' :
@@ -813,6 +849,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 						$order->update_status( 'on-hold', sprintf( __( 'DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'woocommerce-gateway-dibs' ), $posted['transact'] ) );
 						// Store Transaction number as post meta
 						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
+						
+						if ( isset( $posted['ticket'] ) ) {
+							add_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
+							$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
+						}
 						$order->payment_complete( $posted['transact'] );
 						break;
 					case '0' :
@@ -840,13 +881,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 
 		// Payment Window callback
-		if ( isset( $posted["transaction"] ) && ! empty( $posted['orderId'] ) ) {
+		if ( isset( $posted["transaction"] ) && ! empty( $posted['orderid'] ) ) {
 
 			if ( $this->debug == 'yes' ) {
 				$this->log->add( 'dibs', 'Payment Window callback.' );
 			}
 
-			$order_id = $this->get_order_id( $posted['orderId'] );
+			$order_id = $this->get_order_id( $posted['orderid'] );
 
 			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 
@@ -991,11 +1032,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 
 		// Flexwin callback
-		if ( isset( $posted['uniqueoid'] ) && is_numeric( $posted['uniqueoid'] ) ) {
+		if ( isset( $posted['orderid'] ) ) {
 
-			$order_id = (int) $posted['uniqueoid'];
+			$order_id = $this->get_order_id( $posted['orderid'] );
 
-			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
+			$order = wc_get_order( $order_id );
 
 			if ( $order->id == $order_id && $order->status == 'pending' ) {
 
@@ -1306,4 +1347,5 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	function get_key_2() {
 		return $this->key_2;
 	}
+	
 } // End class
