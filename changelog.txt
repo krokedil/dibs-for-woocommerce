@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2016.05.13		- version 2.2
+* Tweak         - Removes Payment Window.
+
 2016.05.13		- version 2.1.7
 * Tweak			- Added filter 'wc_dibs_get_order_id' in helper function for retrieving order ID (get_order_id) from order number. Useful for third party plugins.
 * Tweak			- Added $order as third parameter in filter dibs_checkout_form.
