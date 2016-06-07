@@ -431,14 +431,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 
 			// Order ID
-			$prefix       = 'n°'; // Strip n° (french translation)
+			$prefix = 'n°'; // Strip n° (french translation)
 			$tmp_order_id = $order->get_order_number();
-
-			if ( substr( $tmp_order_id, 0, strlen( $prefix ) ) == $prefix ) {
-				$tmp_order_id = substr( $tmp_order_id, strlen( $prefix ) );
+			
+			if (substr($tmp_order_id, 0, strlen($prefix)) == $prefix) {
+			    $tmp_order_id = substr($tmp_order_id, strlen($prefix));
 			}
 
-			$args['orderId'] = ltrim( $tmp_order_id, '#' ); // Strip #
+			$args['orderId'] = ltrim( $tmp_order_id, '#'); // Strip #
 
 			// Language
 			if ( $this->dibs_language == 'no' ) {
