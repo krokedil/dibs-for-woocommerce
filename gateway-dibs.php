@@ -3,7 +3,7 @@
 Plugin Name: WooCommerce DIBS FlexWin Gateway
 Plugin URI: http://woocommerce.com
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 2.1.7
+Version: 2.2
 Author: Krokedil
 Author URI: http://krokedil.com
 */
@@ -47,6 +47,7 @@ function init_dibs_gateway() {
 		return;
 	}
 
+
 	class WC_Gateway_Dibs extends WC_Payment_Gateway {
 
 		public function __construct() {
@@ -54,11 +55,9 @@ function init_dibs_gateway() {
 
 			// Currency
 			$this->selected_currency = get_woocommerce_currency();
-
 		}
 
 	} // Close class WC_Gateway_Dibs
-
 
 	/**
 	 * Localisation
@@ -95,8 +94,6 @@ function init_dibs_gateway() {
 	if ( defined( 'WC_DIBS_DEBUG' ) && true === WC_DIBS_DEBUG ) {
 		require_once( 'includes/class-wc-dibs-manual-modification.php' );
 	}
-
-
 } // Close init_dibs_gateway
 
 /**
@@ -122,7 +119,6 @@ class WC_Gateway_Dibs_Extra {
 
 	public function __construct() {
 
-
 		// Actions
 		add_action( 'init', array( &$this, 'check_callback' ), 20 );
 
@@ -131,9 +127,7 @@ class WC_Gateway_Dibs_Extra {
 
 		// Capture payment when order is set to Completed
 		add_action( 'woocommerce_order_status_completed', array( $this, 'capture_order_on_completion' ), 10, 1 );
-
 	}
-
 
 	/**
 	 * Check for DIBS Response
@@ -162,7 +156,6 @@ class WC_Gateway_Dibs_Extra {
 
 			$callback = new WC_Gateway_Dibs_CC;
 			$callback->successful_request( stripslashes_deep( $_REQUEST ) );
-
 		} // End if
 
 		// Check for buyer-return-to-shop callback
@@ -172,11 +165,9 @@ class WC_Gateway_Dibs_Extra {
 
 			$callback = new WC_Gateway_Dibs_CC;
 			$callback->successful_request( stripslashes_deep( $_REQUEST ) );
-
 		} // End if
 
 	} // End function check_callback()
-
 
 	/**
 	 * Calculate totals on checkout form.
@@ -197,21 +188,17 @@ class WC_Gateway_Dibs_Extra {
 					$current_gateway = $available_gateways[ get_option( 'woocommerce_default_gateway' ) ];
 				} else {
 					$current_gateway = current( $available_gateways );
-
 				}
-
 			}
 
 			if ( $current_gateway->id == 'dibs_invoice' ) {
 
 				$current_gateway_id = $current_gateway->id;
 				$this->add_fee_to_cart();
-
 			}
 		} // End if is checkout
 		return $totals;
 	}
-
 
 	/**
 	 * Add the invoice fee to the cart if DIBS Invoice is selected payment method and if invoice fee is used.
@@ -296,13 +283,9 @@ class WC_Gateway_Dibs_Extra {
 						// DIBS capture problem
 						$order->add_order_note( sprintf( __( 'DIBS transaction capture failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['declineReason'] ) );
 					}
-
 				}
-
 			}
-
 		}
-
 	}
 
 } // End class WC_Gateway_Dibs_Extra
