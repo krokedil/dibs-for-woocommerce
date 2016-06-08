@@ -45,7 +45,6 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 	 */
 	class WC_Dibs_Compatibility {
 
-
 		/**
 		 * Get the WC Order instance for a given order ID or order post
 		 *
@@ -66,7 +65,6 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 			if ( self::is_wc_version_gte_2_2() ) {
 
 				return wc_get_order( $the_order );
-
 			} else {
 
 				global $post;
@@ -74,11 +72,9 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 				if ( false === $the_order ) {
 
 					$order_id = $post->ID;
-
 				} elseif ( $the_order instanceof WP_Post ) {
 
 					$order_id = $the_order->ID;
-
 				} elseif ( is_numeric( $the_order ) ) {
 
 					$order_id = $the_order;
@@ -87,7 +83,6 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 				return new WC_Order( $order_id );
 			}
 		}
-
 
 		/**
 		 * Transparently backport the `post_status` WP Query arg used by WC 2.2
@@ -130,7 +125,6 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 			return $args;
 		}
 
-
 		/**
 		 * Get the user ID for an order
 		 *
@@ -145,13 +139,11 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 			if ( self::is_wc_version_gte_2_2() ) {
 
 				return $order->get_user_id();
-
 			} else {
 
 				return $order->customer_user ? $order->customer_user : 0;
 			}
 		}
-
 
 		/**
 		 * Get the user for an order
@@ -167,13 +159,11 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 			if ( self::is_wc_version_gte_2_2() ) {
 
 				return $order->get_user();
-
 			} else {
 
 				return self::get_order_user_id( $order ) ? get_user_by( 'id', self::get_order_user_id( $order ) ) : false;
 			}
 		}
-
 
 		/**
 		 * Get the WC Product instance for a given product ID or post
@@ -192,13 +182,11 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 			if ( self::is_wc_version_gte_2_2() ) {
 
 				return wc_get_product( $the_product, $args );
-
 			} else {
 
 				return get_product( $the_product, $args );
 			}
 		}
-
 
 		/**
 		 * Return an array of formatted item meta in format:
@@ -234,7 +222,6 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 			if ( self::is_wc_version_gte_2_2() ) {
 
 				return $item_meta->get_formatted( $hide_prefix );
-
 			} else {
 
 				if ( empty( $item_meta->meta ) ) {
@@ -265,7 +252,6 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 							if ( ! is_wp_error( $term ) && is_object( $term ) && $term->name ) {
 								$meta_value = $term->name;
 							}
-
 							// If we have a product, and its not a term, try to find its non-sanitized name
 						} elseif ( $item_meta->product ) {
 							$product_attributes = $item_meta->product->get_attributes();
@@ -286,7 +272,6 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 			}
 		}
 
-
 		/**
 		 * Get the full path to the log file for a given $handle
 		 *
@@ -301,13 +286,11 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 			if ( self::is_wc_version_gte_2_2() ) {
 
 				return wc_get_log_file_path( $handle );
-
 			} else {
 
 				return sprintf( '%s/plugins/woocommerce/logs/%s-%s.txt', WP_CONTENT_DIR, $handle, sanitize_file_name( wp_hash( $handle ) ) );
 			}
 		}
-
 
 		/**
 		 * Helper method to get the version of the currently installed WooCommerce
@@ -320,7 +303,6 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 			return defined( 'WC_VERSION' ) && WC_VERSION ? WC_VERSION : null;
 		}
 
-
 		/**
 		 * Returns true if the installed version of WooCommerce is 2.2 or greater
 		 *
@@ -330,7 +312,6 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 		public static function is_wc_version_gte_2_2() {
 			return self::get_wc_version() && version_compare( self::get_wc_version(), '2.2', '>=' );
 		}
-
 
 		/**
 		 * Returns true if the installed version of WooCommerce is greater than $version
@@ -346,6 +327,5 @@ if ( ! class_exists( 'WC_Dibs_Compatibility' ) ) :
 		}
 
 	}
-
 
 endif; // Class exists check

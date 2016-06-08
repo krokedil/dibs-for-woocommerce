@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Kca_Order Class
  */
@@ -12,7 +13,6 @@ class WC_Dibs_Manual_Modification {
 		add_action( 'save_post', array( $this, 'save_metabox' ) );
 	}
 
-
 	/**
 	 * DIBS Transaction no & ticket ID metabox
 	 */
@@ -23,7 +23,6 @@ class WC_Dibs_Manual_Modification {
 			'render_transaction_meta_box_content'
 		), 'shop_order', 'advanced', 'high' );
 	}
-
 
 	/**
 	 * Render DIBS Transaction Meta Box content.
@@ -41,7 +40,6 @@ class WC_Dibs_Manual_Modification {
 
 		// Add an nonce field so we can check for it later.
 		wp_nonce_field( 'wc_dibs_transaction_metabox', 'wc_dibs_transaction_metabox_nonce' );
-
 
 		?>
 
@@ -70,9 +68,7 @@ class WC_Dibs_Manual_Modification {
 		</div>
 
 		<?php
-
 	} // End function
-
 
 	/**
 	 * Save the meta when the post is saved.
@@ -120,7 +116,6 @@ class WC_Dibs_Manual_Modification {
 		update_post_meta( $post_id, '_dibs_transaction_no', $dibs_transaction );
 		update_post_meta( $post_id, '_transaction_id', $dibs_transaction );
 		update_post_meta( $post_id, '_dibs_ticket', $dibs_ticket );
-
 	} // End function
 
 } // End class

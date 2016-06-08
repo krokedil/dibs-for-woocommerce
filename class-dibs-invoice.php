@@ -1,5 +1,6 @@
 <?php
 
+
 class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 	/**
@@ -40,7 +41,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		$this->testmode       = ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';
 		$this->debug          = ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
 
-
 		// Set country based on currency. For DIBS Invoice - available in Sweden, Norway and Denmark
 		switch ( $this->selected_currency ) {
 			case 'DKK':
@@ -71,7 +71,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		// Apply filters for language
 		$this->dibs_language = apply_filters( 'dibs_language', $dibs_language );
 
-
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
 		$this->dibs_currency = array(
 			'DKK' => '208', // Danish Kroner
@@ -88,7 +87,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			'CHF' => '756', // Swiss Franc
 			'TRY' => '949', // Turkish Lire
 		);
-
 
 		// Invoice fee
 		if ( $this->invoice_fee_id == "" ) {
@@ -126,14 +124,12 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 		endif;
 
-
 		// Check if the currency is supported
 		if ( ! isset( $this->dibs_currency[ $this->selected_currency ] ) ) {
 			$this->enabled = "no";
 		} else {
 			$this->enabled = $this->settings['enabled'];
 		}
-
 
 		// Actions
 		add_action( 'valid-dibs-callback', array( &$this, 'successful_request' ) );
@@ -145,10 +141,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		) );
 
 		add_action( 'wp_print_footer_scripts', array( $this, 'print_invoice_fee_updater' ) );
-
-
 	} // End construct
-
 
 	/**
 	 * Check if this gateway is enabled and available in the user's country
@@ -183,7 +176,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 		return false;
 	}
-
 
 	/**
 	 * Initialise Gateway Settings Form Fields
@@ -300,9 +292,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				'default' => 'no'
 			)
 		);
-
 	} // End init_form_fields()
-
 
 	/**
 	 * Admin Panel Options
@@ -337,7 +327,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		<?php
 	} // End admin_options()
 
-
 	/**
 	 * get_icon function.
 	 *
@@ -363,7 +352,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		return apply_filters( 'wc_dibs_invoice_icon_html', $icon_html );
 	}
 
-
 	/**
 	 * There are no payment fields for dibs, but we want to show the description if set.
 	 **/
@@ -372,7 +360,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			echo wpautop( wptexturize( $description ) );
 		}
 	}
-
 
 	/**
 	 * Generate the dibs button link
@@ -396,9 +383,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 		);
 
-
 		// Payment Method - Payment Window
-
 
 		$args['orderId'] = $order_id;
 
@@ -440,7 +425,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		}
 		*/
 
-
 		$args['oiTypes'] = 'UNITCODE;QUANTITY;DESCRIPTION;AMOUNT;VATAMOUNT;ITEMID';
 
 		// Cart Contents
@@ -460,7 +444,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				} else {
 					$tmp_sku = $_product->id;
 				}
-
 			} else {
 
 				// Version 1.6.6
@@ -472,7 +455,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				} else {
 					$tmp_sku = $item['id'];
 				}
-
 			}
 
 			if ( $_product->exists() && $item['qty'] ) :
@@ -509,11 +491,9 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 		endif;
 
-
 		// Fees
 		if ( sizeof( $order->get_fees() ) > 0 ) {
 			foreach ( $order->get_fees() as $item ) {
-
 
 				// We manually calculate the tax percentage here
 				if ( $order->get_total_tax() > 0 ) :
@@ -523,27 +503,21 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 					$item_tax_percentage = 0.00;
 				endif;
 
-
 				// Invoice fee or regular fee
 				if ( $this->invoice_fee_title == $item['name'] ) {
 					$args['invoiceFee']    = number_format( $this->invoice_fee_price_ex_tax, 2, '.', '' ) * 100;
 					$args['invoiceFeeVAT'] = round( $item_tax_percentage ) * 100;
 
 					$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation + ( $item['line_total'] + $item['line_tax'] );
-
 				} else {
 					$tmp_fee = 'st;' . '1' . ';' . $item['name'] . ';' . number_format( $order->get_item_total( $item, false ), 2, '.', '' ) * 100 . ';' . number_format( $order->get_item_tax( $item ), 2, '.', '' ) * 100 . ';' . '0';
 
 					$args[ 'oiRow' . $item_loop ] = $tmp_fee;
 
 					$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation + ( $item['line_total'] + $item['line_tax'] );
-
 				}
-
 			}
-
 		} // End fees
-
 
 		// Order total
 		if ( $this->pg_calc_totals == 'yes' ) {
@@ -588,7 +562,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			$this->log->add( 'dibs', 'Sending values to DIBS: ' . $tmp_log );
 		endif;
 
-
 		wc_enqueue_js( '
 			jQuery("body").block({
 					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce-gateway-dibs' ) ) . '",
@@ -612,16 +585,13 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			jQuery("#submit_dibs_invoice_payment_form").click();
 		' );
 
-
 		// Print out and send the form
 
 		return '<form action="' . $this->paymentwindow_url . '" method="post" id="dibs_invoice_payment_form">
 				' . $fields . '
 				<input type="submit" class="button-alt" id="submit_dibs_invoice_payment_form" value="' . __( 'Pay via dibs', 'woocommerce-gateway-dibs' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'woocommerce-gateway-dibs' ) . '</a>
 			</form>';
-
 	}
-
 
 	/**
 	 * Process the payment and return the result
@@ -637,9 +607,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			'result'   => 'success',
 			'redirect' => $redirect_url
 		);
-
 	}
-
 
 	/**
 	 * receipt_page
@@ -649,9 +617,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
 
 		echo $this->generate_dibs_form( $order );
-
 	}
-
 
 	/**
 	 * Cancel order
@@ -674,7 +640,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 
-
 			if ( $posted['MAC'] == $MAC && $order->id == $order_id && $order->status == 'pending' ) {
 
 				// Cancel the order + restore stock
@@ -682,25 +647,19 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 				// Message
 				wc_add_notice( __( 'Your order was cancelled.', 'woocommerce-gateway-dibs' ), 'error' );
-
 			} elseif ( $order->status != 'pending' ) {
 
 				wc_add_notice( __( 'Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'woocommerce-gateway-dibs' ), 'error' );
-
 			} else {
 
 				wc_add_notice( __( 'Invalid order.', 'woocommerce-gateway-dibs' ), 'error' );
-
 			}
 
 			wp_safe_redirect( $woocommerce->cart->get_cart_url() );
 			exit;
-
 		} // End Payment Window
 
-
 	} // End function cancel_order()
-
 
 	/**
 	 * print_invoice_fee_updater()
@@ -722,7 +681,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		}
 	} // end print_invoice_fee_updater
 
-
 	// Helper function - get Invoice fee id
 	function get_dibs_invoice_fee_product() {
 		return $this->invoice_fee_id;
@@ -737,6 +695,5 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	function get_dibs_invoice_fee_title() {
 		return $this->invoice_fee_title;
 	}
-
 
 } // End class

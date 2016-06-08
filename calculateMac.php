@@ -16,7 +16,6 @@ function createMessage( $formKeyValues ) {
 		}
 
 		return $string;
-
 	} else {
 		return "An array must be used as input!";
 	}
@@ -51,7 +50,6 @@ function calculateMac( $formKeyValues, $HmacKey, $logfile = null ) {
 		}
 
 		return $MAC;
-
 	} else {
 		die( "Form key values must be given as an array" );
 	}

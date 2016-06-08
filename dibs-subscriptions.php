@@ -12,7 +12,6 @@
 function postToDIBS( $paymentFunction, $params, $send_as_json = true, $username = false, $password = false ) {
 	// Create JSON string from array of key => values
 
-
 	// Set correct POST URL corresponding to the payment function requested
 	switch ( $paymentFunction ) {
 		case 'AuthorizeCard' :
@@ -67,7 +66,6 @@ function postToDIBS( $paymentFunction, $params, $send_as_json = true, $username 
 		) );
 	}
 
-
 	$post_back = array();
 
 	if ( is_wp_error( $response ) ) {
@@ -81,12 +79,10 @@ function postToDIBS( $paymentFunction, $params, $send_as_json = true, $username 
 		} else {
 			$post_back = json_decode( $response['body'], true );
 		}
-
 	}
 
 	return $post_back;
 }
-
 
 /**
  * AuthorizeTicket
@@ -127,7 +123,6 @@ function AuthorizeTicket( $amount, $currency, $merchantId, $orderId, $ticketId, 
 		// Insert own code to update shop system
 	}
 }
-
 
 /**
  * RefundTransaction
