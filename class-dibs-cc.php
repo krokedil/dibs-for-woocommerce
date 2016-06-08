@@ -572,7 +572,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			// Add MAC to the $args array
 			$args['MAC'] = $MAC;
 		} else {
-
 			// Payment Method - Flexwin
 
 			// Paytype
@@ -691,7 +690,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * Process the payment and return the result
 	 **/
 	function process_payment( $order_id ) {
-
 		$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
 
 		return array(
@@ -704,7 +702,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * receipt_page
 	 **/
 	function receipt_page( $order ) {
-
 		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
 
 		echo $this->generate_dibs_form( $order );
@@ -714,7 +711,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * Successful Payment!
 	 **/
 	function successful_request( $posted ) {
-
 		// Debug
 		if ( $this->debug == 'yes' ) :
 
