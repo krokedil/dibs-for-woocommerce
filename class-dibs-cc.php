@@ -1,5 +1,6 @@
 <?php
 
+
 class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 	/**
@@ -16,7 +17,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$this->has_fields = false;
 		$this->log        = new WC_Logger();
 
-		$this->flexwin_url       = 'https://payment.architrade.com/paymentweb/start.action';
+		$this->flexwin_url = 'https://payment.architrade.com/paymentweb/start.action';
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -44,7 +45,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$this->api_password           = ( isset( $this->settings['api_password'] ) ) ? $this->settings['api_password'] : '';
 		$this->testmode               = ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';
 		$this->debug                  = ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
-
 
 		// Apply filters for language
 		$this->dibs_language = apply_filters( 'dibs_language', $this->language );
@@ -105,15 +105,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		} else {
 			$this->enabled = $this->settings['enabled'];
 		}
-
 	} // End construct
-
 
 	/**
 	 * Initialise Gateway Settings Form Fields
 	 */
 	function init_form_fields() {
-
 		$this->form_fields = array(
 			'enabled'                  => array(
 				'title'   => __( 'Enable/Disable', 'woocommerce-gateway-dibs' ),
@@ -155,19 +152,19 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				'title'       => __( 'Language', 'woocommerce-gateway-dibs' ),
 				'type'        => 'select',
 				'options'     => array(
-					'en'    => 'English',
-					'da'    => 'Danish',
-					'de'    => 'German',
-					'es'    => 'Spanish',
-					'fi'    => 'Finnish',
-					'fo'    => 'Faroese',
-					'fr'    => 'French',
-					'it'    => 'Italian',
-					'nl'    => 'Dutch',
-					'no'    => 'Norwegian',
-					'pl'    => 'Polish (simplified)',
-					'sv'    => 'Swedish',
-					'kl'    => 'Greenlandic',
+					'en' => 'English',
+					'da' => 'Danish',
+					'de' => 'German',
+					'es' => 'Spanish',
+					'fi' => 'Finnish',
+					'fo' => 'Faroese',
+					'fr' => 'French',
+					'it' => 'Italian',
+					'nl' => 'Dutch',
+					'no' => 'Norwegian',
+					'pl' => 'Polish (simplified)',
+					'sv' => 'Swedish',
+					'kl' => 'Greenlandic',
 				),
 				'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'woocommerce-gateway-dibs' ),
 				'default'     => 'sv'
@@ -246,9 +243,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				'default' => 'no'
 			)
 		);
-
 	} // End init_form_fields()
-
 
 	/**
 	 * Admin Panel Options
@@ -284,7 +279,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		<?php
 	} // End admin_options()
 
-
 	/**
 	 * get_icon function.
 	 *
@@ -294,6 +288,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$icon_html  = '';
 		$icon_src   = '';
 		$icon_width = '';
+
 		if ( $this->alternative_icon ) {
 			$icon_src   = $this->alternative_icon;
 			$icon_width = $this->alternative_icon_width;
@@ -311,18 +306,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 */
 
 	function is_available() {
-
 		global $woocommerce;
 
 		if ( $this->enabled == "yes" ) :
-
 			return true;
-
 		endif;
 
 		return false;
 	}
-
 
 	/**
 	 * There are no payment fields for dibs, but we want to show the description if set.
@@ -332,7 +323,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			echo wpautop( wptexturize( $description ) );
 		}
 	}
-
 
 	/**
 	 * Generate the dibs button link
@@ -356,13 +346,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['paytype'] = $paytypes;
 		}
 
-
 		// What kind of payment is this - subscription payment or regular payment
 		if ( class_exists( 'WC_Subscriptions_Order' ) && WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
 
 			// Subscription payment
 			$args['maketicket'] = '1';
-
 
 			if ( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
 				$price = 1;
@@ -372,8 +360,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 			// Price
 			$args['amount'] = $price * 100;
-
-
 		} else {
 			// Price
 			$args['amount'] = $order->order_total * 100;
@@ -384,7 +370,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 		}
 
-
 		// Order number
 		$prefix       = 'n°'; // Strip n° (french translation)
 		$tmp_order_id = $order->get_order_number();
@@ -394,7 +379,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		}
 
 		$args['orderid'] = ltrim( $tmp_order_id, '#' ); // Strip #
-
 
 		// Language
 		$args['lang'] = $this->dibs_language;
@@ -420,12 +404,10 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['test'] = 'yes';
 		}
 
-
 		// IP
 		if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
 			$args['ip'] = $_SERVER['HTTP_CLIENT_IP'];
 		}
-
 
 		// MD5
 		// Calculate key
@@ -435,7 +417,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$merchant = $this->merchant_id;
 		//$orderid = $order_id;
 
-
 		$currency = $this->dibs_currency[ $this->selected_currency ];
 		$amount   = $order->order_total * 100;
 		$postvars = 'merchant=' . $merchant . '&orderid=' . $args['orderid'] . '&currency=' . $currency . '&amount=' . $amount;
@@ -443,7 +424,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		if ( ! isset( $args['maketicket'] ) ) {
 			$args['md5key'] = MD5( $key2 . MD5( $key1 . $postvars ) );
 		}
-
 
 		// Apply filters to the $args array
 		$args = apply_filters( 'dibs_checkout_form', $args, 'dibs_cc', $order );
@@ -462,7 +442,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		if ( $this->debug == 'yes' ) :
 			$this->log->add( 'dibs', 'Sending values to DIBS: ' . $tmp_log );
 		endif;
-
 
 		wc_enqueue_js( '
 			jQuery("body").block({
@@ -493,9 +472,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				' . $fields . '
 				<input type="submit" class="button-alt" id="submit_dibs_cc_payment_form" value="' . __( 'Pay via dibs', 'woocommerce-gateway-dibs' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'woocommerce-gateway-dibs' ) . '</a>
 			</form>';
-
 	}
-
 
 	/**
 	 * Process the payment and return the result
@@ -508,9 +485,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			'result'   => 'success',
 			'redirect' => $order->get_checkout_payment_url( true )
 		);
-
 	}
-
 
 	/**
 	 * receipt_page
@@ -520,9 +495,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
 
 		echo $this->generate_dibs_form( $order );
-
 	}
-
 
 	/**
 	 * Successful Payment!
@@ -540,7 +513,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 			$this->log->add( 'dibs', 'Returning values from DIBS: ' . $tmp_log );
 		endif;
-
 
 		// Flexwin callback
 		if ( isset( $posted['transact'] ) && isset( $posted['orderid'] ) ) {
@@ -581,7 +553,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			if ( $posted['authkey'] != $md5 ) {
 				// MD5 check failed
 				$order->update_status( 'failed', sprintf( __( 'MD5 check failed. DIBS transaction ID: %s', 'woocommerce-gateway-dibs' ), strtolower( $posted['transaction'] ) ) );
-
 			}
 
 			// Set order status
@@ -630,9 +601,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 						break;
 
 				endswitch;
-
 			}
-
 
 			// Return to Thank you page if this is a buyer-return-to-shop callback
 			wp_redirect( $redirect_url );
@@ -662,22 +631,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 				// Message
 				wc_add_notice( __( 'Your order was cancelled.', 'woocommerce-gateway-dibs' ), 'error' );
-
 			} elseif ( $order->status != 'pending' ) {
 
 				wc_add_notice( __( 'Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'woocommerce-gateway-dibs' ), 'error' );
-
 			} else {
 
 				wc_add_notice( __( 'Invalid order.', 'woocommerce-gateway-dibs' ), 'error' );
-
 			}
 
 			wp_safe_redirect( $woocommerce->cart->get_cart_url() );
 			exit;
 		} // End Flexwin
 	} // End function cancel_order()
-
 
 	/**
 	 * scheduled_subscription_payment function.
@@ -701,7 +666,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 
 			WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $order );
-
 		} else {
 
 			// Debug
@@ -711,11 +675,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 			WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
 			$order->payment_complete();
-
 		}
-
 	} // End function
-
 
 	/**
 	 * process_subscription_payment function.
@@ -760,19 +721,17 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			update_post_meta( $order->id, '_transaction_id', $response['transact'] );
 
 			if ( $this->capturenow == 'yes' ) {
-				add_post_meta( $order_id, '_dibs_order_captured', 'yes' );
+				add_post_meta( $order->id, '_dibs_order_captured', 'yes' );
 				$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
 			}
 
 			return $response['transact'];
-
 		} elseif ( ! empty( $response['wp_remote_note'] ) ) {
 
 			// WP remote post problem
 			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ), $response['wp_remote_note'] ) );
 
 			return false;
-
 		} else {
 
 			// Payment problem
@@ -780,11 +739,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['reason'] ) );
 
 			return false;
-
 		}
-
 	} // End function
-
 
 	/**
 	 * Update the customer token IDs for a subscription after a customer used the gateway to successfully complete the payment
@@ -799,9 +755,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		update_post_meta( $original_order->id, '_dibs_ticket', get_post_meta( $renewal_order->id, '_dibs_ticket', true ) );
 	}
 
-
 	/**
-	 * Get the order ID. Check to see if SON and SONP is enabled and
+	 * Get the order ID. Check to see if Sequential Order Numbers and Sequential
+	 * Order Numbers Pro is enabled.
 	 *
 	 * @global type $wc_seq_order_number
 	 *
@@ -813,7 +769,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 		// Get Order ID by order_number() if the Sequential Order Number plugin is installed
 		if ( class_exists( 'WC_Seq_Order_Number' ) ) {
-
 			global $wc_seq_order_number;
 
 			$order_id = $wc_seq_order_number->find_order_by_order_number( $order_number );
@@ -821,23 +776,18 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			if ( 0 === $order_id ) {
 				$order_id = $order_number;
 			}
-
 			// Get Order ID by order_number() if the Sequential Order Number Pro plugin is installed
 		} elseif ( class_exists( 'WC_Seq_Order_Number_Pro' ) ) {
-
 			$order_id = wc_seq_order_number_pro()->find_order_by_order_number( $order_number );
 
 			if ( 0 === $order_id ) {
 				$order_id = $order_number;
 			}
-
 		} else {
-
 			$order_id = $order_number;
 		}
 
 		return apply_filters( 'wc_dibs_get_order_id', $order_id );
-
 	} // end function
 
 	/**
@@ -924,15 +874,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			}
 
 			return true;
-
 		} else {
-
 			// Refund problem
 			$order->add_order_note( sprintf( __( 'DIBS refund failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['message'] ) );
 
 			return false;
 		}
-
 	}
 
 	/**
