@@ -1,10 +1,10 @@
 === WooCommerce DIBS Gateway ===
 Contributors: krokedil, niklashogefjord
 Tags: ecommerce, e-commerce, woocommerce, dibs
-Requires at least: 3.8
-Tested up to: 4.0
-Requires WooCommerce at least: 2.1
-Tested WooCommerce up to: 2.2
+Requires at least: 4.3
+Tested up to: 4.5
+Requires WooCommerce at least: 2.3
+Tested WooCommerce up to: 2.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
