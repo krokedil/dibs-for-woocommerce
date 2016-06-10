@@ -29,7 +29,7 @@ Author URI: http://krokedil.com
  * Required functions
  */
 if ( ! function_exists( 'woothemes_queue_update' ) ) {
-	require_once( 'woo-includes/woo-functions.php' );
+	require_once( plugin_dir_path( __FILE__ ) . 'includes/woo-includes/woo-functions.php' );
 }
 
 /**
@@ -41,7 +41,6 @@ woothemes_queue_update( plugin_basename( __FILE__ ), 'a76c47dcf644f3ca7264357776
 add_action( 'plugins_loaded', 'init_dibs_gateway', 0 );
 
 function init_dibs_gateway() {
-
 	// If the WooCommerce payment gateway class is not available, do nothing
 	if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
 		return;
@@ -59,14 +58,8 @@ function init_dibs_gateway() {
 
 	} // Close class WC_Gateway_Dibs
 
-	/**
-	 * Localisation
-	 */
+	// Localisation
 	load_plugin_textdomain( 'woocommerce-gateway-dibs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-
-	/*
-	 * Constants
-	 */
 
 	// Plugin Folder Path
 	if ( ! defined( 'WC_DIBS_PLUGIN_DIR' ) ) {
@@ -77,18 +70,18 @@ function init_dibs_gateway() {
 	if ( ! defined( 'WC_DIBS_PLUGIN_URL' ) ) {
 		define( 'WC_DIBS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 	}
-	
+
 	// Include our Dibs credit card class
-	require_once 'class-dibs-cc.php';
+	require_once( WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-cc.php' );
 
 	// Include our Dibs Invoice class
-	require_once 'class-dibs-invoice.php';
+	require_once( WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-invoice.php' );
 
 	// Check if we should include the Dibs manual modification class
 	if ( defined( 'WC_DIBS_DEBUG' ) && true === WC_DIBS_DEBUG ) {
-		require_once( 'includes/class-wc-dibs-manual-modification.php' );
+		require_once( WC_DIBS_PLUGIN_DIR . 'includes/class-wc-dibs-manual-modification.php' );
 	}
-} // Close init_dibs_gateway
+}
 
 /**
  * Add the gateway to WooCommerce
@@ -112,7 +105,6 @@ add_filter( 'woocommerce_payment_gateways', 'add_dibs_gateway' );
 class WC_Gateway_Dibs_Extra {
 
 	public function __construct() {
-
 		// Actions
 		add_action( 'init', array( &$this, 'check_callback' ), 20 );
 
@@ -127,7 +119,6 @@ class WC_Gateway_Dibs_Extra {
 	 * Check for DIBS Response
 	 **/
 	function check_callback() {
-
 		// Cancel order POST
 		if ( strpos( $_SERVER["REQUEST_URI"], 'woocommerce/dibscancel' ) !== false ) {
 
@@ -141,7 +132,6 @@ class WC_Gateway_Dibs_Extra {
 
 		// Check for IPN callback (dibscallback)
 		if ( ( strpos( $_SERVER["REQUEST_URI"], 'woocommerce/dibscallback' ) !== false ) ) {
-
 			header( "HTTP/1.1 200 Ok" );
 
 			// The IPN callback and buyer-return-to-shop callback can be fired at the same time causing multiple payment_complete() calls.
@@ -150,23 +140,25 @@ class WC_Gateway_Dibs_Extra {
 
 			$callback = new WC_Gateway_Dibs_CC;
 			$callback->successful_request( stripslashes_deep( $_REQUEST ) );
-		} // End if
+		}
 
 		// Check for buyer-return-to-shop callback
 		if ( ( strpos( $_SERVER["REQUEST_URI"], 'woocommerce/dibsaccept' ) !== false ) ) {
-
 			header( "HTTP/1.1 200 Ok" );
 
 			$callback = new WC_Gateway_Dibs_CC;
 			$callback->successful_request( stripslashes_deep( $_REQUEST ) );
-		} // End if
+		}
 
-	} // End function check_callback()
+	}
 
 	/**
-	 * Calculate totals on checkout form.
-	 **/
-
+	 * Calculate totals on checkout page.
+	 *
+	 * @param $totals
+	 *
+	 * @return mixed
+	 */
 	public function calculate_totals( $totals ) {
 		global $woocommerce;
 		if ( is_checkout() || defined( 'WOOCOMMERCE_CHECKOUT' ) ) {
@@ -195,8 +187,9 @@ class WC_Gateway_Dibs_Extra {
 	}
 
 	/**
-	 * Add the invoice fee to the cart if DIBS Invoice is selected payment method and if invoice fee is used.
-	 **/
+	 * Add the invoice fee to the cart if DIBS Invoice is selected payment method
+	 * and if invoice fee is used.
+	 */
 	function add_fee_to_cart() {
 		global $woocommerce;
 
@@ -218,16 +211,16 @@ class WC_Gateway_Dibs_Extra {
 				$woocommerce->cart->add_fee( $product->get_title(), $product->get_price_excluding_tax(), $product_tax, $product->get_tax_class() );
 
 			endif;
-		} // End if invoice_fee_id > 0
-
-	} // End function add_fee_to_cart
+		}
+	}
 
 	/**
 	 * Capture payment in DIBS if option is enabled
-	 * @link    http://tech.dibspayment.com/D2_capturecgi
+	 *
+	 * @param $order_id int
+	 * @link  http://tech.dibspayment.com/D2_capturecgi
 	 */
 	function capture_order_on_completion( $order_id ) {
-
 		if ( is_object( $order_id ) ) {
 			$order_id = $order_id->id;
 		}
@@ -237,7 +230,6 @@ class WC_Gateway_Dibs_Extra {
 
 		// Check if capture on completed option is selected
 		if ( 'complete' == $dibs_cc->get_capturenow() ) {
-
 			// Check if DIBS transaction number exists
 			if ( get_post_meta( $order_id, '_dibs_transaction_no', true ) ) {
 
@@ -253,7 +245,7 @@ class WC_Gateway_Dibs_Extra {
 					$postvars = 'merchant=' . $merchant_id . '&orderid=' . $order->get_order_number() . '&transact=' . $transact . '&amount=' . $amount;
 					$md5key   = MD5( $key2 . MD5( $key1 . $postvars ) );
 
-					require_once( 'dibs-subscriptions.php' );
+					require_once( WC_DIBS_PLUGIN_DIR . 'includes/dibs-subscriptions.php' );
 
 					// Capture parameters
 					$params = array(
@@ -282,6 +274,5 @@ class WC_Gateway_Dibs_Extra {
 		}
 	}
 
-} // End class WC_Gateway_Dibs_Extra
-
+}
 $wc_gateway_dibs_extra = new WC_Gateway_Dibs_Extra;

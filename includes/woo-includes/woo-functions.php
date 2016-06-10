@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Functions used by plugins
  */
 if ( ! class_exists( 'WC_Dependencies' ) ) {
-	require_once 'class-wc-dependencies.php';
+	require_once( WC_DIBS_PLUGIN_DIR . 'includes/woo-includes/class-wc-dependencies.php' );
 }
 
 /**

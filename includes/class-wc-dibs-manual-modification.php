@@ -7,7 +7,6 @@
 class WC_Dibs_Manual_Modification {
 
 	public function __construct() {
-
 		// Meta boxes
 		add_action( 'add_meta_boxes', array( $this, 'dibs_transaction_metabox' ) );
 		add_action( 'save_post', array( $this, 'save_metabox' ) );
@@ -17,7 +16,6 @@ class WC_Dibs_Manual_Modification {
 	 * DIBS Transaction no & ticket ID metabox
 	 */
 	public function dibs_transaction_metabox( $post_type ) {
-
 		add_meta_box( 'wc_dibs_transaction_metabox', __( 'DIBS Order transaction details', 'woocommerce-gateway-dibs' ), array(
 			$this,
 			'render_transaction_meta_box_content'
@@ -30,7 +28,6 @@ class WC_Dibs_Manual_Modification {
 	 * @param WP_Post $post The post object.
 	 */
 	public function render_transaction_meta_box_content( $post ) {
-
 		$order = wc_get_order( $post->ID );
 
 		// Only display the metabox if DIBS is the used payment gateway
@@ -74,9 +71,10 @@ class WC_Dibs_Manual_Modification {
 	 * Save the meta when the post is saved.
 	 *
 	 * @param int $post_id The ID of the post being saved.
+	 *
+	 * @return int
 	 */
 	public function save_metabox( $post_id ) {
-
 		/*
 		 * We need to verify this came from the our screen and with proper authorization,
 		 * because save_post can be triggered at other times.

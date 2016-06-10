@@ -1,17 +1,17 @@
 <?php
 
 /**
- * postToDIBS
  * Sends a set of parameters to a DIBS API function
  *
  * @param string $paymentFunction The name of the target payment function, e.g. AuthorizeCard
- * @param array $params A set of parameters to be posted in key => value format
+ * @param array  $params A set of parameters to be posted in key => value format
+ * @param bool   $send_as_json
+ * @param bool   $username
+ * @param bool   $password
  *
  * @return array
  */
 function postToDIBS( $paymentFunction, $params, $send_as_json = true, $username = false, $password = false ) {
-	// Create JSON string from array of key => values
-
 	// Set correct POST URL corresponding to the payment function requested
 	switch ( $paymentFunction ) {
 		case 'AuthorizeCard' :
@@ -88,9 +88,9 @@ function postToDIBS( $paymentFunction, $params, $send_as_json = true, $username 
  * AuthorizeTicket
  * Makes a new authorization on an existing ticket using the AuthorizeTicket JSON service
  *
- * @param int @amount The amount of the purchase in smallest unit
+ * @param int    @amount The amount of the purchase in smallest unit
  * @param string @currency The currency either in numeric or string format (e.g. 208/DKK)
- * @param int @merchantId DIBS Merchant ID / customer number
+ * @param int    @merchantId DIBS Merchant ID / customer number
  * @param string @orderId The shops order ID for the purchase
  * @param string @ticketId The ticket number on which the authorization should be done
  * @param string @K The secret HMAC key from DIBS Admin
@@ -128,8 +128,8 @@ function AuthorizeTicket( $amount, $currency, $merchantId, $orderId, $ticketId, 
  * RefundTransaction
  * Refunds a previously captured transaction using the RefundTransaction JSON service
  *
- * @param int @amount The amount of the capture in smallest unit
- * @param int @merchantId DIBS Merchant ID / customer number
+ * @param int    @amount The amount of the capture in smallest unit
+ * @param int    @merchantId DIBS Merchant ID / customer number
  * @param string @transactionId The ticket number on which the authorization should be done
  * @param string @K The secret HMAC key from DIBS Admin
  */

@@ -528,7 +528,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 		// HMAC
 		$formKeyValues = $args;
-		require_once( 'calculateMac.php' );
+		require_once( WC_DIBS_PLUGIN_DIR . 'includes/calculateMac.php' );
 		$logfile = '';
 		// Calculate the MAC for the form key-values to be posted to DIBS.
 		$MAC = calculateMac( $formKeyValues, $this->key_hmac, $logfile );
@@ -632,7 +632,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		if ( isset( $posted['orderId'] ) && is_numeric( $posted['orderId'] ) ) {
 
 			// Verify HMAC
-			require_once( 'calculateMac.php' );
+			require_once( WC_DIBS_PLUGIN_DIR . 'includes/calculateMac.php' );
 			$logfile = '';
 			$MAC     = calculateMac( $posted, $this->key_hmac, $logfile );
 
