@@ -31,7 +31,7 @@ class WC_Dibs_Manual_Modification {
 	 */
 	public function render_transaction_meta_box_content( $post ) {
 
-		$order = WC_Dibs_Compatibility::wc_get_order( $post->ID );
+		$order = wc_get_order( $post->ID );
 
 		// Only display the metabox if DIBS is the used payment gateway
 		if ( $order->payment_method != 'dibs' ) {

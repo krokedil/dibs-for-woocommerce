@@ -367,7 +367,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	public function generate_dibs_form( $order_id ) {
 		global $woocommerce;
 
-		$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
+		$order = wc_get_order( $order_id );
 
 		$payment_gateway_total_cost_calculation = '';
 
@@ -598,7 +598,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	 **/
 	function process_payment( $order_id ) {
 
-		$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
+		$order = wc_get_order( $order_id );
 
 		// Prepare redirect url
 		$redirect_url = $order->get_checkout_payment_url( true );
@@ -638,7 +638,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 			$order_id = $posted['orderId'];
 
-			$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
+			$order = wc_get_order( $order_id );
 
 			if ( $posted['MAC'] == $MAC && $order->id == $order_id && $order->status == 'pending' ) {
 

@@ -77,13 +77,7 @@ function init_dibs_gateway() {
 	if ( ! defined( 'WC_DIBS_PLUGIN_URL' ) ) {
 		define( 'WC_DIBS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 	}
-
-	/**
-	 * Include the WooCommerce Compatibility Utility class
-	 * The purpose of this class is to provide a single point of compatibility functions for dealing with supporting multiple versions of WooCommerce (currently 2.0.x and 2.1)
-	 */
-	require_once 'classes/class-wc-dibs-compatibility.php';
-
+	
 	// Include our Dibs credit card class
 	require_once 'class-dibs-cc.php';
 

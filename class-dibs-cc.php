@@ -334,7 +334,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	public function generate_dibs_form( $order_id ) {
 		global $woocommerce;
 
-		$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
+		$order = wc_get_order( $order_id );
 
 		$dibs_adr = $this->flexwin_url;
 
@@ -486,7 +486,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * Process the payment and return the result
 	 **/
 	function process_payment( $order_id ) {
-		$order = WC_Dibs_Compatibility::wc_get_order( $order_id );
+		$order = wc_get_order( $order_id );
 
 		return array(
 			'result'   => 'success',
