@@ -352,7 +352,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 		// What kind of payment is this - subscription payment or regular payment
 		if ( class_exists( 'WC_Subscriptions_Order' ) && WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
-
 			// Subscription payment
 			$args['maketicket'] = '1';
 
@@ -366,7 +365,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['amount'] = $price * 100;
 		} else {
 			// Price
-			$args['amount'] = $order->order_total * 100;
+			$args['amount'] = $order->get_total() * 100;
 
 			// Instant capture if selected in settings
 			if ( $this->capturenow == 'yes' ) {
@@ -419,15 +418,20 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$key1     = $this->key_1;
 		$key2     = $this->key_2;
 		$merchant = $this->merchant_id;
-		//$orderid = $order_id;
+		// $orderid = $order_id;
 
 		$currency = $this->dibs_currency[ $this->selected_currency ];
-		$amount   = $order->order_total * 100;
+		$amount   = $order->get_total() * 100;
 		$postvars = 'merchant=' . $merchant . '&orderid=' . $args['orderid'] . '&currency=' . $currency . '&amount=' . $amount;
 
 		if ( ! isset( $args['maketicket'] ) ) {
 			$args['md5key'] = MD5( $key2 . MD5( $key1 . $postvars ) );
 		}
+
+		/*
+		$args['preauth'] = 'true';
+		$args['md5key'] = MD5( $key2 . MD5( $key1 . 'transact=' . get_post_meta( $order_id, '_dibs_transact', true ) . '&preauth=true&currency=' . $currency ) );
+		*/
 
 		// Apply filters to the $args array
 		$args = apply_filters( 'dibs_checkout_form', $args, 'dibs_cc', $order );
@@ -539,6 +543,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 					$subs = wcs_get_subscriptions_for_order( $order, array( 'order_type' => 'parent' ) );
 					foreach ( $subs as $subscription ) {
 						add_post_meta( $subscription->id, '_dibs_ticket', $posted['ticket'] );
+						add_post_meta( $subscription->id, '_dibs_transact', $posted['transact'] );
 
 						// Store card details in the subscription
 						if ( isset( $posted['cardnomask'] ) ) {
@@ -901,7 +906,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$order->add_order_note( $refund_note );
 
 			// Maybe change status to Refunded
-			if ( $order->order_total == $amount ) {
+			if ( $order->get_total() == $amount ) {
 				$order->update_status( 'refunded' );
 			}
 
