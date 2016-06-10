@@ -1,7 +1,13 @@
 <?php
 
-// This function converts an array holding the form key values to a string.
-// The generated string represents the message to be signed by the MAC.
+/**
+ * This function converts an array holding the form key values to a string.
+ * The generated string represents the message to be signed by the MAC.
+ *
+ * @param $formKeyValues
+ *
+ * @return string
+ */
 function createMessage( $formKeyValues ) {
 	$string = "";
 	if ( is_array( $formKeyValues ) ) {
@@ -21,7 +27,13 @@ function createMessage( $formKeyValues ) {
 	}
 }
 
-// This function converts from a hexadecimal representation to a string representation.
+/**
+ * This function converts from a hexadecimal representation to a string representation.
+ *
+ * @param $hex
+ *
+ * @return string
+ */
 function hextostr( $hex ) {
 	$string = "";
 	foreach ( explode( "\n", trim( chunk_split( $hex, 2 ) ) ) as $h ) {
@@ -31,8 +43,16 @@ function hextostr( $hex ) {
 	return $string;
 }
 
-// This function calculates the MAC for an array holding the form key values.
-// The $logfile is optional.
+/**
+ * This function calculates the MAC for an array holding the form key values.
+ * The $logfile is optional.
+ *
+ * @param $formKeyValues
+ * @param $HmacKey
+ * @param null $logfile
+ *
+ * @return false|string
+ */
 function calculateMac( $formKeyValues, $HmacKey, $logfile = null ) {
 	// Create the message to be signed.
 	if ( is_array( $formKeyValues ) ) {

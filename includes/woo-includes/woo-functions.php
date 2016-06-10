@@ -1,25 +1,30 @@
 <?php
 
-/**
- * Functions used by plugins
- */
+// Functions used by plugins
 if ( ! class_exists( 'WC_Dependencies' ) ) {
 	require_once( WC_DIBS_PLUGIN_DIR . 'includes/woo-includes/class-wc-dependencies.php' );
 }
 
-/**
- * WC Detection
- */
 if ( ! function_exists( 'is_woocommerce_active' ) ) {
+	/**
+	 * Check if WooCommerce is active.
+	 *
+	 * @return bool
+	 */
 	function is_woocommerce_active() {
 		return WC_Dependencies::woocommerce_active_check();
 	}
 }
 
-/**
- * Queue updates for the WooUpdater
- */
+
 if ( ! function_exists( 'woothemes_queue_update' ) ) {
+	/**
+	 * Queue updates for the WooUpdater.
+	 *
+	 * @param $file
+	 * @param $file_id
+	 * @param $product_id
+	 */
 	function woothemes_queue_update( $file, $file_id, $product_id ) {
 		global $woothemes_queued_updates;
 
@@ -36,11 +41,17 @@ if ( ! function_exists( 'woothemes_queue_update' ) ) {
 	}
 }
 
-/**
- * Load installer for the WooThemes Updater.
- * @return $api Object
- */
 if ( ! class_exists( 'WooThemes_Updater' ) && ! function_exists( 'woothemes_updater_install' ) ) {
+	/**
+	 * Load installer for the WooThemes Updater.
+	 *
+	 * @param $api
+	 * @param $action
+	 * @param $args
+	 *
+	 * @hook   plugins_api
+	 * @return stdClass
+	 */
 	function woothemes_updater_install( $api, $action, $args ) {
 		$download_url = 'http://woodojo.s3.amazonaws.com/downloads/woothemes-updater/woothemes-updater.zip';
 
@@ -55,18 +66,14 @@ if ( ! class_exists( 'WooThemes_Updater' ) && ! function_exists( 'woothemes_upda
 
 		return $api;
 	}
-
 	add_filter( 'plugins_api', 'woothemes_updater_install', 10, 3 );
 }
 
-/**
- * WooUpdater Installation Prompts
- */
 if ( ! class_exists( 'WooThemes_Updater' ) && ! function_exists( 'woothemes_updater_notice' ) ) {
-
 	/**
 	 * Display a notice if the "WooThemes Updater" plugin hasn't been installed.
-	 * @return void
+	 *
+	 * @hook admin_notices
 	 */
 	function woothemes_updater_notice() {
 		$active_plugins = apply_filters( 'active_plugins', get_option( 'active_plugins' ) );
@@ -89,7 +96,6 @@ if ( ! class_exists( 'WooThemes_Updater' ) && ! function_exists( 'woothemes_upda
 		}
 		echo '<div class="updated fade"><p>' . $message . '</p></div>' . "\n";
 	}
-
 	add_action( 'admin_notices', 'woothemes_updater_notice' );
 }
 

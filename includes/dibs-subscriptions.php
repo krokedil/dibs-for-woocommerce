@@ -24,14 +24,12 @@ function postToDIBS( $paymentFunction, $params, $send_as_json = true, $username 
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CancelTransaction';
 			break;
 		case 'CaptureTransaction' :
-			//$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CaptureTransaction';
 			$postUrl = 'https://payment.architrade.com/cgi-bin/capture.cgi';
 			break;
 		case 'CreateTicket' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CreateTicket';
 			break;
 		case 'RefundTransaction' :
-			//$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/RefundTransaction';
 			$postUrl = 'https://' . $username . ':' . $password . '@payment.architrade.com/cgi-adm/refund.cgi';
 			break;
 		case 'Ping' :

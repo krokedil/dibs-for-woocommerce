@@ -1,11 +1,13 @@
 <?php
 
-
 /**
- * Kca_Order Class
+ * Class WC_Dibs_Manual_Modification
  */
 class WC_Dibs_Manual_Modification {
 
+	/**
+	 * WC_Dibs_Manual_Modification constructor.
+	 */
 	public function __construct() {
 		// Meta boxes
 		add_action( 'add_meta_boxes', array( $this, 'dibs_transaction_metabox' ) );
@@ -13,7 +15,9 @@ class WC_Dibs_Manual_Modification {
 	}
 
 	/**
-	 * DIBS Transaction no & ticket ID metabox
+	 * DIBS Transaction no & ticket ID metabox.
+	 *
+	 * @param $post_type
 	 */
 	public function dibs_transaction_metabox( $post_type ) {
 		add_meta_box( 'wc_dibs_transaction_metabox', __( 'DIBS Order transaction details', 'woocommerce-gateway-dibs' ), array(
@@ -25,7 +29,7 @@ class WC_Dibs_Manual_Modification {
 	/**
 	 * Render DIBS Transaction Meta Box content.
 	 *
-	 * @param WP_Post $post The post object.
+	 * @param $post WP_Post object.
 	 */
 	public function render_transaction_meta_box_content( $post ) {
 		$order = wc_get_order( $post->ID );
@@ -65,7 +69,7 @@ class WC_Dibs_Manual_Modification {
 		</div>
 
 		<?php
-	} // End function
+	}
 
 	/**
 	 * Save the meta when the post is saved.
@@ -75,10 +79,8 @@ class WC_Dibs_Manual_Modification {
 	 * @return int
 	 */
 	public function save_metabox( $post_id ) {
-		/*
-		 * We need to verify this came from the our screen and with proper authorization,
-		 * because save_post can be triggered at other times.
-		 */
+		// We need to verify this came from the our screen and with proper authorization,
+		// because save_post can be triggered at other times.
 
 		// Check if our nonce is set.
 		if ( ! isset( $_POST['wc_dibs_transaction_metabox_nonce'] ) ) {
@@ -114,7 +116,7 @@ class WC_Dibs_Manual_Modification {
 		update_post_meta( $post_id, '_dibs_transaction_no', $dibs_transaction );
 		update_post_meta( $post_id, '_transaction_id', $dibs_transaction );
 		update_post_meta( $post_id, '_dibs_ticket', $dibs_ticket );
-	} // End function
+	}
 
-} // End class
-new WC_Dibs_Manual_Modification();
+}
+$wc_dibs_manual_modification = new WC_Dibs_Manual_Modification();
