@@ -56,8 +56,7 @@ function init_dibs_gateway() {
 	if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
 		return;
 	}
-
-
+	
 	class WC_Gateway_Dibs extends WC_Payment_Gateway {
 
 		public function __construct() {

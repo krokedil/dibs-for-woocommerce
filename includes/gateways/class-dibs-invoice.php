@@ -139,41 +139,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		add_action( 'wp_print_footer_scripts', array( $this, 'print_invoice_fee_updater' ) );
 	} // End construct
 
-	/**
-	 * Check if this gateway is enabled and available in the user's country
-	 */
-
-	function is_available() {
-
-		global $woocommerce;
-		if ( $this->enabled == "yes" ) :
-
-			// Base country check
-			if ( ! in_array( get_option( 'woocommerce_default_country' ), array( 'SE', 'NO', 'DK' ) ) ) {
-				return false;
-			}
-
-			// Required fields check
-			if ( empty( $this->merchant_id ) || empty( $this->key_hmac ) ) {
-				return false;
-			}
-
-			// Checkout form check
-			if ( isset( $woocommerce->cart->total ) ) {
-				// Only activate the payment gateway if the customers country is the same as the shop country ($this->dibs_country)
-				if ( $woocommerce->customer->get_country() == true && $woocommerce->customer->get_country() != $this->dibs_country ) {
-					return false;
-				}
-			} // End Checkout form check
-
-			return true;
-
-		endif;
-
-		return false;
-	}
-
-	/**
+/**
 	 * Initialise Gateway Settings Form Fields
 	 */
 	function init_form_fields() {
@@ -288,6 +254,39 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				'default' => 'no'
 			)
 		);
+	}
+
+		/**
+	 * Check if this gateway is enabled and available in the user's country
+	 */
+
+	function is_available() {
+		global $woocommerce;
+		if ( $this->enabled == "yes" ) :
+
+			// Base country check
+			if ( ! in_array( get_option( 'woocommerce_default_country' ), array( 'SE', 'NO', 'DK' ) ) ) {
+				return false;
+			}
+
+			// Required fields check
+			if ( empty( $this->merchant_id ) || empty( $this->key_hmac ) ) {
+				return false;
+			}
+
+			// Checkout form check
+			if ( isset( $woocommerce->cart->total ) ) {
+				// Only activate the payment gateway if the customers country is the same as the shop country ($this->dibs_country)
+				if ( $woocommerce->customer->get_country() == true && $woocommerce->customer->get_country() != $this->dibs_country ) {
+					return false;
+				}
+			} // End Checkout form check
+
+			return true;
+
+		endif;
+
+		return false;
 	} // End init_form_fields()
 
 	/**
@@ -297,7 +296,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	 * @since 1.0.0
 	 */
 	public function admin_options() {
-
 		?>
 		<h3><?php _e( 'DIBS Invoice', 'woocommerce-gateway-dibs' ); ?></h3>
 		<p><?php printf( __( 'Documentation <a href="%s" target="_blank">can be found here</a>.', 'woocommerce-gateway-dibs' ), 'http://docs.woothemes.com/document/dibs/' ); ?></p>
@@ -356,6 +354,38 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	}
 
 	/**
+	 * Process the payment and return the result
+	 *
+	 * @param int $order_id
+	 *
+	 * @return array
+	 */
+	function process_payment( $order_id ) {
+
+		$order = wc_get_order( $order_id );
+
+		// Prepare redirect url
+		$redirect_url = $order->get_checkout_payment_url( true );
+
+		return array(
+			'result'   => 'success',
+			'redirect' => $redirect_url
+		);
+	}
+
+	/**
+	 * receipt_page
+	 *
+	 * @param $order
+	 */
+	function receipt_page( $order ) {
+
+		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
+
+		echo $this->generate_dibs_form( $order );
+	}
+
+	/**
 	 * Generate the dibs button link
 	 *
 	 * @param $order_id
@@ -392,7 +422,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 		// URLs
 		// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL
-		// We also need to make the callback url the accept/return url. If we use $this->get_return_url( $order ) the HMAC calculation doesn't add up 
+		// We also need to make the callback url the accept/return url. If we use $this->get_return_url( $order ) the HMAC calculation doesn't add up
 		$args['callbackUrl']     = apply_filters( 'woocommerce_dibs_invoice_callbackurl', trailingslashit( site_url( '/woocommerce/dibscallback' ) ) );
 		$args['acceptReturnUrl'] = trailingslashit( site_url( '/woocommerce/dibsaccept' ) );
 		$args['cancelreturnurl'] = trailingslashit( site_url( '/woocommerce/dibscancel' ) );
@@ -577,43 +607,10 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		' );
 
 		// Print out and send the form
-
 		return '<form action="' . $this->paymentwindow_url . '" method="post" id="dibs_invoice_payment_form">
 				' . $fields . '
 				<input type="submit" class="button-alt" id="submit_dibs_invoice_payment_form" value="' . __( 'Pay via dibs', 'woocommerce-gateway-dibs' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'woocommerce-gateway-dibs' ) . '</a>
 			</form>';
-	}
-
-	/**
-	 * Process the payment and return the result
-	 *
-	 * @param int $order_id
-	 *
-	 * @return array
-	 */
-	function process_payment( $order_id ) {
-
-		$order = wc_get_order( $order_id );
-
-		// Prepare redirect url
-		$redirect_url = $order->get_checkout_payment_url( true );
-
-		return array(
-			'result'   => 'success',
-			'redirect' => $redirect_url
-		);
-	}
-
-	/**
-	 * receipt_page
-	 *
-	 * @param $order
-	 */
-	function receipt_page( $order ) {
-
-		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
-
-		echo $this->generate_dibs_form( $order );
 	}
 
 	/**

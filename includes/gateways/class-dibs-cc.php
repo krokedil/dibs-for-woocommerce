@@ -323,6 +323,33 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
+	 * Process the payment and return the result.
+	 *
+	 * @param int $order_id
+	 *
+	 * @return array
+	 */
+	function process_payment( $order_id ) {
+		$order = wc_get_order( $order_id );
+
+		return array(
+			'result'   => 'success',
+			'redirect' => $order->get_checkout_payment_url( true )
+		);
+	}
+
+	/**
+	 * Show receipt page.
+	 *
+	 * @param $order
+	 */
+	function receipt_page( $order ) {
+		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
+
+		echo $this->generate_dibs_form( $order );
+	}
+
+	/**
 	 * Generate the dibs button link
 	 *
 	 * @param $order_id
@@ -474,33 +501,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * Process the payment and return the result.
-	 *
-	 * @param int $order_id
-	 *
-	 * @return array
-	 */
-	function process_payment( $order_id ) {
-		$order = wc_get_order( $order_id );
-
-		return array(
-			'result'   => 'success',
-			'redirect' => $order->get_checkout_payment_url( true )
-		);
-	}
-
-	/**
-	 * Show receipt page.
-	 *
-	 * @param $order
-	 */
-	function receipt_page( $order ) {
-		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
-
-		echo $this->generate_dibs_form( $order );
-	}
-
-	/**
 	 * Process successful payment.
 	 *
 	 * @param $posted
@@ -642,6 +642,42 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		} // End Flexwin callback
 	}
 
+/**
+	 * Gets the order ID. Checks to see if Sequential Order Numbers or Sequential Order
+	 * Numbers Pro is enabled and, if yes, use order number set by them.
+	 *
+	 * @param $order_number
+	 *
+	 * @return mixed|void
+	 */
+	private function get_order_id( $order_number ) {
+
+		// Get Order ID by order_number() if the Sequential Order Number plugin is installed
+		if ( class_exists( 'WC_Seq_Order_Number' ) ) {
+
+			global $wc_seq_order_number;
+
+			$order_id = $wc_seq_order_number->find_order_by_order_number( $order_number );
+
+			if ( 0 === $order_id ) {
+				$order_id = $order_number;
+			}
+			// Get Order ID by order_number() if the Sequential Order Number Pro plugin is installed
+		} elseif ( class_exists( 'WC_Seq_Order_Number_Pro' ) ) {
+
+			$order_id = wc_seq_order_number_pro()->find_order_by_order_number( $order_number );
+
+			if ( 0 === $order_id ) {
+				$order_id = $order_number;
+			}
+		} else {
+
+			$order_id = $order_number;
+		}
+
+		return apply_filters( 'wc_dibs_get_order_id', $order_id );
+	}
+
 	/**
 	 * Cancels an order.
 	 *
@@ -765,7 +801,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		}
 	}
 
-	/**
+		/**
 	 * Update the customer token IDs for a subscription after a customer used the gateway to
 	 * successfully complete the payment for an automatic renewal payment which had previously failed.
 	 *
@@ -774,53 +810,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 */
 	function update_failing_payment_method( $original_order, $renewal_order ) {
 		update_post_meta( $original_order->id, '_dibs_ticket', get_post_meta( $renewal_order->id, '_dibs_ticket', true ) );
-	}
-
-	/**
-	 * Gets the order ID. Checks to see if Sequential Order Numbers or Sequential Order
-	 * Numbers Pro is enabled and, if yes, use order number set by them.
-	 *
-	 * @param $order_number
-	 *
-	 * @return mixed|void
-	 */
-	private function get_order_id( $order_number ) {
-
-		// Get Order ID by order_number() if the Sequential Order Number plugin is installed
-		if ( class_exists( 'WC_Seq_Order_Number' ) ) {
-
-			global $wc_seq_order_number;
-
-			$order_id = $wc_seq_order_number->find_order_by_order_number( $order_number );
-
-			if ( 0 === $order_id ) {
-				$order_id = $order_number;
-			}
-			// Get Order ID by order_number() if the Sequential Order Number Pro plugin is installed
-		} elseif ( class_exists( 'WC_Seq_Order_Number_Pro' ) ) {
-
-			$order_id = wc_seq_order_number_pro()->find_order_by_order_number( $order_number );
-
-			if ( 0 === $order_id ) {
-				$order_id = $order_number;
-			}
-		} else {
-
-			$order_id = $order_number;
-		}
-
-		return apply_filters( 'wc_dibs_get_order_id', $order_id );
 	} // end function
-
-	/**
-	 * Checks if order can be refunded via DIBS.
-	 * @param $order
-	 *
-	 * @return bool
-	 */
-	public function can_refund_order( $order ) {
-		return $order && $order->get_transaction_id();
-	}
 
 	/**
 	 * Process a refund if supported.
@@ -898,6 +888,16 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 			return false;
 		}
+	}
+
+	/**
+	 * Checks if order can be refunded via DIBS.
+	 * @param $order
+	 *
+	 * @return bool
+	 */
+	public function can_refund_order( $order ) {
+		return $order && $order->get_transaction_id();
 	}
 
 	/**
