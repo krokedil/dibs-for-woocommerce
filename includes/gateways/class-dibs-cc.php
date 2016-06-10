@@ -1,16 +1,14 @@
 <?php
 
-
+/**
+ * Class WC_Gateway_Dibs_CC
+ */
 class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 	/**
-	 * Class for Dibs credit card payment.
-	 *
+	 * WC_Gateway_Dibs_CC constructor.
 	 */
-
 	public function __construct() {
-		global $woocommerce;
-
 		parent::__construct();
 
 		$this->id         = 'dibs';
@@ -248,8 +246,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	} // End init_form_fields()
 
 	/**
-	 * Admin Panel Options
-	 * - Options for bits like 'title' and availability on a country-by-country basis
+	 * Admin Panel Options.
+	 * Options for bits like 'title' and availability on a country-by-country basis.
 	 *
 	 * @since 1.0.0
 	 */
@@ -279,10 +277,10 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			?>
 		</table><!--/.form-table-->
 		<?php
-	} // End admin_options()
+	}
 
 	/**
-	 * get_icon function.
+	 * Get gateway icon.
 	 *
 	 * @return string
 	 */
@@ -303,17 +301,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * Check if this gateway is enabled and available in the user's country
+	 * Check if this gateway is enabled and available in user's country.
+	 *
+	 * @return bool
 	 */
-
 	function is_available() {
-
-		global $woocommerce;
-
 		if ( $this->enabled == "yes" ) :
-
 			return true;
-
 		endif;
 
 		return false;
@@ -330,10 +324,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 	/**
 	 * Generate the dibs button link
-	 **/
+	 *
+	 * @param $order_id
+	 *
+	 * @return string
+	 */
 	public function generate_dibs_form( $order_id ) {
-		global $woocommerce;
-
 		$order = wc_get_order( $order_id );
 
 		$dibs_adr = $this->flexwin_url;
@@ -391,13 +387,10 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['decorator'] = $this->decorator;
 		}
 
-		//'uniqueoid' => $order->order_key,
-		//$args['uniqueoid'] = $order_id;
-
 		$args['ordertext'] = 'Name: ' . $order->billing_first_name . ' ' . $order->billing_last_name . '. Address: ' . $order->billing_address_1 . ', ' . $order->billing_postcode . ' ' . $order->billing_city;
 
-		// URLs
-		// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL
+		// Callback URL doesn't work as in the other gateways. DIBS erase everything
+		// after a '?' in a specified callback URL
 		$args['callbackurl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit( site_url( '/woocommerce/dibscallback' ) ) );
 		$args['accepturl']   = trailingslashit( site_url( '/woocommerce/dibsaccept' ) );
 		$args['cancelurl']   = trailingslashit( site_url( '/woocommerce/dibscancel' ) );
@@ -412,8 +405,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['ip'] = $_SERVER['HTTP_CLIENT_IP'];
 		}
 
-		// MD5
-		// Calculate key
+		// Calculate MD5 key
 		// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/
 		$key1     = $this->key_1;
 		$key2     = $this->key_2;
@@ -475,7 +467,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		' );
 
 		// Print out and send the form
-
 		return '<form action="' . $dibs_adr . '" method="post" id="dibs_cc_payment_form">
 				' . $fields . '
 				<input type="submit" class="button-alt" id="submit_dibs_cc_payment_form" value="' . __( 'Pay via dibs', 'woocommerce-gateway-dibs' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'woocommerce-gateway-dibs' ) . '</a>
@@ -483,8 +474,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * Process the payment and return the result
-	 **/
+	 * Process the payment and return the result.
+	 *
+	 * @param int $order_id
+	 *
+	 * @return array
+	 */
 	function process_payment( $order_id ) {
 		$order = wc_get_order( $order_id );
 
@@ -495,8 +490,10 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * receipt_page
-	 **/
+	 * Show receipt page.
+	 *
+	 * @param $order
+	 */
 	function receipt_page( $order ) {
 		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
 
@@ -504,8 +501,10 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * Successful Payment!
-	 **/
+	 * Process successful payment.
+	 *
+	 * @param $posted
+	 */
 	function successful_request( $posted ) {
 		// Debug
 		if ( $this->debug == 'yes' ) :
@@ -558,7 +557,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 					}
 				}
 			}
-
 
 			// Check order not already completed or processing
 			// (to avoid multiple callbacks from DIBS - IPN & return-to-shop callback
@@ -645,10 +643,10 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * Cancel order
-	 * We do this since DIBS doesn't like GET parameters in callback and cancel url's
-	 **/
-
+	 * Cancels an order.
+	 *
+	 * @param $posted
+	 */
 	function cancel_order( $posted ) {
 		global $woocommerce;
 
@@ -677,20 +675,15 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			wp_safe_redirect( $woocommerce->cart->get_cart_url() );
 			exit;
 		} // End Flexwin
-	} // End function cancel_order()
+	}
 
 	/**
-	 * scheduled_subscription_payment function.
+	 * Process a scheduled subscription payment.
 	 *
-	 * @param $amount_to_charge float The amount to charge.
-	 * @param $order WC_Order The WC_Order object of the order which the subscription was purchased in.
-	 * @param $product_id int The ID of the subscription product for which this payment relates.
-	 *
-	 * @access public
-	 * @return void
+	 * @param $amount_to_charge
+	 * @param $order
 	 */
 	function scheduled_subscription_payment( $amount_to_charge, $order ) {
-
 		$result = $this->process_subscription_payment( $order, $amount_to_charge );
 
 		if ( false == $result ) {
@@ -711,15 +704,15 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
 			$order->payment_complete();
 		}
-	} // End function
+	}
 
 	/**
-	 * process_subscription_payment function.
+	 * Process a subscription payment.
+	 * @param string $order
+	 * @param int $amount
 	 *
-	 * Since we use a Merchant handled subscription, we need to generate the
-	 * recurrence request.
+	 * @return bool
 	 */
-
 	function process_subscription_payment( $order = '', $amount = 0 ) {
 		require_once( WC_DIBS_PLUGIN_DIR . 'includes/dibs-subscriptions.php' );
 
@@ -748,7 +741,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$response = postToDIBS( 'AuthorizeTicket', $params, false );
 
 		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" || $response['status'] == "ACCEPTED" ) ) {
-
 			// Payment ok
 			$order->add_order_note( sprintf( __( 'DIBS subscription payment completed. Transaction Id: %s.', 'woocommerce-gateway-dibs' ), $response['transact'] ) );
 			update_post_meta( $order->id, '_dibs_transaction_no', $response['transact'] );
@@ -761,42 +753,36 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 			return $response['transact'];
 		} elseif ( ! empty( $response['wp_remote_note'] ) ) {
-
 			// WP remote post problem
 			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ), $response['wp_remote_note'] ) );
 
 			return false;
 		} else {
-
 			// Payment problem
-			//$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['declineReason'] ) );
 			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['reason'] ) );
 
 			return false;
 		}
-	} // End function
+	}
 
 	/**
-	 * Update the customer token IDs for a subscription after a customer used the gateway to successfully complete the payment
-	 * for an automatic renewal payment which had previously failed.
+	 * Update the customer token IDs for a subscription after a customer used the gateway to
+	 * successfully complete the payment for an automatic renewal payment which had previously failed.
 	 *
-	 * @param WC_Order $original_order The original order in which the subscription was purchased.
-	 * @param WC_Order $renewal_order The order which recorded the successful payment (to make up for the failed automatic payment).
-	 *
-	 * @return void
+	 * @param $original_order
+	 * @param $renewal_order
 	 */
 	function update_failing_payment_method( $original_order, $renewal_order ) {
 		update_post_meta( $original_order->id, '_dibs_ticket', get_post_meta( $renewal_order->id, '_dibs_ticket', true ) );
 	}
 
 	/**
-	 * Get the order ID. Check to see if SON and SONP is enabled and
+	 * Gets the order ID. Checks to see if Sequential Order Numbers or Sequential Order
+	 * Numbers Pro is enabled and, if yes, use order number set by them.
 	 *
-	 * @global type $wc_seq_order_number
+	 * @param $order_number
 	 *
-	 * @param type $order_number
-	 *
-	 * @return type
+	 * @return mixed|void
 	 */
 	private function get_order_id( $order_number ) {
 
@@ -827,9 +813,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	} // end function
 
 	/**
-	 * Can the order be refunded via Dibs?
-	 *
-	 * @param  WC_Order $order
+	 * Checks if order can be refunded via DIBS.
+	 * @param $order
 	 *
 	 * @return bool
 	 */
@@ -838,14 +823,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * Process a refund if supported
+	 * Process a refund if supported.
 	 *
-	 * @param   int $order_id
-	 * @param   float $amount
-	 * @param   string $reason
+	 * @param int $order_id
+	 * @param null $amount
+	 * @param string $reason
 	 *
-	 * @return  bool|wp_error True or false based on success, or a WP_Error object
-	 * @link    http://tech.dibspayment.com/D2_refundcgi
+	 * @return bool
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 		$order = wc_get_order( $order_id );
@@ -890,7 +874,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 			$order->add_order_note( $refund_note );
 
-			//$this->log->add( 'dibs', $refund_note );
 			return false;
 		}
 
@@ -910,7 +893,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 			return true;
 		} else {
-
 			// Refund problem
 			$order->add_order_note( sprintf( __( 'DIBS refund failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['message'] ) );
 
@@ -919,28 +901,36 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * Returns merchant ID
+	 * Returns merchant ID.
+	 *
+	 * @return string
 	 */
 	function get_merchant_id() {
 		return $this->merchant_id;
 	}
 
 	/**
-	 * Returns capturenow setting
+	 * Checks if orders should be captured as soon as checkout is completed.
+	 *
+	 * @return string
 	 */
 	function get_capturenow() {
 		return $this->capturenow;
 	}
 
 	/**
-	 * Returns MD5 key 1
+	 * Returns MD5 key 1.
+	 *
+	 * @return string
 	 */
 	function get_key_1() {
 		return $this->key_1;
 	}
 
 	/**
-	 * Returns MD5 key 2
+	 * Returns MD5 key 2.
+	 *
+	 * @return string
 	 */
 	function get_key_2() {
 		return $this->key_2;

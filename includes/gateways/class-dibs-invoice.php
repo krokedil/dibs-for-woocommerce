@@ -9,8 +9,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	 */
 
 	public function __construct() {
-		global $woocommerce;
-
 		parent::__construct();
 
 		$this->id                = 'dibs_invoice';
@@ -58,8 +56,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			case 'SEK' :
 				$this->dibs_country = 'SE';
 				$dibs_language      = 'sv';
-				$this->merchant_id  = $this->merchant_id;
-				$this->key_hmac     = $this->key_hmac;
 				break;
 			default:
 				$this->dibs_country = '';
@@ -333,8 +329,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	 * @return string
 	 */
 	public function get_icon() {
-		$icon_html = '';
-
 		switch ( get_woocommerce_currency() ) {
 			case 'NOK':
 				$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/single/horiz/DIBS_checkout_single_faktura.png" alt="DIBS - Payments made easy" width="100"/>';
@@ -363,10 +357,12 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 	/**
 	 * Generate the dibs button link
-	 **/
+	 *
+	 * @param $order_id
+	 *
+	 * @return string
+	 */
 	public function generate_dibs_form( $order_id ) {
-		global $woocommerce;
-
 		$order = wc_get_order( $order_id );
 
 		$payment_gateway_total_cost_calculation = '';
@@ -430,11 +426,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		// Cart Contents
 		$item_loop = 1;
 		if ( sizeof( $order->get_items() ) > 0 ) : foreach ( $order->get_items() as $item ) :
-
-			$tmp_sku = '';
-
 			if ( function_exists( 'get_product' ) ) {
-
 				// Version 2.0
 				$_product = $order->get_product_from_item( $item );
 
@@ -445,7 +437,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 					$tmp_sku = $_product->id;
 				}
 			} else {
-
 				// Version 1.6.6
 				$_product = new WC_Product( $item['id'] );
 
@@ -595,7 +586,11 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 	/**
 	 * Process the payment and return the result
-	 **/
+	 *
+	 * @param int $order_id
+	 *
+	 * @return array
+	 */
 	function process_payment( $order_id ) {
 
 		$order = wc_get_order( $order_id );
@@ -611,7 +606,9 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 	/**
 	 * receipt_page
-	 **/
+	 *
+	 * @param $order
+	 */
 	function receipt_page( $order ) {
 
 		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
@@ -622,8 +619,9 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	/**
 	 * Cancel order
 	 * We do this since DIBS doesn't like GET parameters in callback and cancel url's
-	 **/
-
+	 *
+	 * @param $posted
+	 */
 	function cancel_order( $posted ) {
 
 		global $woocommerce;
