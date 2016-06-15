@@ -1,13 +1,14 @@
 <?php
 
 
+/**
+ * Class WC_Gateway_Dibs_Invoice
+ */
 class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 
 	/**
-	 * Class for Dibs Invoice payment.
-	 *
+	 * WC_Gateway_Dibs_Invoice constructor.
 	 */
-
 	public function __construct() {
 		parent::__construct();
 
@@ -139,7 +140,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		add_action( 'wp_print_footer_scripts', array( $this, 'print_invoice_fee_updater' ) );
 	} // End construct
 
-/**
+	/**
 	 * Initialise Gateway Settings Form Fields
 	 */
 	function init_form_fields() {
@@ -233,14 +234,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				'description' => __( 'Order total sent to DIBS is calculated by the payment gateway, not by WooCommerce. This can be useful when having prices/tax amounts that use 3 or 4 decimals since DIBS process prices with 2 decimals. Both Order total and each order row is passed to DIBS. If they do not add up DIBS will cancel the payment. ', 'woocommerce-gateway-dibs' ),
 				'default'     => 'no'
 			),
-			/*
-'capturenow' => array(
-			'title' => __( 'Instant capture (capturenow)', 'woocommerce-gateway-dibs' ),
-			'type' => 'checkbox',
-			'label' => __( 'If checked the order amount is immediately transferred from the customer’s account to the shop’s account. Contact DIBS when using this function.', 'woocommerce-gateway-dibs' ),
-			'default' => 'no'
-		),
-		*/
 			'testmode'       => array(
 				'title'   => __( 'Test Mode', 'woocommerce-gateway-dibs' ),
 				'type'    => 'checkbox',
@@ -256,14 +249,11 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		);
 	}
 
-		/**
+	/**
 	 * Check if this gateway is enabled and available in the user's country
 	 */
-
 	function is_available() {
-		global $woocommerce;
-		if ( $this->enabled == "yes" ) :
-
+		if ( $this->enabled == "yes" ) {
 			// Base country check
 			if ( ! in_array( get_option( 'woocommerce_default_country' ), array( 'SE', 'NO', 'DK' ) ) ) {
 				return false;
@@ -275,23 +265,21 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			}
 
 			// Checkout form check
-			if ( isset( $woocommerce->cart->total ) ) {
+			if ( isset( WC()->cart->total ) ) {
 				// Only activate the payment gateway if the customers country is the same as the shop country ($this->dibs_country)
-				if ( $woocommerce->customer->get_country() == true && $woocommerce->customer->get_country() != $this->dibs_country ) {
+				if ( WC()->customer->get_country() == true && WC()->customer->get_country() != $this->dibs_country ) {
 					return false;
 				}
 			} // End Checkout form check
 
 			return true;
-
-		endif;
+		}
 
 		return false;
-	} // End init_form_fields()
+	}
 
 	/**
-	 * Admin Panel Options
-	 * - Options for bits like 'title' and availability on a country-by-country basis
+	 * Admin Panel Options.
 	 *
 	 * @since 1.0.0
 	 */
@@ -315,14 +303,14 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 					</td>
 				</tr>
 				<?php
-			} // End check currency
+			}
 			?>
 		</table><!--/.form-table-->
 		<?php
-	} // End admin_options()
+	}
 
 	/**
-	 * get_icon function.
+	 * Get payment method icon.
 	 *
 	 * @return string
 	 */
@@ -361,7 +349,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	 * @return array
 	 */
 	function process_payment( $order_id ) {
-
 		$order = wc_get_order( $order_id );
 
 		// Prepare redirect url
@@ -374,19 +361,18 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * receipt_page
+	 * Show receipt page.
 	 *
 	 * @param $order
 	 */
 	function receipt_page( $order ) {
-
 		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
 
 		echo $this->generate_dibs_form( $order );
 	}
 
 	/**
-	 * Generate the dibs button link
+	 * Generate the dibs button link.
 	 *
 	 * @param $order_id
 	 *
@@ -398,19 +384,12 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		$payment_gateway_total_cost_calculation = '';
 
 		$args = array(
-			// Merchant
 			'merchant' => $this->merchant_id,
-
-			// Paytype
 			'paytype'  => 'ALL_INVOICES',
-
-			// Currency
 			'currency' => $this->dibs_currency[ $this->selected_currency ],
-
 		);
 
 		// Payment Method - Payment Window
-
 		$args['orderId'] = $order_id;
 
 		// Language
@@ -421,7 +400,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		$args['language'] = $this->dibs_language;
 
 		// URLs
-		// Callback URL doesn't work as in the other gateways. DIBS erase everyting after a '?' in a specified callback URL
+		// Callback URL doesn't work as in the other gateways. DIBS erase everything after a '?' in a specified callback URL
 		// We also need to make the callback url the accept/return url. If we use $this->get_return_url( $order ) the HMAC calculation doesn't add up
 		$args['callbackUrl']     = apply_filters( 'woocommerce_dibs_invoice_callbackurl', trailingslashit( site_url( '/woocommerce/dibscallback' ) ) );
 		$args['acceptReturnUrl'] = trailingslashit( site_url( '/woocommerce/dibsaccept' ) );
@@ -444,20 +423,12 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			$args['test'] = '1';
 		}
 
-		// Instant capture
-		/*
-		if ( $this->capturenow == 'yes' ) {
-			$args['capturenow'] = '1';
-		}
-		*/
-
 		$args['oiTypes'] = 'UNITCODE;QUANTITY;DESCRIPTION;AMOUNT;VATAMOUNT;ITEMID';
 
 		// Cart Contents
 		$item_loop = 1;
-		if ( sizeof( $order->get_items() ) > 0 ) : foreach ( $order->get_items() as $item ) :
-			if ( function_exists( 'get_product' ) ) {
-				// Version 2.0
+		if ( sizeof( $order->get_items() ) > 0 ) {
+			foreach ( $order->get_items() as $item ) {
 				$_product = $order->get_product_from_item( $item );
 
 				// Get SKU or product id
@@ -466,63 +437,46 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 				} else {
 					$tmp_sku = $_product->id;
 				}
-			} else {
-				// Version 1.6.6
-				$_product = new WC_Product( $item['id'] );
 
-				// Get SKU or product id
-				if ( $_product->get_sku() ) {
-					$tmp_sku = $_product->get_sku();
-				} else {
-					$tmp_sku = $item['id'];
+				if ( $_product->exists() && $item['qty'] ) {
+					$tmp_product                  = 'st;' . $item['qty'] . ';' . $item['name'] . ';' . number_format( $order->get_item_total( $item, false ), 2, '.', '' ) * 100 . ';' . number_format( $order->get_item_tax( $item ), 2, '.', '' ) * 100 . ';' . $tmp_sku;
+					$args[ 'oiRow' . $item_loop ] = $tmp_product;
+
+					$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation + ( $order->get_item_total( $item, false ) + $order->get_item_tax( $item ) ) * $item['qty'];
+					$item_loop ++;
 				}
 			}
-
-			if ( $_product->exists() && $item['qty'] ) :
-
-				$tmp_product                  = 'st;' . $item['qty'] . ';' . $item['name'] . ';' . number_format( $order->get_item_total( $item, false ), 2, '.', '' ) * 100 . ';' . number_format( $order->get_item_tax( $item ), 2, '.', '' ) * 100 . ';' . $tmp_sku;
-				$args[ 'oiRow' . $item_loop ] = $tmp_product;
-
-				$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation + ( $order->get_item_total( $item, false ) + $order->get_item_tax( $item ) ) * $item['qty'];
-				$item_loop ++;
-
-			endif;
-		endforeach; endif;
+		}
 
 		// Shipping Cost
-		if ( $order->get_total_shipping() > 0 ) :
-
+		if ( $order->get_total_shipping() > 0 ) {
 			$tmp_shipping = 'st;' . '1' . ';' . __( 'Shipping cost', 'woocommerce-gateway-dibs' ) . ';' . $order->get_total_shipping() * 100 . ';' . $order->order_shipping_tax * 100 . ';' . '0';
 
 			$args[ 'oiRow' . $item_loop ] = $tmp_shipping;
 
 			$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation + ( $order->get_total_shipping() + $order->order_shipping_tax );
 			$item_loop ++;
-
-		endif;
+		}
 
 		// Discount
-		if ( $order->get_order_discount() > 0 ) :
-
+		if ( $order->get_order_discount() > 0 ) {
 			$tmp_discount = 'st;' . '1' . ';' . __( 'Discount', 'woocommerce-gateway-dibs' ) . ';' . - number_format( $order->get_order_discount(), 2, '.', '' ) * 100 . ';' . '0' . ';' . '0';
 
 			$args[ 'oiRow' . $item_loop ] = $tmp_discount;
 
 			$payment_gateway_total_cost_calculation = $payment_gateway_total_cost_calculation - $order->get_order_discount();
-
-		endif;
+		}
 
 		// Fees
 		if ( sizeof( $order->get_fees() ) > 0 ) {
 			foreach ( $order->get_fees() as $item ) {
-
 				// We manually calculate the tax percentage here
-				if ( $order->get_total_tax() > 0 ) :
+				if ( $order->get_total_tax() > 0 ) {
 					// Calculate tax percentage
 					$item_tax_percentage = number_format( ( $item['line_tax'] / $item['line_total'] ) * 100, 2, '.', '' );
-				else :
+				} else {
 					$item_tax_percentage = 0.00;
-				endif;
+				}
 
 				// Invoice fee or regular fee
 				if ( $this->invoice_fee_title == $item['name'] ) {
@@ -551,18 +505,12 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 		$formKeyValues = $args;
 		require_once( WC_DIBS_PLUGIN_DIR . 'includes/calculateMac.php' );
 		$logfile = '';
+
 		// Calculate the MAC for the form key-values to be posted to DIBS.
 		$MAC = calculateMac( $formKeyValues, $this->key_hmac, $logfile );
 
 		// Add MAC to the $args array
 		$args['MAC'] = $MAC;
-
-		/*
-		echo '<pre>';
-		print_r($args);
-		echo '</pre>';
-		die();
-		*/
 
 		// Prepare the form
 		$fields  = '';
@@ -614,18 +562,15 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * Cancel order
-	 * We do this since DIBS doesn't like GET parameters in callback and cancel url's
+	 * Cancels an order.
+	 *
+	 * We do this since DIBS doesn't like GET parameters in callback and cancel url's.
 	 *
 	 * @param $posted
 	 */
 	function cancel_order( $posted ) {
-
-		global $woocommerce;
-
 		// Payment Window callback
 		if ( isset( $posted['orderId'] ) && is_numeric( $posted['orderId'] ) ) {
-
 			// Verify HMAC
 			require_once( WC_DIBS_PLUGIN_DIR . 'includes/calculateMac.php' );
 			$logfile = '';
@@ -636,30 +581,26 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			$order = wc_get_order( $order_id );
 
 			if ( $posted['MAC'] == $MAC && $order->id == $order_id && $order->status == 'pending' ) {
-
 				// Cancel the order + restore stock
 				$order->cancel_order( __( 'Order cancelled by customer.', 'woocommerce-gateway-dibs' ) );
 
 				// Message
 				wc_add_notice( __( 'Your order was cancelled.', 'woocommerce-gateway-dibs' ), 'error' );
 			} elseif ( $order->status != 'pending' ) {
-
 				wc_add_notice( __( 'Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'woocommerce-gateway-dibs' ), 'error' );
 			} else {
-
 				wc_add_notice( __( 'Invalid order.', 'woocommerce-gateway-dibs' ), 'error' );
 			}
 
-			wp_safe_redirect( $woocommerce->cart->get_cart_url() );
+			wp_safe_redirect( WC()->cart->get_cart_url() );
 			exit;
 		} // End Payment Window
-
-	} // End function cancel_order()
+	}
 
 	/**
-	 * print_invoice_fee_updater()
-	 * Adds inline javascript in the footer that updates the totals on the checkout form when a payment method is selected.
-	 **/
+	 * Adds inline javascript in the footer that updates the totals on the checkout form
+	 * when a payment method is selected.
+	 */
 	function print_invoice_fee_updater() {
 		if ( is_checkout() && $this->enabled == "yes" && $this->invoice_fee_id > 0 ) {
 			?>
@@ -674,21 +615,33 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs {
 			</script>
 			<?php
 		}
-	} // end print_invoice_fee_updater
+	}
 
-	// Helper function - get Invoice fee id
+	/**
+	 * Helper function, gets invoice fee id.
+	 *
+	 * @return int
+	 */
 	function get_dibs_invoice_fee_product() {
 		return $this->invoice_fee_id;
 	}
 
-	// Helper function - get Invoice fee price
+	/**
+	 * Helper function, gets invoice fee price.
+	 *
+	 * @return int
+	 */
 	function get_dibs_invoice_fee_price() {
 		return $this->invoice_fee_price;
 	}
 
-	// Helper function - get Invoice fee title
+	/**
+	 * Helper function, gets invoice fee title.
+	 *
+	 * @return string
+	 */
 	function get_dibs_invoice_fee_title() {
 		return $this->invoice_fee_title;
 	}
 
-} // End class
+}
