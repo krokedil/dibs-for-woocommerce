@@ -367,7 +367,21 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		);
 
 		// Paytype
-		$paytypes = apply_filters( 'woocommerce_dibs_paytypes', '' );
+		//
+		//
+		//
+		$paytypes = apply_filters( 'woocommerce_dibs_paytypes', 'pbbtest' );
+		$structured_information = '<?xml version="1.0" encoding="UTF-8"?>
+			<orderInformation>
+				<orderItem itemDescription="prod1" itemID="3363" orderRowNumber="1" price="19000" quantity="1" unitCode="pcs" VATPercent="0" />
+			</orderInformation>';
+		$args['structuredOrderInformation'] = esc_attr( $structured_information );
+		$args['deliveryLastName'] = 'Lastname';
+		//
+		//
+		//
+		//
+
 
 		if ( ! empty( $paytypes ) ) {
 			$args['paytype'] = $paytypes;
