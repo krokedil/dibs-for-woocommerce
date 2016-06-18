@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Class WC_Gateway_Dibs_CC
  */
@@ -370,18 +371,45 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		//
 		//
 		//
-		$paytypes = apply_filters( 'woocommerce_dibs_paytypes', 'pbbtest' );
-		$structured_information = '<?xml version="1.0" encoding="UTF-8"?>
-			<orderInformation>
-				<orderItem itemDescription="prod1" itemID="3363" orderRowNumber="1" price="19000" quantity="1" unitCode="pcs" VATPercent="0" />
-			</orderInformation>';
-		$args['structuredOrderInformation'] = esc_attr( $structured_information );
-		$args['deliveryLastName'] = 'Lastname';
-		//
-		//
-		//
-		//
+		$paytypes               = apply_filters( 'woocommerce_dibs_paytypes', 'pbbtest' );
+		$structured_information = '<?xml version="1.0" encoding="UTF-8"?><orderInformation>';
+		$order_items            = $order->get_items( array( 'line_item', 'shipping', 'fee', 'coupon' ) );
+		$order_row              = 1;
+		foreach ( $order_items as $order_item ) {
+			if ( 'line_item' == $order_item['type'] ) {
+				$item_description = $order_item['name'];
+				$item_id          = $order_item['product_id'];
+				$item_price       = (int) ( $order_item['line_total'] * 100 / $order_item['qty'] );
+				$item_quantity    = $order_item['qty'];
+				$item_vat_percent = (int) ( $order_item['line_tax'] / $order_item['line_total'] * 100 );
+				$item_vat_amount  = (int) ( $order_item['line_tax'] * 100 / $order_item['qty'] );
+				$order_row_number = $order_row;
+				$order_row ++;
 
+				$structured_information .= '<orderItem itemDescription="' . $item_description . '" itemID="' . $item_id . '" orderRowNumber="' . $order_row_number . '" price="' . $item_price . '" quantity="' . $item_quantity . '" unitCode="pcs" VATAmount="' . $item_vat_amount . '" />';
+			}
+		}
+
+		// Add shipping
+		if ( $order->get_total_shipping() > 0 ) {
+			$shipping_description = __( 'Shipping', 'woocommerce-gateway-dibs' );
+			$shipping_id          = 'shipping';
+			$shipping_price       = (int) ( $order->get_total_shipping() * 100 );
+			$shipping_quantity    = 1;
+			$shipping_vat_percent = (int) ( $order->get_shipping_tax() / $order->get_total_shipping() * 100 );
+			$shipping_vat_amount  = (int) $order->get_shipping_tax() * 100;
+			$shipping_row_number  = $order_row;
+
+			$structured_information .= '<orderItem itemDescription="' . $shipping_description . '" itemID="' . $shipping_id . '" orderRowNumber="' . $shipping_row_number . '" price="' . $shipping_price . '" quantity="' . $shipping_quantity . '" unitCode="pcs" VATAmount="' . $shipping_vat_amount . '" />';
+		}
+
+		$structured_information .= '</orderInformation>';
+		$args['structuredOrderInformation'] = esc_attr( $structured_information );
+		// $args['deliveryLastName'] = 'Lastname';
+		//
+		//
+		//
+		//
 
 		if ( ! empty( $paytypes ) ) {
 			$args['paytype'] = $paytypes;
@@ -656,7 +684,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		} // End Flexwin callback
 	}
 
-/**
+	/**
 	 * Gets the order ID. Checks to see if Sequential Order Numbers or Sequential Order
 	 * Numbers Pro is enabled and, if yes, use order number set by them.
 	 *
@@ -758,6 +786,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 	/**
 	 * Process a subscription payment.
+	 *
 	 * @param string $order
 	 * @param int $amount
 	 *
@@ -815,7 +844,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		}
 	}
 
-		/**
+	/**
 	 * Update the customer token IDs for a subscription after a customer used the gateway to
 	 * successfully complete the payment for an automatic renewal payment which had previously failed.
 	 *
@@ -906,6 +935,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 	/**
 	 * Checks if order can be refunded via DIBS.
+	 *
 	 * @param $order
 	 *
 	 * @return bool
