@@ -826,7 +826,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			update_post_meta( $order->id, '_transaction_id', $response['transact'] );
 
 			if ( $this->capturenow == 'yes' ) {
-				add_post_meta( $order_id, '_dibs_order_captured', 'yes' );
+				add_post_meta( $order->id, '_dibs_order_captured', 'yes' );
 				$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
 			}
 
