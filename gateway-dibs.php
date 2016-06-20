@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: WooCommerce DIBS FlexWin Gateway
+Plugin Name: DIBS for WooCommerce
 Plugin URI: http://woocommerce.com
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
 Version: 2.2
@@ -22,7 +22,7 @@ Author URI: http://krokedil.com
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-    
+
 */
 
 // Plugin Folder Path
@@ -35,18 +35,7 @@ if ( ! defined( 'WC_DIBS_PLUGIN_URL' ) ) {
 	define( 'WC_DIBS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 
-/**
- * Required functions
- */
-if ( ! function_exists( 'woothemes_queue_update' ) ) {
-	require_once( plugin_dir_path( __FILE__ ) . 'includes/woo-includes/woo-functions.php' );
-}
 require_once( plugin_dir_path( __FILE__ ) . 'includes/class-dibs-extra.php' );
-
-/**
- * Plugin updates
- */
-woothemes_queue_update( plugin_basename( __FILE__ ), 'a76c47dcf644f3ca7264357776c7da58', '18602' );
 
 // Init DIBS Gateway after WooCommerce has loaded
 add_action( 'plugins_loaded', 'init_dibs_gateway', 0 );
@@ -56,7 +45,8 @@ function init_dibs_gateway() {
 	if ( ! class_exists( 'WC_Payment_Gateway' ) ) {
 		return;
 	}
-	
+
+
 	class WC_Gateway_Dibs extends WC_Payment_Gateway {
 
 		public function __construct() {
