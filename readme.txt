@@ -7,6 +7,7 @@ Requires WooCommerce at least: 2.3
 Tested WooCommerce up to: 2.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
+Stable tag: trunk
 
 By Krokedil - http://krokedil.com/
 
