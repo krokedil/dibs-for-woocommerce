@@ -45,9 +45,31 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 		$this->api_password           = ( isset( $this->settings['api_password'] ) ) ? $this->settings['api_password'] : '';
 		$this->testmode               = ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';
 		$this->debug                  = ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
+		$this->invoice_fee_id         = ( isset( $this->settings['invoice_fee_id'] ) ) ? $this->settings['invoice_fee_id'] : '';
 
 		// Apply filters for language
 		$this->dibs_language = apply_filters( 'dibs_language', $this->language );
+
+		// Invoice fee
+		if ( $this->invoice_fee_id == "" ) {
+			$this->invoice_fee_id = 0;
+		}
+		if ( $this->invoice_fee_id > 0 ) {
+			$product = wc_get_product( $this->invoice_fee_id );
+			if ( $product ) {
+				// We manually calculate the tax percentage here
+				$this->invoice_fee_tax_percentage = number_format( ( ( $product->get_price() / $product->get_price_excluding_tax() ) - 1 ) * 100, 2, '.', '' );
+				$this->invoice_fee_price          = $product->get_price();
+				$this->invoice_fee_price_ex_tax   = $product->get_price_excluding_tax();
+				$this->invoice_fee_title          = $product->get_title();
+			} else {
+				$this->invoice_fee_price = 0;
+				$this->invoice_fee_title = '';
+			}
+		} else {
+			$this->invoice_fee_price = 0;
+			$this->invoice_fee_title = '';
+		}
 
 		// Subscription support
 		$this->supports = array(
@@ -210,7 +232,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 				'description' => __( 'Specifies which of the pre-built decorators to use (when using Flexwin as the payment method). This will override the customer specific decorator, if one has been uploaded.', 'woocommerce-gateway-dibs' ),
 				'default'     => 'responsive',
 			),
-			'invoice_fee_id' => array(
+			'invoice_fee_id'           => array(
 				'title'       => __( 'Invoice Fee', 'woocommerce-gateway-dibs' ),
 				'type'        => 'text',
 				'description' => __( 'Create a hidden (simple) product that acts as the invoice fee. Enter the ID number in this textfield. Leave blank to disable. ', 'woocommerce-gateway-dibs' ),
@@ -307,17 +329,17 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 			'currency' => $this->dibs_currency[ $this->selected_currency ],
 		);
 
-		$paytypes = apply_filters( 'woocommerce_dibs_invoice_paytypes', 'pbbtest' );
+		$paytypes = apply_filters( 'woocommerce_dibs_invoice_paytypes', 'pbb,pbbtest,cl_inv,cl_inv_test,cl_ins,cl_instest,sv_inv,sv_invtest,sv_ins,sv_instest,kl_inv,kl_invtest,kl_ins,kl_instest,shb_inv,shb_invtest' );
 
 		if ( ! empty( $paytypes ) ) {
 			$args['paytype'] = $paytypes;
 		}
 
 		// Invoice specific parameters
-		$order_items = $order->get_items( array( 'line_item', 'shipping', 'fee', 'coupon' ) );
-		$order_row   = 1;
+		$order_items            = $order->get_items( array( 'line_item', 'shipping', 'fee', 'coupon' ) );
+		$order_row              = 1;
 		$structured_information = '<?xml version="1.0" encoding="UTF-8"?><orderInformation>';
-		foreach ( $order_items as $order_item ) {
+		foreach ( $order_items as $order_item_key => $order_item ) {
 			if ( 'line_item' == $order_item['type'] ) {
 				$item_description = $order_item['name'];
 				$item_id          = $order_item['product_id'];
@@ -325,6 +347,19 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 				$item_quantity    = $order_item['qty'];
 				$item_vat_percent = (int) ( $order_item['line_tax'] / $order_item['line_total'] * 100 );
 				$item_vat_amount  = (int) ( $order_item['line_tax'] * 100 / $order_item['qty'] );
+				$order_row_number = $order_row;
+				$order_row ++;
+
+				$structured_information .= '<orderItem itemDescription="' . $item_description . '" itemID="' . $item_id . '" orderRowNumber="' . $order_row_number . '" price="' . $item_price . '" quantity="' . $item_quantity . '" unitCode="pcs" VATAmount="' . $item_vat_amount . '" />';
+			}
+
+			if ( 'fee' == $order_item['type'] ) {
+				$item_description = $order_item['name'];
+				$item_id          = 'fee_' . $order_item_key;
+				$item_price       = (int) $order_item['line_total'] * 100;
+				$item_quantity    = 1;
+				$item_vat_percent = (int) ( $order_item['line_tax'] / $order_item['line_total'] * 100 );
+				$item_vat_amount  = (int) $order_item['line_tax'] * 100;
 				$order_row_number = $order_row;
 				$order_row ++;
 
@@ -441,9 +476,9 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 		}
 
 		// Debug
-		if ( $this->debug == 'yes' ) :
+		if ( $this->debug == 'yes' ) {
 			$this->log->add( 'dibs', 'Sending values to DIBS: ' . $tmp_log );
-		endif;
+		}
 
 		wc_enqueue_js( '
 			jQuery("body").block({
