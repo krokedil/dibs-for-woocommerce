@@ -108,6 +108,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 		}
 
 		add_action( 'woocommerce_receipt_dibs_invoice', array( $this, 'receipt_page' ) );
+		add_action( 'wp_print_footer_scripts', array( $this, 'print_invoice_fee_updater' ) );
 	} // End construct
 
 	/**
