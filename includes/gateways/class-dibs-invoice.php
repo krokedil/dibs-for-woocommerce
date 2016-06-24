@@ -210,6 +210,12 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 				'description' => __( 'Specifies which of the pre-built decorators to use (when using Flexwin as the payment method). This will override the customer specific decorator, if one has been uploaded.', 'woocommerce-gateway-dibs' ),
 				'default'     => 'responsive',
 			),
+			'invoice_fee_id' => array(
+				'title'       => __( 'Invoice Fee', 'woocommerce-gateway-dibs' ),
+				'type'        => 'text',
+				'description' => __( 'Create a hidden (simple) product that acts as the invoice fee. Enter the ID number in this textfield. Leave blank to disable. ', 'woocommerce-gateway-dibs' ),
+				'default'     => ''
+			),
 			'api_settings_title'       => array(
 				'title'       => __( 'API Credentials', 'woocommerce-gateway-dibs' ),
 				'type'        => 'title',
