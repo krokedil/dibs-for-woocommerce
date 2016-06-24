@@ -13,6 +13,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		parent::__construct();
 
 		$this->id         = 'dibs';
+		$this->name       = 'DIBS';
 		$this->has_fields = false;
 		$this->log        = new WC_Logger();
 
@@ -367,49 +368,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			'currency' => $this->dibs_currency[ $this->selected_currency ],
 		);
 
-		// Paytype
-		//
-		//
-		//
-		$paytypes               = apply_filters( 'woocommerce_dibs_paytypes', 'pbbtest' );
-		$structured_information = '<?xml version="1.0" encoding="UTF-8"?><orderInformation>';
-		$order_items            = $order->get_items( array( 'line_item', 'shipping', 'fee', 'coupon' ) );
-		$order_row              = 1;
-		foreach ( $order_items as $order_item ) {
-			if ( 'line_item' == $order_item['type'] ) {
-				$item_description = $order_item['name'];
-				$item_id          = $order_item['product_id'];
-				$item_price       = (int) ( $order_item['line_total'] * 100 / $order_item['qty'] );
-				$item_quantity    = $order_item['qty'];
-				$item_vat_percent = (int) ( $order_item['line_tax'] / $order_item['line_total'] * 100 );
-				$item_vat_amount  = (int) ( $order_item['line_tax'] * 100 / $order_item['qty'] );
-				$order_row_number = $order_row;
-				$order_row ++;
-
-				$structured_information .= '<orderItem itemDescription="' . $item_description . '" itemID="' . $item_id . '" orderRowNumber="' . $order_row_number . '" price="' . $item_price . '" quantity="' . $item_quantity . '" unitCode="pcs" VATAmount="' . $item_vat_amount . '" />';
-			}
-		}
-
-		// Add shipping
-		if ( $order->get_total_shipping() > 0 ) {
-			$shipping_description = __( 'Shipping', 'woocommerce-gateway-dibs' );
-			$shipping_id          = 'shipping';
-			$shipping_price       = (int) ( $order->get_total_shipping() * 100 );
-			$shipping_quantity    = 1;
-			$shipping_vat_percent = (int) ( $order->get_shipping_tax() / $order->get_total_shipping() * 100 );
-			$shipping_vat_amount  = (int) $order->get_shipping_tax() * 100;
-			$shipping_row_number  = $order_row;
-
-			$structured_information .= '<orderItem itemDescription="' . $shipping_description . '" itemID="' . $shipping_id . '" orderRowNumber="' . $shipping_row_number . '" price="' . $shipping_price . '" quantity="' . $shipping_quantity . '" unitCode="pcs" VATAmount="' . $shipping_vat_amount . '" />';
-		}
-
-		$structured_information .= '</orderInformation>';
-		$args['structuredOrderInformation'] = esc_attr( $structured_information );
-		// $args['deliveryLastName'] = 'Lastname';
-		//
-		//
-		//
-		//
+		$paytypes = apply_filters( 'woocommerce_dibs_paytypes', 'AAK,ACCEPT,ACK,AKK,AMEX,BHBC,CCK,DAELLS,DIN,DK,VISA,EWORLD,FCC,FCK,FFK,FINX(SE),DISC,FLEGCARD,FSC,GIT,GSC,HEME,HEMP,HEMTX,HMK,HNYBORG,HSC,HTX,IBC,IKEA,ISHBY,JCB,JEM_FIX,KAUPBK,LFBBK,LIC(DK),LIC(SE),LOPLUS,MC,MEDM,MERLIN,MGNGC,MPO_Nets,MPO_EULI,MTRO,MYHC,NSBK,OESBK,Q8SK,REB,SEMCARD,ROEDCEN,S/T,SBSBK,SEB_KOBK,SEBSBK,SHB_KB,SILV_ERHV,SILV_PRIV,STARTOUR,TLK,TUBC,VEKO,VISA,AAL,ABN,AKTIA,BAX,CC,DBSE_A,DNFI_A,DNB,ECRED,ELV,FSB,GIRO_A,HNS,ING,NDB,OKO,P24_A,PAGOC,paypal,RBS,SEB,SEB_AC,SHB,SOLO,SOLOFI,TAP' );
 
 		if ( ! empty( $paytypes ) ) {
 			$args['paytype'] = $paytypes;
@@ -692,7 +651,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 *
 	 * @return mixed|void
 	 */
-	private function get_order_id( $order_number ) {
+	function get_order_id( $order_number ) {
 
 		// Get Order ID by order_number() if the Sequential Order Number plugin is installed
 		if ( class_exists( 'WC_Seq_Order_Number' ) ) {
