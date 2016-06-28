@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Class WC_Gateway_Dibs_CC
  */
@@ -12,6 +13,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		parent::__construct();
 
 		$this->id         = 'dibs';
+		$this->name       = 'DIBS';
 		$this->has_fields = false;
 		$this->log        = new WC_Logger();
 
@@ -366,8 +368,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			'currency' => $this->dibs_currency[ $this->selected_currency ],
 		);
 
-		// Paytype
-		$paytypes = apply_filters( 'woocommerce_dibs_paytypes', '' );
+		$paytypes = apply_filters( 'woocommerce_dibs_paytypes', 'AAK,ACCEPT,ACK,AKK,AMEX,BHBC,CCK,DAELLS,DIN,DK,VISA,EWORLD,FCC,FCK,FFK,FINX(SE),DISC,FLEGCARD,FSC,GIT,GSC,HEME,HEMP,HEMTX,HMK,HNYBORG,HSC,HTX,IBC,IKEA,ISHBY,JCB,JEM_FIX,KAUPBK,LFBBK,LIC(DK),LIC(SE),LOPLUS,MC,MEDM,MERLIN,MGNGC,MPO_Nets,MPO_EULI,MTRO,MYHC,NSBK,OESBK,Q8SK,REB,SEMCARD,ROEDCEN,S/T,SBSBK,SEB_KOBK,SEBSBK,SHB_KB,SILV_ERHV,SILV_PRIV,STARTOUR,TLK,TUBC,VEKO,VISA,AAL,ABN,AKTIA,BAX,CC,DBSE_A,DNFI_A,DNB,ECRED,ELV,FSB,GIRO_A,HNS,ING,NDB,OKO,P24_A,PAGOC,paypal,RBS,SEB,SEB_AC,SHB,SOLO,SOLOFI,TAP' );
 
 		if ( ! empty( $paytypes ) ) {
 			$args['paytype'] = $paytypes;
@@ -642,7 +643,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		} // End Flexwin callback
 	}
 
-/**
+	/**
 	 * Gets the order ID. Checks to see if Sequential Order Numbers or Sequential Order
 	 * Numbers Pro is enabled and, if yes, use order number set by them.
 	 *
@@ -650,7 +651,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 *
 	 * @return mixed|void
 	 */
-	private function get_order_id( $order_number ) {
+	function get_order_id( $order_number ) {
 
 		// Get Order ID by order_number() if the Sequential Order Number plugin is installed
 		if ( class_exists( 'WC_Seq_Order_Number' ) ) {
@@ -744,6 +745,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 	/**
 	 * Process a subscription payment.
+	 *
 	 * @param string $order
 	 * @param int $amount
 	 *
@@ -783,7 +785,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			update_post_meta( $order->id, '_transaction_id', $response['transact'] );
 
 			if ( $this->capturenow == 'yes' ) {
-				add_post_meta( $order_id, '_dibs_order_captured', 'yes' );
+				add_post_meta( $order->id, '_dibs_order_captured', 'yes' );
 				$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
 			}
 
@@ -801,7 +803,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		}
 	}
 
-		/**
+	/**
 	 * Update the customer token IDs for a subscription after a customer used the gateway to
 	 * successfully complete the payment for an automatic renewal payment which had previously failed.
 	 *
@@ -892,6 +894,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 	/**
 	 * Checks if order can be refunded via DIBS.
+	 *
 	 * @param $order
 	 *
 	 * @return bool
