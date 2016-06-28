@@ -1,7 +1,12 @@
 *** DIBS Changelog ***
 
-2016.06.xx		- version 2.2
+2016.06.27		- version 2.2.1
+* Tweak         - Updated readme.txt.
+* Tweak			- Changed plugin main file name for WordPress best practices.
+
+2016.06.27		- version 2.2
 * Tweak         - Removed payment window support.
+* Misc			- Release on wordpress.org.
 
 2016.05.13		- version 2.1.7
 * Tweak			- Added filter 'wc_dibs_get_order_id' in helper function for retrieving order ID (get_order_id) from order number. Useful for third party plugins.
