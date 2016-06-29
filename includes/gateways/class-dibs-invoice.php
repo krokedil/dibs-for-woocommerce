@@ -12,10 +12,11 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 	public function __construct() {
 		parent::__construct();
 
-		$this->id         = 'dibs_invoice';
-		$this->name       = 'DIBS Invoice';
-		$this->has_fields = false;
-		$this->log        = new WC_Logger();
+		$this->id           = 'dibs_invoice';
+		$this->name         = 'DIBS Invoice';
+		$this->method_title = 'DIBS Invoice';
+		$this->has_fields   = false;
+		$this->log          = new WC_Logger();
 
 		$this->flexwin_url = 'https://payment.architrade.com/paymentweb/start.action';
 
