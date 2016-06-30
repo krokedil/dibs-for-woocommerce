@@ -1,0 +1,33 @@
+.license_status span {
+	padding: 10px 20px;
+	color: #fff;
+	font-weight: 700;
+}
+.license_status span.deactivated {
+	background: red;
+}
+.license_status span.activated {
+	background: green;
+}
+.dibs-account-settings-content {
+	width:70%;
+	float:left;
+	box-sizing:border-box;
+}
+.dibs-account-settings-sidebar {
+	width:28%;
+	margin-left:2%;
+	padding:0 0 0 2%;
+	border-left:1px solid #ccc;
+	float:left;
+	box-sizing:border-box;
+}
+.dibs-account-settings:after {
+    content:'';
+    display:block;
+    clear: both;
+}
+.dibs-account-settings h4 {
+	font-size: 1.3em;
+	margin: 1.33em 0 .5em 0;
+}
