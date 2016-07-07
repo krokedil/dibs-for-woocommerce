@@ -50,32 +50,11 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_CC {
 		// Apply filters for language
 		$this->dibs_language = apply_filters( 'dibs_language', $this->language );
 
-		// Subscription support
+		// Supports
 		$this->supports = array(
 			'products',
-			'subscriptions',
-			'subscription_cancellation',
-			'subscription_suspension',
-			'subscription_reactivation',
-			'subscription_amount_changes',
-			'subscription_date_changes',
-			'subscription_payment_method_change_customer',
-			'subscription_payment_method_change_admin',
-			'multiple_subscriptions',
 			'refunds'
 		);
-
-		// Subscriptions
-		if ( class_exists( 'WC_Subscriptions_Order' ) ) {
-			add_action( 'woocommerce_scheduled_subscription_payment_' . $this->id, array(
-				$this,
-				'scheduled_subscription_payment'
-			), 10, 2 );
-			add_action( 'woocommerce_subscriptions_changed_failing_payment_method_' . $this->id, array(
-				$this,
-				'update_failing_payment_method'
-			), 10, 2 );
-		}
 
 		// Actions
 		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
@@ -332,28 +311,15 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_CC {
 			$args['paytype'] = $paytypes;
 		}
 
-		// What kind of payment is this - subscription payment or regular payment
-		if ( class_exists( 'WC_Subscriptions_Order' ) && WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
-			// Subscription payment
-			$args['maketicket'] = '1';
+		
+		// Price
+		$args['amount'] = $order->get_total() * 100;
 
-			if ( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
-				$price = 1;
-			} else {
-				$price = WC_Subscriptions_Order::get_total_initial_payment( $order );
-			}
-
-			// Price
-			$args['amount'] = $price * 100;
-		} else {
-			// Price
-			$args['amount'] = $order->get_total() * 100;
-
-			// Instant capture if selected in settings
-			if ( $this->capturenow == 'yes' ) {
-				$args['capturenow'] = 'yes';
-			}
+		// Instant capture if selected in settings
+		if ( $this->capturenow == 'yes' ) {
+			$args['capturenow'] = 'yes';
 		}
+		
 
 		// Order number
 		$prefix       = 'n°'; // Strip n° (french translation)
