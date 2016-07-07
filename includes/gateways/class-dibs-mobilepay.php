@@ -110,6 +110,30 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_CC {
 
 		add_action( 'woocommerce_receipt_dibs_mobilepay', array( $this, 'receipt_page' ) );
 	} // End construct
+	
+	
+	/**
+	 * Check if this gateway is enabled and available in the user's country
+	 */
+	function is_available() {
+		if ( $this->enabled == "yes" ) {
+			
+			// Required fields check
+			if ( empty( $this->merchant_id ) ) {
+				return false;
+			}
+			// Checkout form check
+			if ( isset( WC()->cart->total ) ) {
+				// Only activate the payment gateway if the customers country is the same as the shop country ($this->dibs_country)
+				if ( WC()->customer->get_country() == true && WC()->customer->get_country() != 'DK' ) {
+					return false;
+				}
+			} // End Checkout form check
+			return true;
+		}
+		return false;
+	}
+
 
 	/**
 	 * Initialise Gateway Settings Form Fields
@@ -283,6 +307,7 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_CC {
 		</table><!--/.form-table-->
 		<?php
 	}
+	
 
 	/**
 	 * Generate the dibs button link
@@ -432,6 +457,27 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_CC {
 				' . $fields . '
 				<input type="submit" class="button-alt" id="submit_dibs_cc_payment_form" value="' . __( 'Pay via dibs', 'woocommerce-gateway-dibs' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'woocommerce-gateway-dibs' ) . '</a>
 			</form>';
+	}
+	
+	/**
+	 * Get gateway icon.
+	 *
+	 * @return string
+	 */
+	public function get_icon() {
+		$icon_html  = '';
+		$icon_src   = '';
+		$icon_width = '';
+		if ( $this->alternative_icon ) {
+			$icon_src   = $this->alternative_icon;
+			$icon_width = $this->alternative_icon_width;
+		} else {
+			$icon_src   = 'https://cdn.dibspayment.com/logo/checkout/single/horiz/DIBS_checkout_single_10.png';
+			$icon_width = '98';
+		}
+		$icon_html = '<img src="' . $icon_src . '" alt="DIBS - Payments made easy" style="max-width:' . $icon_width . 'px"/>';
+
+		return apply_filters( 'wc_dibs_icon_html', $icon_html );
 	}
 
 }
