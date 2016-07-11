@@ -75,15 +75,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 		// Subscription support
 		$this->supports = array(
 			'products',
-			'subscriptions',
-			'subscription_cancellation',
-			'subscription_suspension',
-			'subscription_reactivation',
-			'subscription_amount_changes',
-			'subscription_date_changes',
-			'subscription_payment_method_change_customer',
-			'subscription_payment_method_change_admin',
-			'multiple_subscriptions',
 			'refunds'
 		);
 
