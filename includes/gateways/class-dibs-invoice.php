@@ -78,18 +78,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 			'refunds'
 		);
 
-		// Subscriptions
-		if ( class_exists( 'WC_Subscriptions_Order' ) ) {
-			add_action( 'woocommerce_scheduled_subscription_payment_' . $this->id, array(
-				$this,
-				'scheduled_subscription_payment'
-			), 10, 2 );
-			add_action( 'woocommerce_subscriptions_changed_failing_payment_method_' . $this->id, array(
-				$this,
-				'update_failing_payment_method'
-			), 10, 2 );
-		}
-
 		// Actions
 		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
