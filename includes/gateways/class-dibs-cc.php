@@ -449,10 +449,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			$args['md5key'] = MD5( $key2 . MD5( $key1 . $postvars ) );
 		}
 
-		/*
-		$args['preauth'] = 'true';
-		$args['md5key'] = MD5( $key2 . MD5( $key1 . 'transact=' . get_post_meta( $order_id, '_dibs_transact', true ) . '&preauth=true&currency=' . $currency ) );
-		*/
+		
+		// Check if this is a subscription payment method change.
+		if ( class_exists( 'WC_Subscriptions_Order' ) && 0 == $args['amount'] ) {
+			$args['preauth'] = 'true';
+			$args['amount'] = 1;
+			$args['md5key'] = MD5( $key2 . MD5( $key1 . 'transact=12345678&preauth=true&currency=123' ) );
+			unset($args['md5key']);
+		}
 
 		// Apply filters to the $args array
 		$args = apply_filters( 'dibs_checkout_form', $args, 'dibs_cc', $order );
@@ -534,6 +538,34 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 			// Prepare redirect url
 			$redirect_url = $order->get_checkout_order_received_url();
+			
+			// Subscription payment method change?
+			if( isset( $posted['transact'] )  && 'true' == $posted['preauth'] && '13' == $posted['statuscode'] ) {
+				update_post_meta( $order_id, '_dibs_ticket', $posted['transact'] );
+				$order->add_order_note( sprintf( __( 'Payment method updated. DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['transact'] ) );
+
+				if ( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
+					$subs = wcs_get_subscriptions_for_order( $order, array( 'order_type' => 'parent' ) );
+					foreach ( $subs as $subscription ) {
+						update_post_meta( $subscription->id, '_dibs_ticket', $posted['transact'] );
+
+						// Store card details in the subscription
+						if ( isset( $posted['cardnomask'] ) ) {
+							update_post_meta( $subscription->id, '_dibs_cardnomask', $posted['cardnomask'], true );
+						}
+						if ( isset( $posted['cardprefix'] ) ) {
+							update_post_meta( $subscription->id, '_dibs_cardprefix', $posted['cardprefix'], true );
+						}
+						if ( isset( $posted['cardexpdate'] ) ) {
+							update_post_meta( $subscription->id, '_dibs_cardexpdate', $posted['cardexpdate'], true );
+						}
+					}
+				}
+				$return_url = get_permalink( wc_get_page_id( 'myaccount' ) );
+				wc_add_notice( sprintf( __( 'Your card %s is now stored with DIBS and will be used for future subscription renewal payments.', 'woocommerce-gateway-dibs' ), $posted['cardnomask'] ), 'success' );
+				wp_redirect( $return_url );
+				exit;
+			}
 
 			// Should we add Ticket id? This might be returned in a separate callback
 			if ( isset( $posted['ticket'] ) ) {
@@ -548,13 +580,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 						// Store card details in the subscription
 						if ( isset( $posted['cardnomask'] ) ) {
-							add_post_meta( $subscription->id, '_dibs_cardnomask', $posted['cardnomask'], true );
+							update_post_meta( $subscription->id, '_dibs_cardnomask', $posted['cardnomask'], true );
 						}
 						if ( isset( $posted['cardprefix'] ) ) {
-							add_post_meta( $subscription->id, '_dibs_cardprefix', $posted['cardprefix'], true );
+							update_post_meta( $subscription->id, '_dibs_cardprefix', $posted['cardprefix'], true );
 						}
 						if ( isset( $posted['cardexpdate'] ) ) {
-							add_post_meta( $subscription->id, '_dibs_cardexpdate', $posted['cardexpdate'], true );
+							update_post_meta( $subscription->id, '_dibs_cardexpdate', $posted['cardexpdate'], true );
 						}
 					}
 				}
