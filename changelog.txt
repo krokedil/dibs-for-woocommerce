@@ -1,5 +1,10 @@
 *** DIBS Changelog ***
 
+2016.07.xx		- version 2.3
+* Feature		- Added support for Mobile Pay Online
+* Tweak			- Added support for customer payment method change (WCS 2.0 change).
+* Fix			- Changed to hook 'woocommerce_subscription_failing_payment_method_updated_dibs' for handling updated payment method changes (WCS 2.0 compat). 
+
 2016.06.27		- version 2.2.1
 * Tweak         - Updated readme.txt.
 * Tweak			- Changed plugin main file name for WordPress best practices.
