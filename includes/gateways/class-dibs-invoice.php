@@ -291,6 +291,41 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 		</table><!--/.form-table-->
 		<?php
 	}
+	
+	
+	/**
+	 * Check if this gateway is enabled and available in the user's country
+	 */
+	function is_available() {
+
+		global $woocommerce;
+		if ( $this->enabled == "yes" ) :
+
+			// Base country check
+			if ( ! in_array( get_option( 'woocommerce_default_country' ), array( 'SE', 'NO', 'DK' ) ) ) {
+				return false;
+			}
+
+			// Required fields check
+			if ( empty( $this->merchant_id ) || empty( $this->key_hmac ) ) {
+				return false;
+			}
+
+			// Checkout form check
+			if ( isset( $woocommerce->cart->total ) ) {
+				// Only activate the payment gateway if the customers country is the same as the shop country ($this->dibs_country)
+				if ( $woocommerce->customer->get_country() == true && $woocommerce->customer->get_country() != $this->dibs_country ) {
+					return false;
+				}
+			} // End Checkout form check
+
+			return true;
+
+		endif;
+
+		return false;
+	}
+	
 
 	/**
 	 * Generate the dibs button link
