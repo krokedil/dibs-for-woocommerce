@@ -71,7 +71,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 				$this,
 				'scheduled_subscription_payment'
 			), 10, 2 );
-			add_action( 'woocommerce_subscriptions_changed_failing_payment_method_' . $this->id, array(
+			add_action( 'woocommerce_subscription_failing_payment_method_updated_' . $this->id, array(
 				$this,
 				'update_failing_payment_method'
 			), 10, 2 );
@@ -569,24 +569,24 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 
 			// Should we add Ticket id? This might be returned in a separate callback
 			if ( isset( $posted['ticket'] ) ) {
-				add_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
+				update_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
 				$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
 
 				if ( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
 					$subs = wcs_get_subscriptions_for_order( $order, array( 'order_type' => 'parent' ) );
 					foreach ( $subs as $subscription ) {
-						add_post_meta( $subscription->id, '_dibs_ticket', $posted['ticket'] );
-						add_post_meta( $subscription->id, '_dibs_transact', $posted['transact'] );
+						update_post_meta( $subscription->id, '_dibs_ticket', $posted['ticket'] );
+						update_post_meta( $subscription->id, '_dibs_transact', $posted['transact'] );
 
 						// Store card details in the subscription
 						if ( isset( $posted['cardnomask'] ) ) {
-							update_post_meta( $subscription->id, '_dibs_cardnomask', $posted['cardnomask'], true );
+							update_post_meta( $subscription->id, '_dibs_cardnomask', $posted['cardnomask'] );
 						}
 						if ( isset( $posted['cardprefix'] ) ) {
-							update_post_meta( $subscription->id, '_dibs_cardprefix', $posted['cardprefix'], true );
+							update_post_meta( $subscription->id, '_dibs_cardprefix', $posted['cardprefix'] );
 						}
 						if ( isset( $posted['cardexpdate'] ) ) {
-							update_post_meta( $subscription->id, '_dibs_cardexpdate', $posted['cardexpdate'], true );
+							update_post_meta( $subscription->id, '_dibs_cardexpdate', $posted['cardexpdate'] );
 						}
 					}
 				}
@@ -618,14 +618,14 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 						$order->add_order_note( __( 'DIBS payment completed. DIBS transaction number: ', 'woocommerce-gateway-dibs' ) . $posted['transact'] );
 						// Transaction captured
 						if ( $this->capturenow == 'yes' ) {
-							add_post_meta( $order_id, '_dibs_order_captured', 'yes' );
+							update_post_meta( $order_id, '_dibs_order_captured', 'yes' );
 							$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
 						}
 						// Store Transaction number as post meta
-						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
+						update_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
 
 						if ( isset( $posted['ticket'] ) ) {
-							add_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
+							update_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
 							$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
 						}
 
@@ -635,22 +635,22 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 						// Order completed
 						$order->update_status( 'on-hold', sprintf( __( 'DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'woocommerce-gateway-dibs' ), $posted['transact'] ) );
 						// Store Transaction number as post meta
-						add_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
+						update_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
 
 						if ( isset( $posted['ticket'] ) ) {
-							add_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
+							update_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
 							$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
 						}
 
 						// Store card details
 						if ( isset( $posted['cardnomask'] ) ) {
-							add_post_meta( $order_id, '_dibs_cardnomask', $posted['cardnomask'] );
+							update_post_meta( $order_id, '_dibs_cardnomask', $posted['cardnomask'] );
 						}
 						if ( isset( $posted['cardprefix'] ) ) {
-							add_post_meta( $order_id, '_dibs_cardprefix', $posted['cardprefix'] );
+							update_post_meta( $order_id, '_dibs_cardprefix', $posted['cardprefix'] );
 						}
 						if ( isset( $posted['cardexpdate'] ) ) {
-							add_post_meta( $order_id, '_dibs_cardexpdate', $posted['cardexpdate'] );
+							update_post_meta( $order_id, '_dibs_cardexpdate', $posted['cardexpdate'] );
 						}
 
 						$order->payment_complete( $posted['transact'] );
@@ -837,7 +837,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	}
 
 	/**
-	 * Update the customer token IDs for a subscription after a customer used the gateway to
+	 * Update the customer token IDs for a subscription after a customer used DIBS to
 	 * successfully complete the payment for an automatic renewal payment which had previously failed.
 	 *
 	 * @param $original_order
