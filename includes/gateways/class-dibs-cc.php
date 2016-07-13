@@ -754,6 +754,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @param $order
 	 */
 	function scheduled_subscription_payment( $amount_to_charge, $order ) {
+		// This function may get triggered multiple times because the class is instantiated one time per payment method (card, invoice & mobile pay). Only run it for card payments.
+		// TODO: Restructure the classes so this doesn't happen.
+		if( 'dibs' != $this->id ) {
+			return;
+		}
+		
 		$result = $this->process_subscription_payment( $order, $amount_to_charge );
 
 		if ( false == $result ) {
