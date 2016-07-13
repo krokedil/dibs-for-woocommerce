@@ -1,9 +1,12 @@
 *** DIBS Changelog ***
 
-2016.07.xx		- version 2.3
-* Feature		- Added support for Mobile Pay Online
-* Tweak			- Added support for customer payment method change (WCS 2.0 change).
-* Fix			- Changed to hook 'woocommerce_subscription_failing_payment_method_updated_dibs' for handling updated payment method changes (WCS 2.0 compat). 
+2016.07.13		- version 2.3
+* Feature		- Added support for Mobile Pay Online (for Denmark).
+* Tweak			- Added support for WooCommerce Subscriptions customer payment method change (WCS 2.0 change).
+* Fix			- Changed to hook 'woocommerce_subscription_failing_payment_method_updated_dibs' for handling updated payment method changes (WCS 2.0 compat).
+* Fix			- Changed endpoint for DIBS Authorizations (Subscription renewal payments) to work together with Flexwin.
+* Fix			- Bugfixes after code refactoring (separate is_available() for each payment method, remove subscription support & added separate payment icon for invoice payment).
+* Fix			- Use update_post_meta to avoid duplicate post meta data in orders (mainly for subscription payments).
 
 2016.06.27		- version 2.2.1
 * Tweak         - Updated readme.txt.
