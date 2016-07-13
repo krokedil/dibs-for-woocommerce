@@ -149,7 +149,7 @@ class WC_Gateway_Dibs_Extra {
 					$postvars = 'merchant=' . $merchant_id . '&orderid=' . $order->get_order_number() . '&transact=' . $transact . '&amount=' . $amount;
 					$md5key   = MD5( $key2 . MD5( $key1 . $postvars ) );
 
-					require_once( WC_DIBS_PLUGIN_DIR . 'includes/dibs-subscriptions.php' );
+					require_once( WC_DIBS_PLUGIN_DIR . 'includes/dibs-api-functions.php' );
 
 					// Capture parameters
 					$params = array(

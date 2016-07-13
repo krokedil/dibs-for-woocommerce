@@ -785,7 +785,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 	 * @return bool
 	 */
 	function process_subscription_payment( $order = '', $amount = 0 ) {
-		require_once( WC_DIBS_PLUGIN_DIR . 'includes/dibs-subscriptions.php' );
+		require_once( WC_DIBS_PLUGIN_DIR . 'includes/dibs-api-functions.php' );
 
 		$dibs_ticket = get_post_meta( WC_Subscriptions_Renewal_Order::get_parent_order_id( $order->id ), '_dibs_ticket', true );
 
@@ -881,7 +881,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 			return false;
 		}
 
-		require_once( WC_DIBS_PLUGIN_DIR . 'includes/dibs-subscriptions.php' );
+		require_once( WC_DIBS_PLUGIN_DIR . 'includes/dibs-api-functions.php' );
 
 		$amount_smallest_unit = $amount * 100;
 		$transact             = $order->get_transaction_id();
