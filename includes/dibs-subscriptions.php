@@ -18,7 +18,8 @@ function postToDIBS( $paymentFunction, $params, $send_as_json = true, $username 
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/AuthorizeCard';
 			break;
 		case 'AuthorizeTicket' :
-			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/AuthorizeTicket';
+			//$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/AuthorizeTicket';
+			$postUrl = 'https://payment.architrade.com/cgi-ssl/ticket_auth.cgi';
 			break;
 		case 'CancelTransaction' :
 			$postUrl = 'https://api.dibspayment.com/merchant/v1/JSON/Transaction/CancelTransaction';

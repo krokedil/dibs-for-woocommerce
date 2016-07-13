@@ -794,21 +794,25 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		$md5key               = MD5( $this->key_2 . MD5( $this->key_1 . $postvars ) );
 
 		$params = array(
-			'merchant'  => $this->merchant_id,
-			'ticket'    => $dibs_ticket,
 			'amount'    => $amount_smallest_unit,
 			'currency'  => $order->get_order_currency(),
-			'orderid'   => $order->get_order_number(),
-			'textreply' => 'yes',
-			'test'      => $this->testmode,
 			'md5key'    => $md5key,
-			// 'orderId' 	=> $order->id
+			'merchant'  => $this->merchant_id,
+			'orderid'   => $order->get_order_number(),
+			'test' 		=> $this->testmode,
+			'textreply' => 'yes',
+			'ticket'    => $dibs_ticket,
 		);
 
 		if ( $this->capturenow == 'yes' ) {
 			$params['capturenow'] = 'yes';
 		}
-
+		
+		// Debug
+		if ( $this->debug == 'yes' ) {
+			$this->log->add( 'dibs', 'Process subscription payment params: ' . var_export( $params, true ) );
+		}
+			
 		$response = postToDIBS( 'AuthorizeTicket', $params, false );
 
 		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" || $response['status'] == "ACCEPTED" ) ) {
@@ -831,7 +835,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs {
 		} else {
 			// Payment problem
 			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['reason'] ) );
-
+			
+			// Debug
+			if ( $this->debug == 'yes' ) {
+				$this->log->add( 'dibs', 'DIBS subscription payment failed, received response: ' . var_export( $response, true ) );
+			}
+		
 			return false;
 		}
 	}
