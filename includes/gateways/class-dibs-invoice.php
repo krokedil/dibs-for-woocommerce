@@ -32,7 +32,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 		$this->merchant_id            = ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
 		$this->key_1                  = html_entity_decode( $this->settings['key_1'] );
 		$this->key_2                  = html_entity_decode( $this->settings['key_2'] );
-		$this->key_hmac               = html_entity_decode( $this->settings['key_hmac'] );
 		$this->payment_method         = ( isset( $this->settings['payment_method'] ) ) ? $this->settings['payment_method'] : '';
 		$this->pay_type_cards         = ( isset( $this->settings['pay_type_cards'] ) ) ? $this->settings['pay_type_cards'] : 'yes';
 		$this->pay_type_netbanks      = ( isset( $this->settings['pay_type_netbanks'] ) ) ? $this->settings['pay_type_netbanks'] : 'yes';
@@ -307,7 +306,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
 			}
 
 			// Required fields check
-			if ( empty( $this->merchant_id ) || empty( $this->key_hmac ) ) {
+			if ( empty( $this->merchant_id ) ) {
 				return false;
 			}
 
