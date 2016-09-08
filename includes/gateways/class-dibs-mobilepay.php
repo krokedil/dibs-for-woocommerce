@@ -103,7 +103,7 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_CC {
 			// Checkout form check
 			if ( isset( WC()->cart->total ) ) {
 				// Only activate the payment gateway if the customers country is the same as the shop country ($this->dibs_country)
-				if ( WC()->customer->get_country() == true && WC()->customer->get_country() != 'DK' ) {
+				if ( WC()->customer->get_country() == true && ( WC()->customer->get_country() != 'DK' && WC()->customer->get_country() != 'NO' ) ) {
 					return false;
 				}
 			} // End Checkout form check
