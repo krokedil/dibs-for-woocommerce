@@ -81,7 +81,24 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 			$this,
 			'process_admin_options'
 		) );
+		
+		// Set country based on currency. For DIBS Invoice - available in Sweden, Norway and Denmark
+		switch ( $this->selected_currency ) {
+			case 'NOK' :
+				$this->dibs_country = 'NO';
+				$dibs_language      = 'nb';
+				break;
+			case 'SEK' :
+				$this->dibs_country = 'SE';
+				$dibs_language      = 'sv';
+				break;
+			default:
+				$this->dibs_country = '';
+		}
 
+		// Apply filters for language
+		$this->dibs_language = apply_filters( 'dibs_language', $dibs_language );
+		
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
 		$this->dibs_currency = array(
 			'DKK' => '208', // Danish Kroner
