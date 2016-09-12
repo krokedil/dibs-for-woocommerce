@@ -58,6 +58,9 @@ function init_dibs_gateway() {
 	// Localisation
 	load_plugin_textdomain( 'woocommerce-gateway-dibs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
+	// Include our Dibs factory class
+	require_once( WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-factory.php' );
+	
 	// Include our Dibs credit card class
 	require_once( WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-cc.php' );
 

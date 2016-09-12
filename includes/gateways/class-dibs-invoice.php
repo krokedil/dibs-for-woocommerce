@@ -1,10 +1,8 @@
 <?php
-
-
 /**
  * Class WC_Gateway_Dibs_Invoice
  */
-class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_CC {
+class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 
 	/**
 	 * WC_Gateway_Dibs_Invoice constructor.
