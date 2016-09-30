@@ -14,6 +14,22 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			echo wpautop( wptexturize( $description ) );
 		}
 	}
+	
+	/**
+	 * Process the payment and return the result.
+	 *
+	 * @param int $order_id
+	 *
+	 * @return array
+	 */
+	function process_payment( $order_id ) {
+		$order = wc_get_order( $order_id );
+
+		return array(
+			'result'   => 'success',
+			'redirect' => $order->get_checkout_payment_url( true )
+		);
+	}
 
 	/**
 	 * Process successful payment.

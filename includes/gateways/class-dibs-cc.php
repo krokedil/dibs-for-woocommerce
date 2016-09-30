@@ -313,24 +313,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		return false;
 	}
 
-	
-
-	/**
-	 * Process the payment and return the result.
-	 *
-	 * @param int $order_id
-	 *
-	 * @return array
-	 */
-	function process_payment( $order_id ) {
-		$order = wc_get_order( $order_id );
-
-		return array(
-			'result'   => 'success',
-			'redirect' => $order->get_checkout_payment_url( true )
-		);
-	}
-
 	/**
 	 * Show receipt page.
 	 *
@@ -341,7 +323,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 
 		echo $this->generate_dibs_form( $order );
 	}
-
+	
+	
 	/**
 	 * Generate the dibs button link
 	 *
@@ -465,7 +448,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		if ( $this->debug == 'yes' ) :
 			$this->log->add( 'dibs', 'Sending values to DIBS: ' . $tmp_log );
 		endif;
-
+		
 		wc_enqueue_js( '
 			jQuery("body").block({
 					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce-gateway-dibs' ) ) . '",

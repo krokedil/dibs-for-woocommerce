@@ -76,7 +76,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		);
 
 		// Actions
-		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
+		add_action( 'woocommerce_receipt_dibs_invoice', array( $this, 'receipt_page' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
 			$this,
 			'process_admin_options'
@@ -366,7 +366,17 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		return apply_filters( 'wc_dibs_invoice_icon_html', $icon_html );
 	}
 	
+	/**
+	 * Show receipt page.
+	 *
+	 * @param $order
+	 */
+	function receipt_page( $order ) {
+		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
 
+		echo $this->generate_dibs_form( $order );
+	}
+	
 	/**
 	 * Generate the dibs button link
 	 *
