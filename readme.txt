@@ -2,12 +2,12 @@
 Contributors: krokedil, niklashogefjord, slobodanmanic
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 4.5
+Tested up to: 4.6.1
 Requires WooCommerce at least: 2.3
-Tested WooCommerce up to: 2.6
+Tested WooCommerce up to: 2.6.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 2.3
+Stable tag: 2.3.1
 
 DIBS for WooCommerce is a plugin that extends WooCommerce, allowing you to take payments via DIBS (via the D2/FlexWin platform).
 
@@ -34,6 +34,12 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2016.09.30	- version 2.3.1 =
+* Tweak			- Added MobilePay support for Norway.
+* Tweak			- Code refactoring - added payment gateway factory class.
+* Fix			- Remove key_hmac (old code) to avoid php notices.
+* Fix			- Added missing country and language settings in constructor for invoice payment.
 
 = 2016.07.13	- version 2.3 =
 * Feature		- Added support for Mobile Pay Online (for Denmark).

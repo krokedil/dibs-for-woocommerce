@@ -1,5 +1,11 @@
 *** DIBS Changelog ***
 
+2016.09.30		- version 2.3.1
+* Tweak			- Added MobilePay support for Norway.
+* Tweak			- Code refactoring - added payment gateway factory class.
+* Fix			- Remove key_hmac (old code) to avoid php notices.
+* Fix			- Added missing country and language settings in constructor for invoice payment.
+
 2016.07.13		- version 2.3
 * Feature		- Added support for Mobile Pay Online (for Denmark).
 * Tweak			- Added support for WooCommerce Subscriptions customer payment method change (WCS 2.0 change).
