@@ -24,16 +24,16 @@ class WC_Gateway_Dibs_Admin_Notices {
 	public function check_settings() {
 		add_action( 'admin_notices', array( $this, 'check_old_mp_plugin' ) );
 	}
+	
 	/**
 	 * Check if DIBS D2 MasterPass Gateway for WooCommerce is installed
 	 */
 	public function check_old_mp_plugin() {
 		
-		// Terms page
 		if( is_plugin_active('woocommerce-gateway-dibs-d2-masterpass/woocommerce-gateway-dibs-d2-masterpass.php') ) {
 			echo '<div class="notice notice-error">';
 			echo '<p>' . __( 'MasterPass is now available in the <em>DIBS for WooCommerce</em> extension. Please deactivate <em>	
-DIBS D2 MasterPass Gateway for WooCommerce</em> to avoid issues.', 'woocommerce-gateway-paysoncheckout' ) . '</p>';
+DIBS D2 MasterPass Gateway for WooCommerce</em> to avoid issues.', 'woocommerce-gateway-dibs' ) . '</p>';
 			echo '</div>';
 		}
 	}
