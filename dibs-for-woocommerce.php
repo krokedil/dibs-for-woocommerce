@@ -36,6 +36,7 @@ if ( ! defined( 'WC_DIBS_PLUGIN_URL' ) ) {
 }
 
 require_once( plugin_dir_path( __FILE__ ) . 'includes/class-dibs-extra.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'includes/class-dibs-masterpass-functions.php' );
 
 // Init DIBS Gateway after WooCommerce has loaded
 add_action( 'plugins_loaded', 'init_dibs_gateway', 0 );
@@ -67,8 +68,11 @@ function init_dibs_gateway() {
 	// Include our Dibs Invoice class
 	require_once( WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-invoice.php' );
 
-	// Include our Dibs Invoice class
+	// Include our Dibs Mobile Pay class
 	require_once( WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-mobilepay.php' );
+	
+	// Include our Dibs MasterPass class
+	require_once( WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-masterpass.php' );
 
 	// Check if we should include the Dibs manual modification class
 	if ( defined( 'WC_DIBS_DEBUG' ) && true === WC_DIBS_DEBUG ) {
@@ -84,6 +88,7 @@ function add_dibs_gateway( $methods ) {
 	$methods[] = 'WC_Gateway_Dibs_CC';
 	$methods[] = 'WC_Gateway_Dibs_Invoice';
 	$methods[] = 'WC_Gateway_Dibs_MobilePay';
+	$methods[] = 'WC_Gateway_Dibs_Masterpass';
 
 	return $methods;
 }

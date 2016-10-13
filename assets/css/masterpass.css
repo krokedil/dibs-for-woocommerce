@@ -1,0 +1,53 @@
+.dibs-mp-pp {
+	float: right;
+}
+.dibs-mp-pp:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+.single-product div.product .dibs-mp-pp.variations_button {
+	clear: both;
+	padding-top:5px;
+	padding-bottom: 5px;
+	padding-left: 0;
+	padding-right: 0;
+	border: none;
+	margin: 0;
+}
+.dibs-mp-pp-button {
+	clear: both;
+	padding-top:10px;
+	padding-bottom: 5px;
+}
+.dibs-mp-pp-button button {
+	background-color: transparent;
+    border: none;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0;
+    box-shadow: none;
+}
+.dibs-mp-pp-button button:hover {
+	background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+div.dibs_brand_assets img {
+	border: none;
+	background: transparent;
+}
+.widget_shopping_cart .dibs_brand_assets img {
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.widget_shopping_cart .dibs_brand_assets p {
+	text-align: center;
+	margin-bottom: 0;
+}
+.widget_shopping_cart p.buttons.dibs_brand_assets {
+	line-height: 0.5;
+}
