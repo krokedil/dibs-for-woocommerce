@@ -1,12 +1,13 @@
 <?php
 /**
- *  Class for DIBS Masterpass.
- * @class 		WC_Gateway_Dibs_Masterpass
- * @since		0.9
+ * Class for DIBS MasterPass.
+ * @class 		WC_Gateway_Dibs_MasterPass_New
+ * @			We add New to the class name to avoid errors if someone is using the old MasterPass plugin at the same time.
+ * @since		2.4
  *
  **/
 
-class WC_Gateway_Dibs_Masterpass extends WC_Gateway_Dibs_Factory {
+class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 	
 	public function __construct() {
 		
@@ -391,9 +392,25 @@ class WC_Gateway_Dibs_Masterpass extends WC_Gateway_Dibs_Factory {
 	 * @since 1.0.0
 	 */
 	public function admin_options() {
-
     	?>
     	<h3><?php _e('MasterPass via DIBS', 'woocommerce-gateway-dibs-masterpass'); ?></h3>
+    	<?php 
+		$checkout_page_id = wc_get_page_id( 'checkout' );
+		$checkout_url = '';
+		// Check if there is a checkout page
+		if ( $checkout_page_id ) {
+			// Get the permalink
+			$checkout_url = get_permalink( $checkout_page_id );
+			// Force SSL if needed
+			if ( is_ssl() || 'yes' === get_option( 'woocommerce_force_ssl_checkout' ) ) {
+				$checkout_url = str_replace( 'http:', 'https:', $checkout_url );
+			}
+			// Allow filtering of checkout URL
+			$checkout_url = apply_filters( 'woocommerce_get_checkout_url', $checkout_url );
+			echo '<h4>Callback URL to send to MasterPass</h4>';
+			echo '<p><pre>' . $checkout_url . '</pre></p>';
+		}
+		?>
     	<table class="form-table">
     		<?php
 			// Generate the HTML For the settings form.
@@ -1483,4 +1500,4 @@ class WC_Gateway_Dibs_Masterpass extends WC_Gateway_Dibs_Factory {
 	}
 	
 
-} // End class WC_Gateway_Dibs_Masterpass
+} // End class WC_Gateway_Dibs_MasterPass_New
