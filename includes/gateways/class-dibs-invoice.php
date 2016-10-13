@@ -28,8 +28,8 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		$this->title                  = ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
 		$this->description            = ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
 		$this->merchant_id            = ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
-		$this->key_1                  = html_entity_decode( $this->settings['key_1'] );
-		$this->key_2                  = html_entity_decode( $this->settings['key_2'] );
+		$this->key_1					= ( isset( $this->settings['key_1'] ) ) ? html_entity_decode( $this->settings['key_1'] ) : '';
+		$this->key_2					= ( isset( $this->settings['key_2'] ) ) ? html_entity_decode( $this->settings['key_2'] ) : '';
 		$this->payment_method         = ( isset( $this->settings['payment_method'] ) ) ? $this->settings['payment_method'] : '';
 		$this->pay_type_cards         = ( isset( $this->settings['pay_type_cards'] ) ) ? $this->settings['pay_type_cards'] : 'yes';
 		$this->pay_type_netbanks      = ( isset( $this->settings['pay_type_netbanks'] ) ) ? $this->settings['pay_type_netbanks'] : 'yes';
