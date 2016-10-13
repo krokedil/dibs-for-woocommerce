@@ -37,6 +37,7 @@ if ( ! defined( 'WC_DIBS_PLUGIN_URL' ) ) {
 
 require_once( plugin_dir_path( __FILE__ ) . 'includes/class-dibs-extra.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'includes/class-dibs-masterpass-functions.php' );
+require_once( plugin_dir_path( __FILE__ ) . 'includes/class-dibs-admin-notices.php' );
 
 // Init DIBS Gateway after WooCommerce has loaded
 add_action( 'plugins_loaded', 'init_dibs_gateway', 0 );
