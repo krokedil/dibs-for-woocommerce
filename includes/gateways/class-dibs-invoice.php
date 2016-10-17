@@ -282,7 +282,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		?>
 		<h3><?php _e( 'DIBS Invoice', 'woocommerce-gateway-dibs' ); ?></h3>
 		<p>
-			<?php printf( __( 'Documentation <a href="%s" target="_blank">can be found here</a>.', 'woocommerce-gateway-dibs' ), 'http://docs.woothemes.com/document/dibs/' ); ?>
+			<?php printf( __( 'Documentation <a href="%s" target="_blank">can be found here</a>.', 'woocommerce-gateway-dibs' ), 'http://docs.krokedil.com/documentation/dibs-for-woocommerce/' ); ?>
 		</p>
 		<table class="form-table">
 			<?php
