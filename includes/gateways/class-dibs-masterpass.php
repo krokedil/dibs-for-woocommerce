@@ -407,7 +407,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 			}
 			// Allow filtering of checkout URL
 			$checkout_url = apply_filters( 'woocommerce_get_checkout_url', $checkout_url );
-			echo '<h4>Callback URL to send to MasterPass</h4>';
+			echo '<h4>Callback URL to send to DIBS/MasterPass</h4>';
 			echo '<p><pre>' . $checkout_url . '</pre></p>';
 		}
 		?>
