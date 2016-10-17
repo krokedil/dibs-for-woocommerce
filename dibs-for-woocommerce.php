@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: DIBS for WooCommerce
-Plugin URI: http://woocommerce.com
+Plugin URI: https://krokedil.se/produkt/dibs/
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 2.3.1
+Version: 2.4
 Author: Krokedil
-Author URI: http://krokedil.com
+Author URI: https://krokedil.se
 */
 
 /*  Copyright 2011-2016  Krokedil Produktionsbyrå AB  (email : info@krokedil.se)
@@ -89,7 +89,7 @@ function add_dibs_gateway( $methods ) {
 	$methods[] = 'WC_Gateway_Dibs_CC';
 	$methods[] = 'WC_Gateway_Dibs_Invoice';
 	$methods[] = 'WC_Gateway_Dibs_MobilePay';
-	$methods[] = 'WC_Gateway_Dibs_Masterpass';
+	$methods[] = 'WC_Gateway_Dibs_MasterPass_New';
 
 	return $methods;
 }

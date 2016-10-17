@@ -1,5 +1,11 @@
 *** DIBS Changelog ***
 
+2016.10.17		- version 2.4
+* Feature		- Added support for MasterPass payment method.
+* Tweak			- Added support for sending calcfee as parameter in card payment (http://tech.dibspayment.com/D2/Hosted/Input_parameters/Standard).
+* Tweak			- Added admin notice class to check if the old MasterPass plugin (https://krokedil.se/produkt/dibs-d2-masterpass/) is active. This plugin now replaces the old one.
+* Fix			- PHP notice fix.
+
 2016.09.30		- version 2.3.1
 * Tweak			- Added MobilePay support for Norway.
 * Tweak			- Code refactoring - added payment gateway factory class.
