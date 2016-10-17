@@ -25,24 +25,25 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		$this->init_settings();
 
 		// Define user set variables
-		$this->title                  = ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
-		$this->description            = ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
-		$this->merchant_id            = ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
-		$this->key_1                  = html_entity_decode( $this->settings['key_1'] );
-		$this->key_2                  = html_entity_decode( $this->settings['key_2'] );
-		$this->payment_method         = ( isset( $this->settings['payment_method'] ) ) ? $this->settings['payment_method'] : '';
-		$this->pay_type_cards         = ( isset( $this->settings['pay_type_cards'] ) ) ? $this->settings['pay_type_cards'] : 'yes';
-		$this->pay_type_netbanks      = ( isset( $this->settings['pay_type_netbanks'] ) ) ? $this->settings['pay_type_netbanks'] : 'yes';
-		$this->pay_type_paypal        = ( isset( $this->settings['pay_type_paypal'] ) ) ? $this->settings['pay_type_paypal'] : '';
-		$this->capturenow             = ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';
-		$this->decorator              = ( isset( $this->settings['decorator'] ) ) ? $this->settings['decorator'] : '';
-		$this->language               = ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
-		$this->alternative_icon       = ( isset( $this->settings['alternative_icon'] ) ) ? $this->settings['alternative_icon'] : '';
-		$this->alternative_icon_width = ( isset( $this->settings['alternative_icon_width'] ) ) ? $this->settings['alternative_icon_width'] : '';
-		$this->api_username           = ( isset( $this->settings['api_username'] ) ) ? $this->settings['api_username'] : '';
-		$this->api_password           = ( isset( $this->settings['api_password'] ) ) ? $this->settings['api_password'] : '';
-		$this->testmode               = ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';
-		$this->debug                  = ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
+		$this->title					= ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
+		$this->description				= ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
+		$this->merchant_id				= ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
+		$this->key_1					= html_entity_decode( $this->settings['key_1'] );
+		$this->key_2					= html_entity_decode( $this->settings['key_2'] );
+		$this->payment_method			= ( isset( $this->settings['payment_method'] ) ) ? $this->settings['payment_method'] : '';
+		$this->pay_type_cards			= ( isset( $this->settings['pay_type_cards'] ) ) ? $this->settings['pay_type_cards'] : 'yes';
+		$this->pay_type_netbanks		= ( isset( $this->settings['pay_type_netbanks'] ) ) ? $this->settings['pay_type_netbanks'] : 'yes';
+		$this->pay_type_paypal			= ( isset( $this->settings['pay_type_paypal'] ) ) ? $this->settings['pay_type_paypal'] : '';
+		$this->capturenow				= ( isset( $this->settings['capturenow'] ) ) ? $this->settings['capturenow'] : '';
+		$this->decorator				= ( isset( $this->settings['decorator'] ) ) ? $this->settings['decorator'] : '';
+		$this->calcfee               	= ( isset( $this->settings['calcfee'] ) ) ? $this->settings['calcfee'] : '';
+		$this->language					= ( isset( $this->settings['language'] ) ) ? $this->settings['language'] : '';
+		$this->alternative_icon			= ( isset( $this->settings['alternative_icon'] ) ) ? $this->settings['alternative_icon'] : '';
+		$this->alternative_icon_width	= ( isset( $this->settings['alternative_icon_width'] ) ) ? $this->settings['alternative_icon_width'] : '';
+		$this->api_username				= ( isset( $this->settings['api_username'] ) ) ? $this->settings['api_username'] : '';
+		$this->api_password				= ( isset( $this->settings['api_password'] ) ) ? $this->settings['api_password'] : '';
+		$this->testmode					= ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';
+		$this->debug					= ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
 
 		// Apply filters for language
 		$this->dibs_language = apply_filters( 'dibs_language', $this->language );
@@ -191,6 +192,12 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 				),
 				'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account.', 'woocommerce-gateway-dibs' ),
 				'default'     => 'no'
+			),
+			'calcfee'                 => array(
+				'title'   => __( 'Calcfee', 'woocommerce-gateway-dibs' ),
+				'type'    => 'checkbox',
+				'label'   => __( 'If this box is checked, the charge from the acquirer due to the transaction will automatically be calculated and affixed. NOTE: To use this parameter you need to contact DIBS Support with the fees you have at your acquirer, as they need to be entered into their system.', 'woocommerce-gateway-dibs' ),
+				'default' => 'yes'
 			),
 			'decorator'                => array(
 				'title'       => __( 'Decorator', 'woocommerce-gateway-dibs' ),
@@ -398,8 +405,13 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		$args['cancelurl']   = trailingslashit( site_url( '/woocommerce/dibscancel' ) );
 
 		// Testmode
-		if ( $this->testmode == 'yes' ) {
+		if ( 'yes' == $this->testmode ) {
 			$args['test'] = 'yes';
+		}
+		
+		// Calcfee
+		if ( 'yes' == $this->calcfee ) {
+			$args['calcfee'] = 'yes';
 		}
 
 		// IP
