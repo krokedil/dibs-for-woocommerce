@@ -196,8 +196,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			'calcfee'                 => array(
 				'title'   => __( 'Calcfee', 'woocommerce-gateway-dibs' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'If this box is checked, the charge from the acquirer due to the transaction will automatically be calculated and affixed. NOTE: To use this parameter you need to contact DIBS Support with the fees you have at your acquirer, as they need to be entered into their system.', 'woocommerce-gateway-dibs' ),
-				'default' => 'yes'
+				'label'   => __( 'If this box is checked, the charge from the acquirer due to the transaction will automatically be calculated and affixed.', 'woocommerce-gateway-dibs' ),
+				'description' => __( 'NOTE: To use this parameter you need to contact DIBS Support with the fees you have at your acquirer, as they need to be entered into their system.', 'woocommerce-gateway-dibs' ),
+				'default' => 'no'
 			),
 			'decorator'                => array(
 				'title'       => __( 'Decorator', 'woocommerce-gateway-dibs' ),
