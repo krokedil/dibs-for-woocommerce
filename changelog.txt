@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2016.10.19		- version 2.4.1
+* Fix			- Fixed fatal error when trying to instantiate WC_Gateway_Dibs_MasterPass in WC_Gateway_Dibs_MasterPass_Functions class.
+
 2016.10.17		- version 2.4
 * Feature		- Added support for MasterPass payment method.
 * Tweak			- Added support for sending calcfee as parameter in card payment (http://tech.dibspayment.com/D2/Hosted/Input_parameters/Standard).

@@ -3,11 +3,11 @@ Contributors: krokedil, niklashogefjord, slobodanmanic
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
 Tested up to: 4.6.1
-Requires WooCommerce at least: 2.3
+Requires WooCommerce at least: 2.4
 Tested WooCommerce up to: 2.6.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 2.3.1
+Stable tag: 2.4.1
 
 DIBS for WooCommerce is a plugin that extends WooCommerce, allowing you to take payments via DIBS (via the D2/FlexWin platform).
 
@@ -18,8 +18,23 @@ DIBS Payment Services is a leading Scandinavian online payment service provider.
 
 To get started with DIBS you will need an agreement with DIBS as well as your acquiring bank. Visit [DIBS](http://www.dibspayment.com/) website for more information.
 
-When the order goes through, the user is taken to DIBS to make a secure payment. No SSL certificate is required on your site (even though it's strongly recommended). After payment the user is taken back to your thank you page.
+= How does it work? =
+* When an order is placed, the customer is taken to DIBS to make a secure payment.
+* After the customer completes their payment the order is confirmed and the user is taken to the thank you page on your site.
+* Because DIBS handle the payment process for you, no SSL certificate is required (but recommended) on your site.
 
+= Multiple payment methods available =
+The extension comes with the following payment methods that can be activated/deactivated individually:
+
+* Card payment.
+* Invoice payment (via Afterpay/Arvato).
+* MobilePay Online (DK & NO).
+* MasterPass.
+
+= Subscription support =
+The payment gateway also support recurring payments (with the card payment method) via the [WooCommerce Subscriptions](http://woocommerce.com/products/woocommerce-subscriptions/) extension.
+
+= Get started =
 More information on how to get started can be found in the [plugin documentation](http://docs.krokedil.com/documentation/dibs-for-woocommerce/).
 
 
@@ -34,6 +49,15 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2016.10.19	- version 2.4.1 =
+* Fix			- Fixed fatal error when trying to instantiate WC_Gateway_Dibs_MasterPass in WC_Gateway_Dibs_MasterPass_Functions class.
+
+= 2016.10.17	- version 2.4 =
+* Feature		- Added support for MasterPass payment method.
+* Tweak			- Added support for sending calcfee as parameter in card payment (http://tech.dibspayment.com/D2/Hosted/Input_parameters/Standard).
+* Tweak			- Added admin notice class to check if the old MasterPass plugin (https://krokedil.se/produkt/dibs-d2-masterpass/) is active. This plugin now replaces the old one.
+* Fix			- PHP notice fix.
 
 = 2016.09.30	- version 2.3.1 =
 * Tweak			- Added MobilePay support for Norway.

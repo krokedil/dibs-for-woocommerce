@@ -3,7 +3,7 @@
 Plugin Name: DIBS for WooCommerce
 Plugin URI: https://krokedil.se/produkt/dibs/
 Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 2.4
+Version: 2.4.1
 Author: Krokedil
 Author URI: https://krokedil.se
 */
