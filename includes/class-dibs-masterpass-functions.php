@@ -129,7 +129,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 	function check_mp_purchase_from_product_page() {
 		
 		if ( isset($_POST['mp_from_product_page']) && '1' == woocommerce_clean($_POST['mp_from_product_page']) ) {
-			$callback = new WC_Gateway_Dibs_Masterpass;
+			$callback = new WC_Gateway_Dibs_MasterPass_New;
 			$callback->single_masterpass_button_mpinit();
 		}
 
@@ -142,7 +142,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 	function check_mp_purchase_from_cart_page() {
 		
 		if ( isset($_GET['mp_from_cart_page']) && '1' == woocommerce_clean($_GET['mp_from_cart_page']) ) {
-			$callback = new WC_Gateway_Dibs_Masterpass;
+			$callback = new WC_Gateway_Dibs_MasterPass_New;
 			$callback->cart_masterpass_button_mpinit();
 		}
 
@@ -155,7 +155,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 	function check_mp_purchase_from_cart_widget() {
 		
 		if ( isset($_GET['mp_from_cart_widget']) && '1' == woocommerce_clean($_GET['mp_from_cart_widget']) ) {
-			$callback = new WC_Gateway_Dibs_Masterpass;
+			$callback = new WC_Gateway_Dibs_MasterPass_New;
 			$callback->cart_masterpass_button_mpinit();
 		}
 
@@ -243,7 +243,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 
 		// Check if order was created using a DIBS payment method
 		if ( 'dibs_masterpass' == $order_payment_method ) {
-			$callback = new WC_Gateway_Dibs_Masterpass;
+			$callback = new WC_Gateway_Dibs_MasterPass_New;
 		// } elseif ( 'dibs_account_invoice' == $order_payment_method ) {
 			// $callback = new WC_Gateway_Dibs_Account_Invoice;
 		} else {
