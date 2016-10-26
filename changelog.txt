@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2016.10.26		- version 2.4.2
+* Fix			- Get DIBS ticket number from subscription in process_subscription_payment if it isn't stored in parent order (might happen if customer have changed/updated their card).
+
 2016.10.19		- version 2.4.1
 * Fix			- Fixed fatal error when trying to instantiate WC_Gateway_Dibs_MasterPass in WC_Gateway_Dibs_MasterPass_Functions class.
 
