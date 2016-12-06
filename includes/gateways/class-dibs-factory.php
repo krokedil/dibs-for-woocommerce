@@ -90,7 +90,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			if ( isset( $posted['ticket'] ) ) {
 				update_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
 				$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
-
+				
 				if ( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
 					$subs = wcs_get_subscriptions_for_order( $order, array( 'order_type' => 'parent' ) );
 					foreach ( $subs as $subscription ) {

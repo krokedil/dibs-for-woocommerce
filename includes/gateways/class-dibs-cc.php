@@ -362,7 +362,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			$args['maketicket'] = '1';
 
 			if ( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
-				$price = 1;
+				$price = 0;
 			} else {
 				$price = WC_Subscriptions_Order::get_total_initial_payment( $order );
 			}
@@ -436,7 +436,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		}
 
 		
-		// Check if this is a subscription payment method change.
+		// Check if this is a subscription payment method change or the subscription contains a free trial period.
 		if ( class_exists( 'WC_Subscriptions_Order' ) && 0 == $args['amount'] ) {
 			$args['preauth'] = 'true';
 			$args['amount'] = 1;
