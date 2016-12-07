@@ -358,18 +358,20 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 
 		// What kind of payment is this - subscription payment or regular payment
 		if ( class_exists( 'WC_Subscriptions_Order' ) && WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
-			// Subscription payment
-			$args['maketicket'] = '1';
 
 			if ( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
 				$price = 0;
 			} else {
 				$price = WC_Subscriptions_Order::get_total_initial_payment( $order );
+				// Subscription payment
+				$args['maketicket'] = '1';
 			}
 
 			// Price
 			$args['amount'] = $price * 100;
+			
 		} else {
+			
 			// Price
 			$args['amount'] = $order->get_total() * 100;
 
