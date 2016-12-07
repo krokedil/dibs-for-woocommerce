@@ -64,10 +64,26 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			// Prepare redirect url
 			$redirect_url = $order->get_checkout_order_received_url();
 			
-			// Subscription payment method change?
+			// Subscription payment method change or new subscription with a free trial
 			if( isset( $posted['transact'] )  && 'true' == $posted['preauth'] && '13' == $posted['statuscode'] ) {
 				update_post_meta( $order_id, '_dibs_ticket', $posted['transact'] );
-				$order->add_order_note( sprintf( __( 'Payment method updated. DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['transact'] ) );
+				
+				// 
+				if( wcs_order_contains_subscription($order_id) ) {
+					
+					// New subscription but with a free trial. 
+					// Multiple callbacks are sent from DIBS. Don't add an order note if we already have done this
+					if ( $order->status !== 'completed' || $order->status !== 'processing' ) {
+						$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['transact'] ) );
+						$order->payment_complete( $posted['transact'] );
+					}
+					
+				} else {
+					// Payment method change
+					$order->add_order_note( sprintf( __( 'Payment method updated. DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['transact'] ) );
+					wc_add_notice( sprintf( __( 'Your card %s is now stored with DIBS and will be used for future subscription renewal payments.', 'woocommerce-gateway-dibs' ), $posted['cardnomask'] ), 'success' );
+				}
+				
 
 				// Store card details in the subscription
 				if ( isset( $posted['cardnomask'] ) ) {
@@ -81,7 +97,6 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 				}
 				
 				$return_url = get_permalink( wc_get_page_id( 'myaccount' ) );
-				wc_add_notice( sprintf( __( 'Your card %s is now stored with DIBS and will be used for future subscription renewal payments.', 'woocommerce-gateway-dibs' ), $posted['cardnomask'] ), 'success' );
 				wp_redirect( $return_url );
 				exit;
 			}
@@ -90,7 +105,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			if ( isset( $posted['ticket'] ) ) {
 				update_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
 				$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
-				
+
 				if ( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
 					$subs = wcs_get_subscriptions_for_order( $order, array( 'order_type' => 'parent' ) );
 					foreach ( $subs as $subscription ) {
