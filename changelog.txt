@@ -1,5 +1,9 @@
 *** DIBS Changelog ***
 
+2016.12.07		- version 2.4.3
+* Tweak			- Added possibility to send payment window language to DIBS based on current site language in WP.
+* Fix			- Make a real pre-athorization in DIBS when subscription signup contains a free trial. Previously 1 kr was charged.
+
 2016.10.26		- version 2.4.2
 * Fix			- Get DIBS ticket number from subscription in process_subscription_payment if it isn't stored in parent order (might happen if customer have changed/updated their card).
 

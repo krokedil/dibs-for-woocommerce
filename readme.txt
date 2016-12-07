@@ -2,12 +2,12 @@
 Contributors: krokedil, niklashogefjord, slobodanmanic
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 4.6.1
+Tested up to: 4.7
 Requires WooCommerce at least: 2.4
-Tested WooCommerce up to: 2.6.4
+Tested WooCommerce up to: 2.6.8
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 2.4.2
+Stable tag: 2.4.3
 
 DIBS for WooCommerce is a plugin that extends WooCommerce, allowing you to take payments via DIBS (via the D2/FlexWin platform).
 
@@ -49,6 +49,10 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2016.12.07	- version 2.4.3 =
+* Tweak			- Added possibility to send payment window language to DIBS based on current site language in WP.
+* Fix			- Make a real pre-athorization in DIBS when subscription signup contains a free trial. Previously 1 kr was charged.
 
 = 2016.10.26	- version 2.4.2 =
 * Fix			- Get DIBS ticket number from subscription in process_subscription_payment if it isn't stored in parent order (might happen if customer have changed/updated their card).
