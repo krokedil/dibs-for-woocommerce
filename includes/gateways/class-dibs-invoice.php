@@ -173,6 +173,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 				'title'       => __( 'Language', 'woocommerce-gateway-dibs' ),
 				'type'        => 'select',
 				'options'     => array(
+					'wp' => 'WordPress site Language',
 					'en' => 'English',
 					'da' => 'Danish',
 					'de' => 'German',
@@ -482,7 +483,13 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		$args['orderid'] = ltrim( $tmp_order_id, '#' ); // Strip #
 
 		// Language
-		$args['lang'] = $this->dibs_language;
+		if( 'wp' == $this->dibs_language) {
+			// Get ISO language code
+			$iso_code = explode('_', get_locale());
+			$args['lang'] = $iso_code[0];
+		} else {
+			$args['lang'] = $this->dibs_language;
+		}
 
 		// Layout
 		if ( ! empty( $this->decorator ) ) {
