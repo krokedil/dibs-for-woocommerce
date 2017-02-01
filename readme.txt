@@ -1,5 +1,5 @@
 === DIBS for WooCommerce ===
-Contributors: krokedil, niklashogefjord, slobodanmanic
+Contributors: krokedil, niklashogefjord, slobodanmanic, boozebrorsan
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
 Tested up to: 4.7
@@ -49,6 +49,9 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2017.02.02	- version 2.4.4
+* Fix			- Makes the plugin translatable through WordPress.org (https://translate.wordpress.org/projects/wp-plugins/dibs-for-woocommerce).
 
 = 2016.12.07	- version 2.4.3 =
 * Tweak			- Added possibility to send payment window language to DIBS based on current site language in WP.

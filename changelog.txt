@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2017.02.02		- version 2.4.4
+* Fix			- Makes the plugin translatable through WordPress.org (https://translate.wordpress.org/projects/wp-plugins/dibs-for-woocommerce).
+
 2016.12.07		- version 2.4.3
 * Tweak			- Added possibility to send payment window language to DIBS based on current site language in WP.
 * Fix			- Make a real pre-athorization in DIBS when subscription signup contains a free trial. Previously 1 kr was charged.

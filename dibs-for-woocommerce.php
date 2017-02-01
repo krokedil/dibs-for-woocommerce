@@ -1,11 +1,13 @@
 <?php
 /*
-Plugin Name: DIBS for WooCommerce
-Plugin URI: https://krokedil.se/produkt/dibs/
-Description: Extends WooCommerce. Provides a <a href="http://www.http://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
-Version: 2.4.3
-Author: Krokedil
-Author URI: https://krokedil.se
+ * Plugin Name: DIBS for WooCommerce
+ * Plugin URI: https://krokedil.se/produkt/dibs/
+ * Description: Extends WooCommerce. Provides a <a href="https://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
+ * Version: 2.4.4
+ * Author: Krokedil
+ * Author URI: https://krokedil.se
+ * Text Domain: woocommerce-gateway-dibs
+ * Domain Path: /languages
 */
 
 /*  Copyright 2011-2016  Krokedil Produktionsbyrå AB  (email : info@krokedil.se)
