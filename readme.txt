@@ -7,7 +7,7 @@ Requires WooCommerce at least: 2.4
 Tested WooCommerce up to: 2.6.8
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 2.4.3
+Stable tag: 2.4.4
 
 DIBS for WooCommerce is a plugin that extends WooCommerce, allowing you to take payments via DIBS (via the D2/FlexWin platform).
 
