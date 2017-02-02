@@ -18,7 +18,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 		$this->order_button_text  	= $this->get_order_button_text();
         $this->has_fields 			= false;
         $this->log 					= new WC_Logger();
-        $this->method_title 		= __('MasterPass', 'woocommerce-gateway-dibs-masterpass');
+        $this->method_title 		= __('MasterPass', 'dibs-for-woocommerce');
         
 		
 		// Load the form fields.
@@ -97,7 +97,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 			if ( WC()->session->get( 'dibs_wallet_mp_validate_respons' ) ) {
 				return __( 'Place order', 'woocommerce' );
 			} else {
-				return __( 'Proceed to MasterPass', 'woocommerce-gateway-dibs-masterpass' );
+				return __( 'Proceed to MasterPass', 'dibs-for-woocommerce' );
 			}
 		}
 	}
@@ -204,171 +204,171 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
     
     	$this->form_fields = array(
 			'enabled' => array(
-							'title' => __( 'Enable/Disable', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Enable/Disable', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable MasterPass', 'woocommerce-gateway-dibs-masterpass' ), 
+							'label' => __( 'Enable MasterPass', 'dibs-for-woocommerce' ), 
 							'default' => 'yes'
 						),
 			'title' => array(
-							'title' => __( 'Title', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Title', 'dibs-for-woocommerce' ), 
 							'type' => 'text', 
-							'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-gateway-dibs-masterpass' ), 
-							'default' => __( 'MasterPass', 'woocommerce-gateway-dibs-masterpass' )
+							'description' => __( 'This controls the title which the user sees during checkout.', 'dibs-for-woocommerce' ), 
+							'default' => __( 'MasterPass', 'dibs-for-woocommerce' )
 						),
 			'description' => array(
-							'title' => __( 'Description', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Description', 'dibs-for-woocommerce' ), 
 							'type' => 'textarea', 
-							'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-gateway-dibs-masterpass' ), 
-							'default' => __("Buy with MasterPass.", 'woocommerce-gateway-dibs-masterpass')
+							'description' => __( 'This controls the description which the user sees during checkout.', 'dibs-for-woocommerce' ), 
+							'default' => __("Buy with MasterPass.", 'dibs-for-woocommerce')
 						),
 			'merchant_id' => array(
-							'title' => __( 'Merchant ID', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Merchant ID', 'dibs-for-woocommerce' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS MasterPass Merchant ID.', 'woocommerce-gateway-dibs-masterpass' ), 
+							'description' => __( 'Please enter your DIBS MasterPass Merchant ID.', 'dibs-for-woocommerce' ), 
 							'default' => ''
 						),
 			'key_hmac' => array(
-							'title' => __( 'HMAC Key (k)', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'HMAC Key (k)', 'dibs-for-woocommerce' ), 
 							'type' => 'text', 
-							'description' => __( 'Please enter your DIBS HMAC Key (k).', 'woocommerce-gateway-dibs-masterpass' ), 
+							'description' => __( 'Please enter your DIBS HMAC Key (k).', 'dibs-for-woocommerce' ), 
 							'default' => ''
 						),
 			'key_1' => array(
-							'title'       => __( 'MD5 k1', 'woocommerce-gateway-dibs-masterpass' ),
+							'title'       => __( 'MD5 k1', 'dibs-for-woocommerce' ),
 							'type'        => 'text',
-							'description' => __( 'Please enter your DIBS MD5 k1; this is only needed when processing refunds via DIBS.', 'woocommerce-gateway-dibs-masterpass' ),
+							'description' => __( 'Please enter your DIBS MD5 k1; this is only needed when processing refunds via DIBS.', 'dibs-for-woocommerce' ),
 							'default'     => '',
-							'placeholder' => __( 'Optional', 'woocommerce-gateway-dibs-masterpass' )
+							'placeholder' => __( 'Optional', 'dibs-for-woocommerce' )
 						),
 			'key_2'	=> array(
-							'title'       => __( 'MD5 k2', 'woocommerce-gateway-dibs-masterpass' ),
+							'title'       => __( 'MD5 k2', 'dibs-for-woocommerce' ),
 							'type'        => 'text',
-							'description' => __( 'Please enter your DIBS MD5 k2; this is only needed when processing refunds via DIBS.', 'woocommerce-gateway-dibs-masterpass' ),
+							'description' => __( 'Please enter your DIBS MD5 k2; this is only needed when processing refunds via DIBS.', 'dibs-for-woocommerce' ),
 							'default'     => '',
-							'placeholder' => __( 'Optional', 'woocommerce-gateway-dibs-masterpass' )
+							'placeholder' => __( 'Optional', 'dibs-for-woocommerce' )
 						),
 			'section_cards' => array(
-							'title'       => __( 'Active Cards', 'woocommerce-gateway-dibs-masterpass' ),
+							'title'       => __( 'Active Cards', 'dibs-for-woocommerce' ),
 							'type'        => 'title',
 							'description' => '',
 						),
 			'card_visa' => array(
-							'title' => __( 'Visa', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Visa', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable payment with Visa', 'woocommerce-gateway-dibs-masterpass' ), 
+							'label' => __( 'Enable payment with Visa', 'dibs-for-woocommerce' ), 
 							'default' => 'yes'
 						),
 			'card_mastercard' => array(
-							'title' => __( 'MasterCard', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'MasterCard', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable payment with MasterCard', 'woocommerce-gateway-dibs-masterpass' ), 
+							'label' => __( 'Enable payment with MasterCard', 'dibs-for-woocommerce' ), 
 							'default' => 'yes'
 						),
 			'card_amex' => array(
-							'title' => __( 'Amex', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Amex', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable payment with Amex', 'woocommerce-gateway-dibs-masterpass' ), 
+							'label' => __( 'Enable payment with Amex', 'dibs-for-woocommerce' ), 
 							'default' => 'no'
 						),
 			'card_diners' => array(
-							'title' => __( 'Diners', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Diners', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable payment with Diners', 'woocommerce-gateway-dibs-masterpass' ), 
+							'label' => __( 'Enable payment with Diners', 'dibs-for-woocommerce' ), 
 							'default' => 'no'
 						),
 			'card_maestro' => array(
-							'title' => __( 'Maestro', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Maestro', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable payment with Maestro', 'woocommerce-gateway-dibs-masterpass' ), 
+							'label' => __( 'Enable payment with Maestro', 'dibs-for-woocommerce' ), 
 							'default' => 'no'
 						),
 			'section_buttons' => array(
-							'title'       => __( 'Display MasterPass Button', 'woocommerce-gateway-dibs-masterpass' ),
+							'title'       => __( 'Display MasterPass Button', 'dibs-for-woocommerce' ),
 							'type'        => 'title',
 							'description' => '',
 						),
 			'display_cart_page_button' => array(
-							'title' => __( 'Display on cart page', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Display on cart page', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Display MasterPass buy button on cart page.', 'woocommerce-gateway-dibs-masterpass' ), 
+							'label' => __( 'Display MasterPass buy button on cart page.', 'dibs-for-woocommerce' ), 
 							'default' => 'yes'
 						),
 			'display_cart_page_button_img' => array(
-							'title' => __( 'Image width', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Image width', 'dibs-for-woocommerce' ), 
 							'type' => 'text', 
-							'description' => __( 'The width of the cart page buy button.', 'woocommerce-gateway-dibs-masterpass' ), 
+							'description' => __( 'The width of the cart page buy button.', 'dibs-for-woocommerce' ), 
 							'default' => '185'
 						),
 			'display_pp_button' => array(
-							'title' => __( 'Display on product page', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Display on product page', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Display MasterPass buy button on product pages.', 'woocommerce-gateway-dibs-masterpass' ), 
+							'label' => __( 'Display MasterPass buy button on product pages.', 'dibs-for-woocommerce' ), 
 							'default' => 'no'
 						),
 			'display_pp_button_img' => array(
-							'title' => __( 'Image width', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Image width', 'dibs-for-woocommerce' ), 
 							'type' => 'text', 
-							'description' => __( 'The width of the Product page buy button.', 'woocommerce-gateway-dibs-masterpass' ), 
+							'description' => __( 'The width of the Product page buy button.', 'dibs-for-woocommerce' ), 
 							'default' => '125'
 						),
 			'display_cart_widget_button' => array(
-							'title' => __( 'Display in cart widget', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Display in cart widget', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Display MasterPass buy button in cart widget.', 'woocommerce-gateway-dibs-masterpass' ), 
+							'label' => __( 'Display MasterPass buy button in cart widget.', 'dibs-for-woocommerce' ), 
 							'default' => 'no'
 						),
 			'display_cart_widget_button_img' => array(
-							'title' => __( 'Image width', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Image width', 'dibs-for-woocommerce' ), 
 							'type' => 'text', 
-							'description' => __( 'The width of the cart widget buy button.', 'woocommerce-gateway-dibs-masterpass' ), 
+							'description' => __( 'The width of the cart widget buy button.', 'dibs-for-woocommerce' ), 
 							'default' => '140'
 						),
 			'order_settings_title' => array(
-				'title' => __( 'Order management settings', 'woocommerce-gateway-dibs-masterpass' ),
+				'title' => __( 'Order management settings', 'dibs-for-woocommerce' ),
 				'type'  => 'title',
 			),
 			'push_cancellation'    => array(
-				'title'   => __( 'DIBS order cancellation', 'woocommerce-gateway-dibs' ),
+				'title'   => __( 'DIBS order cancellation', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Cancel MasterPass order automatically in DIBS when WooCommerce order is cancelled.', 'woocommerce-gateway-dibs-masterpass' ),
+				'label'   => __( 'Cancel MasterPass order automatically in DIBS when WooCommerce order is cancelled.', 'dibs-for-woocommerce' ),
 				'default' => 'no'
 			),
 			'section_api_settings'       => array(
-				'title'       => __( 'API Credentials', 'woocommerce-gateway-dibs-masterpass' ),
+				'title'       => __( 'API Credentials', 'dibs-for-woocommerce' ),
 				'type'        => 'title',
-				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %shere%s.', 'woocommerce-gateway-dibs-masterpass' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
+				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %shere%s.', 'dibs-for-woocommerce' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
 			),
 			'api_username'             => array(
-				'title'       => __( 'API Username', 'woocommerce-gateway-dibs-masterpass' ),
+				'title'       => __( 'API Username', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Get your API credentials from DIBS.', 'woocommerce-gateway-dibs-masterpass' ),
+				'description' => __( 'Get your API credentials from DIBS.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 				'desc_tip'    => true,
-				'placeholder' => __( 'Optional', 'woocommerce-gateway-dibs-masterpass' )
+				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' )
 			),
 			'api_password'             => array(
-				'title'       => __( 'API Password', 'woocommerce-gateway-dibs-masterpass' ),
+				'title'       => __( 'API Password', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Get your API credentials from DIBS.', 'woocommerce-gateway-dibs-masterpass' ),
+				'description' => __( 'Get your API credentials from DIBS.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 				'desc_tip'    => true,
-				'placeholder' => __( 'Optional', 'woocommerce-gateway-dibs-masterpass' )
+				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' )
 			),
 			'section_testmode' => array(
-							'title'       => __( 'Test Mode Settings', 'woocommerce-gateway-dibs-masterpass' ),
+							'title'       => __( 'Test Mode Settings', 'dibs-for-woocommerce' ),
 							'type'        => 'title',
 							'description' => '',
 						),
 			'testmode' => array(
-							'title' => __( 'Test Mode', 'woocommerce-gateway-dibs-masterpass' ), 
+							'title' => __( 'Test Mode', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
-							'label' => __( 'Enable Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'woocommerce-gateway-dibs-masterpass' ), 
+							'label' => __( 'Enable Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'dibs-for-woocommerce' ), 
 							'default' => 'yes'
 						),
 			'debug' => array(
-								'title' => __( 'Debug', 'woocommerce-gateway-dibs-masterpass' ), 
+								'title' => __( 'Debug', 'dibs-for-woocommerce' ), 
 								'type' => 'checkbox', 
-								'label' => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'woocommerce-gateway-dibs-masterpass' ), 
+								'label' => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'dibs-for-woocommerce' ), 
 								'default' => 'no'
 							)
 			);
@@ -381,7 +381,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 	 **/
 	function receipt_page( $order ) {
 		
-		echo '<p>'.__('Thank you for your order.', 'woocommerce-gateway-dibs-masterpass').'</p>';
+		echo '<p>'.__('Thank you for your order.', 'dibs-for-woocommerce').'</p>';
 		
 	}
 	
@@ -393,7 +393,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 	 */
 	public function admin_options() {
     	?>
-    	<h3><?php _e('MasterPass via DIBS', 'woocommerce-gateway-dibs-masterpass'); ?></h3>
+    	<h3><?php _e('MasterPass via DIBS', 'dibs-for-woocommerce'); ?></h3>
     	<?php 
 		$checkout_page_id = wc_get_page_id( 'checkout' );
 		$checkout_url = '';
@@ -435,7 +435,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 	    <?php
 		/*    
 		if( WC()->session->get( 'dibs_wallet_mp_selected' )  ) {
-			echo '<p><a href="' . get_the_permalink() . '?view-pm=all">' . __('Other payment options', 'woocommerce-gateway-dibs-masterpass') . '</a></p>';
+			echo '<p><a href="' . get_the_permalink() . '?view-pm=all">' . __('Other payment options', 'dibs-for-woocommerce') . '</a></p>';
 		}
 		*/
     }
@@ -875,14 +875,14 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 				$package_rates = $package['rates'];
 				foreach ( $package_rates as $rate_key => $rate_value ) {
 					if ( $rate_key == $chosen_method ) {
-						$shipping_name = __( 'Shipping:', 'woocommerce-gateway-dibs' ) . ' ' . $rate_value->label;
+						$shipping_name = __( 'Shipping:', 'dibs-for-woocommerce' ) . ' ' . $rate_value->label;
 					}
 				}
 			}	
 		}
 
 		if ( ! isset( $shipping_name ) ) {
-			$shipping_name = __( 'Shipping', 'woocommerce-gateway-dibs' );
+			$shipping_name = __( 'Shipping', 'dibs-for-woocommerce' );
 		}
 
 		return $shipping_name;
@@ -1088,13 +1088,13 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 				
 				switch($auth_postback['MpAuthorizeResponse']['status']) {
 					case 'ERROR':
-						$order->update_status('failed', sprintf(__('MasterPass payment %s not approved. Status %s.', 'woocommerce-gateway-dibs-masterpass'), $auth_postback['MpAuthorizeResponse']['status'], $postback['MpAuthorizeResponse']['declineReason'] ) );
+						$order->update_status('failed', sprintf(__('MasterPass payment %s not approved. Status %s.', 'dibs-for-woocommerce'), $auth_postback['MpAuthorizeResponse']['status'], $postback['MpAuthorizeResponse']['declineReason'] ) );
 						WC()->session->__unset( 'dibs_wallet_mp_validate_respons' );
 						WC()->session->__unset( 'dibs_wallet_session_id' );
 						WC()->session->__unset( 'dibs_wallet_mp_selected' );
 						WC()->session->__unset( 'dibs_wallet_mp_from_checkout_page' );
 					case 'DECLINED':
-						$order->update_status('failed', sprintf(__('MasterPass payment %s not approved. Status %s.', 'woocommerce-gateway-dibs-masterpass'), $auth_postback['MpAuthorizeResponse']['status'], $postback['MpAuthorizeResponse']['declineReason'] ) );
+						$order->update_status('failed', sprintf(__('MasterPass payment %s not approved. Status %s.', 'dibs-for-woocommerce'), $auth_postback['MpAuthorizeResponse']['status'], $postback['MpAuthorizeResponse']['declineReason'] ) );
 						WC()->session->__unset( 'dibs_wallet_mp_validate_respons' );
 						WC()->session->__unset( 'dibs_wallet_session_id' );
 						WC()->session->__unset( 'dibs_wallet_mp_selected' );
@@ -1104,7 +1104,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 						add_post_meta( $order_id, 'dibs_transaction_no', $auth_postback['MpAuthorizeResponse']['transactionId']);
 						
 		            	// Order completed
-						$order->add_order_note( sprintf( __('MasterPass payment completed. DIBS transaction number: %s.', 'woocommerce-gateway-dibs-masterpass'), $auth_postback['MpAuthorizeResponse']['transactionId'] ) );
+						$order->add_order_note( sprintf( __('MasterPass payment completed. DIBS transaction number: %s.', 'dibs-for-woocommerce'), $auth_postback['MpAuthorizeResponse']['transactionId'] ) );
 		                
 		                // Payment complete
 						$order->payment_complete($auth_postback['MpAuthorizeResponse']['transactionId']);		
@@ -1349,14 +1349,14 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 			switch($postback['MpAuthorizeResponse']['status']) {
 				case 'ERROR':
 					wc_add_notice(var_export($postback, true), 'error');
-					$order->update_status('failed', sprintf(__('MasterPass payment %s not approved. Status %s.', 'woocommerce-gateway-dibs-masterpass'), $postback['MpAuthorizeResponse']['status'], $postback['MpAuthorizeResponse']['declineReason'] ) );
+					$order->update_status('failed', sprintf(__('MasterPass payment %s not approved. Status %s.', 'dibs-for-woocommerce'), $postback['MpAuthorizeResponse']['status'], $postback['MpAuthorizeResponse']['declineReason'] ) );
 					WC()->session->__unset( 'dibs_wallet_mp_validate_respons' );
 					WC()->session->__unset( 'dibs_wallet_session_id' );
 					WC()->session->__unset( 'dibs_wallet_mp_selected' );
 					return;
 				case 'DECLINED':
 					wc_add_notice($postback['MpAuthorizeResponse']['declineReason'], 'error');
-					$order->update_status('failed', sprintf(__('MasterPass payment %s not approved. Status %s.', 'woocommerce-gateway-dibs-masterpass'), $postback['MpAuthorizeResponse']['status'], $postback['MpAuthorizeResponse']['declineReason'] ) );
+					$order->update_status('failed', sprintf(__('MasterPass payment %s not approved. Status %s.', 'dibs-for-woocommerce'), $postback['MpAuthorizeResponse']['status'], $postback['MpAuthorizeResponse']['declineReason'] ) );
 					WC()->session->__unset( 'dibs_wallet_mp_validate_respons' );
 					WC()->session->__unset( 'dibs_wallet_session_id' );
 					WC()->session->__unset( 'dibs_wallet_mp_selected' );
@@ -1366,7 +1366,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 					add_post_meta( $order_id, 'dibs_transaction_no', $postback['MpAuthorizeResponse']['transactionId']);
 					
 	            	// Order completed
-					$order->add_order_note( sprintf( __('MasterPass payment completed. DIBS transaction number: %s.', 'woocommerce-gateway-dibs-masterpass'), $postback['MpAuthorizeResponse']['transactionId'] ) );
+					$order->add_order_note( sprintf( __('MasterPass payment completed. DIBS transaction number: %s.', 'dibs-for-woocommerce'), $postback['MpAuthorizeResponse']['transactionId'] ) );
 	                
 	                // Payment complete
 					$order->payment_complete($postback['MpAuthorizeResponse']['transactionId']);		
@@ -1435,13 +1435,13 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 
 		if ( ! $this->can_refund_order( $order ) ) {
 			$this->log->add( 'Refund Failed: No transaction ID.' );
-			$order->add_order_note( __( 'Refund Failed: No transaction ID.', 'woocommerce-gateway-dibs' ) );
+			$order->add_order_note( __( 'Refund Failed: No transaction ID.', 'dibs-for-woocommerce' ) );
 
 			return false;
 		}
 
 		if ( ! $this->api_username || ! $this->api_password ) {
-			$order->add_order_note( __( 'Refund Failed: Missing API Credentials.', 'woocommerce-gateway-dibs' ) );
+			$order->add_order_note( __( 'Refund Failed: Missing API Credentials.', 'dibs-for-woocommerce' ) );
 
 			return false;
 		}
@@ -1469,7 +1469,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 
 		// WP remote post problem
 		if ( is_wp_error( $response ) ) {
-			$refund_note = sprintf( __( 'DIBS refund failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ), $response['wp_remote_note'] );
+			$refund_note = sprintf( __( 'DIBS refund failed. WP Remote post problem: %s.', 'dibs-for-woocommerce' ), $response['wp_remote_note'] );
 
 			$order->add_order_note( $refund_note );
 			return false;
@@ -1477,9 +1477,9 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 
 		if ( isset( $response['status'] ) && ( $response['status'] == 'ACCEPT' || $response['status'] == 'ACCEPTED' ) ) {
 			// Refund OK
-			$refund_note = sprintf( __( '%s refunded successfully via DIBS.', 'woocommerce-gateway-dibs' ), wc_price( $amount ) );
+			$refund_note = sprintf( __( '%s refunded successfully via DIBS.', 'dibs-for-woocommerce' ), wc_price( $amount ) );
 			if ( '' != $reason ) {
-				$refund_note .= sprintf( __( ' Reason: %s.', 'woocommerce-gateway-dibs' ), $reason );
+				$refund_note .= sprintf( __( ' Reason: %s.', 'dibs-for-woocommerce' ), $reason );
 			}
 
 			$order->add_order_note( $refund_note );
@@ -1493,7 +1493,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 		} else {
 
 			// Refund problem
-			$order->add_order_note( sprintf( __( 'DIBS refund failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['message'] ) );
+			$order->add_order_note( sprintf( __( 'DIBS refund failed. Decline reason: %s.', 'dibs-for-woocommerce' ), $response['message'] ) );
 			return false;
 		}
 

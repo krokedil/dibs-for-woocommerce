@@ -20,7 +20,7 @@ class WC_Dibs_Manual_Modification {
 	 * @param $post_type
 	 */
 	public function dibs_transaction_metabox( $post_type ) {
-		add_meta_box( 'wc_dibs_transaction_metabox', __( 'DIBS Order transaction details', 'woocommerce-gateway-dibs' ), array(
+		add_meta_box( 'wc_dibs_transaction_metabox', __( 'DIBS Order transaction details', 'dibs-for-woocommerce' ), array(
 			$this,
 			'render_transaction_meta_box_content'
 		), 'shop_order', 'advanced', 'high' );
@@ -48,8 +48,8 @@ class WC_Dibs_Manual_Modification {
 			<table cellpadding="0" cellspacing="0" class="woocommerce_order_items dibs_transaction_table">
 				<thead>
 				<tr>
-					<th class="dibs-transaction"><?php _e( 'DIBS Transaction number', 'woocommerce-gateway-dibs' ); ?></th>
-					<th class="dibs-ticket"><?php _e( 'DIBS Ticket number (for subscription payments)', 'woocommerce-gateway-dibs' ); ?></th>
+					<th class="dibs-transaction"><?php _e( 'DIBS Transaction number', 'dibs-for-woocommerce' ); ?></th>
+					<th class="dibs-ticket"><?php _e( 'DIBS Ticket number (for subscription payments)', 'dibs-for-woocommerce' ); ?></th>
 				</tr>
 				</thead>
 				<tbody>

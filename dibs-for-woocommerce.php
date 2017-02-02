@@ -6,7 +6,7 @@
  * Version: 2.4.4
  * Author: Krokedil
  * Author URI: https://krokedil.se
- * Text Domain: woocommerce-gateway-dibs
+ * Text Domain: dibs-for-woocommerce
  * Domain Path: /languages
 */
 
@@ -60,7 +60,7 @@ function init_dibs_gateway() {
 	} // Close class WC_Gateway_Dibs
 
 	// Localisation
-	load_plugin_textdomain( 'woocommerce-gateway-dibs', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	load_plugin_textdomain( 'dibs-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 	// Include our Dibs factory class
 	require_once( WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-factory.php' );

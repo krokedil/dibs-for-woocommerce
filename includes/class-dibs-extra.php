@@ -165,13 +165,13 @@ class WC_Gateway_Dibs_Extra {
 
 					if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" || $response['status'] == "ACCEPTED" ) ) {
 						add_post_meta( $order_id, '_dibs_order_captured', 'yes' );
-						$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
+						$order->add_order_note( __( 'DIBS transaction captured.', 'dibs-for-woocommerce' ) );
 					} elseif ( ! empty( $response['wp_remote_note'] ) ) {
 						// WP remote post problem
-						$order->add_order_note( sprintf( __( 'DIBS transaction capture failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ), $response['wp_remote_note'] ) );
+						$order->add_order_note( sprintf( __( 'DIBS transaction capture failed. WP Remote post problem: %s.', 'dibs-for-woocommerce' ), $response['wp_remote_note'] ) );
 					} else {
 						// DIBS capture problem
-						$order->add_order_note( sprintf( __( 'DIBS transaction capture failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['declineReason'] ) );
+						$order->add_order_note( sprintf( __( 'DIBS transaction capture failed. Decline reason: %s.', 'dibs-for-woocommerce' ), $response['declineReason'] ) );
 					}
 				}
 			}

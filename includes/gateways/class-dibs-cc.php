@@ -114,43 +114,43 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 
 		$this->form_fields = array(
 			'enabled'                  => array(
-				'title'   => __( 'Enable/Disable', 'woocommerce-gateway-dibs' ),
+				'title'   => __( 'Enable/Disable', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Enable DIBS', 'woocommerce-gateway-dibs' ),
+				'label'   => __( 'Enable DIBS', 'dibs-for-woocommerce' ),
 				'default' => 'yes'
 			),
 			'title'                    => array(
-				'title'       => __( 'Title', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'Title', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'This controls the title which the user sees during checkout.', 'woocommerce-gateway-dibs' ),
-				'default'     => __( 'DIBS', 'woocommerce-gateway-dibs' )
+				'description' => __( 'This controls the title which the user sees during checkout.', 'dibs-for-woocommerce' ),
+				'default'     => __( 'DIBS', 'dibs-for-woocommerce' )
 			),
 			'description'              => array(
-				'title'       => __( 'Description', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'Description', 'dibs-for-woocommerce' ),
 				'type'        => 'textarea',
-				'description' => __( 'This controls the description which the user sees during checkout.', 'woocommerce-gateway-dibs' ),
-				'default'     => __( "Pay via DIBS using credit card or bank transfer.", 'woocommerce-gateway-dibs' )
+				'description' => __( 'This controls the description which the user sees during checkout.', 'dibs-for-woocommerce' ),
+				'default'     => __( "Pay via DIBS using credit card or bank transfer.", 'dibs-for-woocommerce' )
 			),
 			'merchant_id'              => array(
-				'title'       => __( 'DIBS Merchant ID', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'DIBS Merchant ID', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Please enter your DIBS Merchant ID; this is needed in order to take payment.', 'woocommerce-gateway-dibs' ),
+				'description' => __( 'Please enter your DIBS Merchant ID; this is needed in order to take payment.', 'dibs-for-woocommerce' ),
 				'default'     => ''
 			),
 			'key_1'                    => array(
-				'title'       => __( 'MD5 k1', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'MD5 k1', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Please enter your DIBS MD5 k1; this is only needed when using Flexwin as the payment method.', 'woocommerce-gateway-dibs' ),
+				'description' => __( 'Please enter your DIBS MD5 k1; this is only needed when using Flexwin as the payment method.', 'dibs-for-woocommerce' ),
 				'default'     => ''
 			),
 			'key_2'                    => array(
-				'title'       => __( 'MD5 k2', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'MD5 k2', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Please enter your DIBS MD5 k2; this is only needed when using Flexwin as the payment method.', 'woocommerce-gateway-dibs' ),
+				'description' => __( 'Please enter your DIBS MD5 k2; this is only needed when using Flexwin as the payment method.', 'dibs-for-woocommerce' ),
 				'default'     => ''
 			),
 			'language'                 => array(
-				'title'       => __( 'Language', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'Language', 'dibs-for-woocommerce' ),
 				'type'        => 'select',
 				'options'     => array(
 					'wp' => 'WordPress site Language',
@@ -168,87 +168,87 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 					'sv' => 'Swedish',
 					'kl' => 'Greenlandic',
 				),
-				'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'woocommerce-gateway-dibs' ),
+				'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'dibs-for-woocommerce' ),
 				'default'     => 'wp'
 			),
 			'alternative_icon'         => array(
-				'title'       => __( 'Alternative payment icon', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'Alternative payment icon', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => sprintf( __( 'Add the URL to an alternative payment icon that the user sees during checkout. Leave blank to use the default image. Alternative payment method logos can be found <a href="%s" target="_blank">here</a>.', 'woocommerce-gateway-dibs' ), 'http://tech.dibspayment.com/logos#check-out-logos' ),
+				'description' => sprintf( __( 'Add the URL to an alternative payment icon that the user sees during checkout. Leave blank to use the default image. Alternative payment method logos can be found <a href="%s" target="_blank">here</a>.', 'dibs-for-woocommerce' ), 'http://tech.dibspayment.com/logos#check-out-logos' ),
 				'default'     => ''
 			),
 			'alternative_icon_width'   => array(
-				'title'       => __( 'Icon width', 'woocommerce-gateway-dibs-masterpass' ),
+				'title'       => __( 'Icon width', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'The width of the Alternative payment icon.', 'woocommerce-gateway-dibs-masterpass' ),
+				'description' => __( 'The width of the Alternative payment icon.', 'dibs-for-woocommerce' ),
 				'default'     => ''
 			),
 			'capturenow'               => array(
-				'title'       => __( 'DIBS transaction capture', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'DIBS transaction capture', 'dibs-for-woocommerce' ),
 				'type'        => 'select',
 				'options'     => array(
-					'yes'      => __( 'On Purchase', 'woocommerce-gateway-dibs' ),
-					'complete' => __( 'On order completion', 'woocommerce-gateway-dibs' ),
-					'no'       => __( 'No', 'woocommerce-gateway-dibs' )
+					'yes'      => __( 'On Purchase', 'dibs-for-woocommerce' ),
+					'complete' => __( 'On order completion', 'dibs-for-woocommerce' ),
+					'no'       => __( 'No', 'dibs-for-woocommerce' )
 				),
-				'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account.', 'woocommerce-gateway-dibs' ),
+				'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account.', 'dibs-for-woocommerce' ),
 				'default'     => 'no'
 			),
 			'calcfee'                 => array(
-				'title'   => __( 'Calcfee', 'woocommerce-gateway-dibs' ),
+				'title'   => __( 'Calcfee', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'If this box is checked, the charge from the acquirer due to the transaction will automatically be calculated and affixed.', 'woocommerce-gateway-dibs' ),
-				'description' => __( 'NOTE: To use this parameter you need to contact DIBS Support with the fees you have at your acquirer, as they need to be entered into their system.', 'woocommerce-gateway-dibs' ),
+				'label'   => __( 'If this box is checked, the charge from the acquirer due to the transaction will automatically be calculated and affixed.', 'dibs-for-woocommerce' ),
+				'description' => __( 'NOTE: To use this parameter you need to contact DIBS Support with the fees you have at your acquirer, as they need to be entered into their system.', 'dibs-for-woocommerce' ),
 				'default' => 'no'
 			),
 			'decorator'                => array(
-				'title'       => __( 'Decorator', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'Decorator', 'dibs-for-woocommerce' ),
 				'type'        => 'select',
 				'options'     => array(
-					'responsive' => __( 'Responsive', 'woocommerce-gateway-dibs' ),
-					'default'    => __( 'Default', 'woocommerce-gateway-dibs' ),
-					'basal'      => __( 'Basal', 'woocommerce-gateway-dibs' ),
-					'rich'       => __( 'Rich', 'woocommerce-gateway-dibs' ),
-					''           => __( 'None', 'woocommerce-gateway-dibs' )
+					'responsive' => __( 'Responsive', 'dibs-for-woocommerce' ),
+					'default'    => __( 'Default', 'dibs-for-woocommerce' ),
+					'basal'      => __( 'Basal', 'dibs-for-woocommerce' ),
+					'rich'       => __( 'Rich', 'dibs-for-woocommerce' ),
+					''           => __( 'None', 'dibs-for-woocommerce' )
 				),
-				'description' => __( 'Specifies which of the pre-built decorators to use (when using Flexwin as the payment method). This will override the customer specific decorator, if one has been uploaded.', 'woocommerce-gateway-dibs' ),
+				'description' => __( 'Specifies which of the pre-built decorators to use (when using Flexwin as the payment method). This will override the customer specific decorator, if one has been uploaded.', 'dibs-for-woocommerce' ),
 				'default'     => 'responsive',
 			),
 			'api_settings_title'       => array(
-				'title'       => __( 'API Credentials', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'API Credentials', 'dibs-for-woocommerce' ),
 				'type'        => 'title',
-				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %shere%s.', 'woocommerce-gateway-dibs' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
+				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %shere%s.', 'dibs-for-woocommerce' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
 			),
 			'api_username'             => array(
-				'title'       => __( 'API Username', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'API Username', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Get your API credentials from DIBS.', 'woocommerce-gateway-dibs' ),
+				'description' => __( 'Get your API credentials from DIBS.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 				'desc_tip'    => true,
-				'placeholder' => __( 'Optional', 'woocommerce-gateway-dibs' )
+				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' )
 			),
 			'api_password'             => array(
-				'title'       => __( 'API Password', 'woocommerce-gateway-dibs' ),
+				'title'       => __( 'API Password', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
-				'description' => __( 'Get your API credentials from DIBS.', 'woocommerce-gateway-dibs' ),
+				'description' => __( 'Get your API credentials from DIBS.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 				'desc_tip'    => true,
-				'placeholder' => __( 'Optional', 'woocommerce-gateway-dibs' )
+				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' )
 			),
 			'test_mode_settings_title' => array(
-				'title' => __( 'Test Mode Settings', 'woocommerce-gateway-dibs' ),
+				'title' => __( 'Test Mode Settings', 'dibs-for-woocommerce' ),
 				'type'  => 'title',
 			),
 			'testmode'                 => array(
-				'title'   => __( 'Test Mode', 'woocommerce-gateway-dibs' ),
+				'title'   => __( 'Test Mode', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Enable DIBS Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'woocommerce-gateway-dibs' ),
+				'label'   => __( 'Enable DIBS Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'dibs-for-woocommerce' ),
 				'default' => 'yes'
 			),
 			'debug'                    => array(
-				'title'   => __( 'Debug', 'woocommerce-gateway-dibs' ),
+				'title'   => __( 'Debug', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
-				'label'   => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'woocommerce-gateway-dibs' ),
+				'label'   => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'dibs-for-woocommerce' ),
 				'default' => 'no'
 			)
 		);
@@ -262,9 +262,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 	 */
 	public function admin_options() {
 		?>
-		<h3><?php _e( 'DIBS', 'woocommerce-gateway-dibs' ); ?></h3>
+		<h3><?php _e( 'DIBS', 'dibs-for-woocommerce' ); ?></h3>
 		<p>
-			<?php printf( __( 'Documentation <a href="%s" target="_blank">can be found here</a>.', 'woocommerce-gateway-dibs' ), 'http://docs.krokedil.com/documentation/dibs-for-woocommerce/' ); ?>
+			<?php printf( __( 'Documentation <a href="%s" target="_blank">can be found here</a>.', 'dibs-for-woocommerce' ), 'http://docs.krokedil.com/documentation/dibs-for-woocommerce/' ); ?>
 		</p>
 		<table class="form-table">
 			<?php
@@ -277,7 +277,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 					<td class="forminp">
 						<fieldset>
 							<legend class="screen-reader-text"><span>DIBS disabled</span></legend>
-							<?php _e( 'DIBS does not support your store currency.', 'woocommerce-gateway-dibs' ); ?><br>
+							<?php _e( 'DIBS does not support your store currency.', 'dibs-for-woocommerce' ); ?><br>
 						</fieldset>
 					</td>
 				</tr>
@@ -328,7 +328,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 	 * @param $order
 	 */
 	function receipt_page( $order ) {
-		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'woocommerce-gateway-dibs' ) . '</p>';
+		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'dibs-for-woocommerce' ) . '</p>';
 
 		echo $this->generate_dibs_form( $order );
 	}
@@ -473,7 +473,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		
 		wc_enqueue_js( '
 			jQuery("body").block({
-					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'woocommerce-gateway-dibs' ) ) . '",
+					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'dibs-for-woocommerce' ) ) . '",
 					baseZ: 99999,
 					overlayCSS:
 					{
@@ -497,7 +497,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		// Print out and send the form
 		return '<form action="' . $dibs_adr . '" method="post" id="dibs_cc_payment_form">
 				' . $fields . '
-				<input type="submit" class="button-alt" id="submit_dibs_cc_payment_form" value="' . __( 'Pay via dibs', 'woocommerce-gateway-dibs' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'woocommerce-gateway-dibs' ) . '</a>
+				<input type="submit" class="button-alt" id="submit_dibs_cc_payment_form" value="' . __( 'Pay via dibs', 'dibs-for-woocommerce' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'dibs-for-woocommerce' ) . '</a>
 			</form>';
 	}
 

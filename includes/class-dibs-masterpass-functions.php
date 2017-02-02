@@ -289,7 +289,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 			$order->add_order_note(
 				__(
 					'DIBS transaction cancelled.',
-					'woocommerce-gateway-dibs'
+					'dibs-for-woocommerce'
 				)
 			);
 			update_post_meta( $order->id, '_dibs_order_cancelled', 'yes' );
@@ -301,7 +301,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 				sprintf(
 					__(
 						'DIBS transaction cancellation failed. Decline reason: %s.',
-						'woocommerce-gateway-dibs'
+						'dibs-for-woocommerce'
 					),
 					$response['declineReason']
 				)
@@ -314,7 +314,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 				sprintf(
 					__(
 						'DIBS transaction cancellation failed. WP Remote post problem: %s.',
-						'woocommerce-gateway-dibs'
+						'dibs-for-woocommerce'
 					),
 					$response['wp_remote_note']
 				)

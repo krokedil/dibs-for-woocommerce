@@ -33,7 +33,7 @@ class WC_Gateway_Dibs_Admin_Notices {
 		if( is_plugin_active('woocommerce-gateway-dibs-d2-masterpass/woocommerce-gateway-dibs-d2-masterpass.php') ) {
 			echo '<div class="notice notice-error">';
 			echo '<p>' . __( 'MasterPass is now available in the <em>DIBS for WooCommerce</em> extension. Please deactivate <em>	
-DIBS D2 MasterPass Gateway for WooCommerce</em> to avoid issues.', 'woocommerce-gateway-dibs' ) . '</p>';
+DIBS D2 MasterPass Gateway for WooCommerce</em> to avoid issues.', 'dibs-for-woocommerce' ) . '</p>';
 			echo '</div>';
 		}
 	}

@@ -74,14 +74,14 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 					// New subscription but with a free trial. 
 					// Multiple callbacks are sent from DIBS. Don't add an order note if we already have done this
 					if ( $order->status !== 'completed' || $order->status !== 'processing' ) {
-						$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['transact'] ) );
+						$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['transact'] ) );
 						$order->payment_complete( $posted['transact'] );
 					}
 					
 				} else {
 					// Payment method change
-					$order->add_order_note( sprintf( __( 'Payment method updated. DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['transact'] ) );
-					wc_add_notice( sprintf( __( 'Your card %s is now stored with DIBS and will be used for future subscription renewal payments.', 'woocommerce-gateway-dibs' ), $posted['cardnomask'] ), 'success' );
+					$order->add_order_note( sprintf( __( 'Payment method updated. DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['transact'] ) );
+					wc_add_notice( sprintf( __( 'Your card %s is now stored with DIBS and will be used for future subscription renewal payments.', 'dibs-for-woocommerce' ), $posted['cardnomask'] ), 'success' );
 				}
 				
 
@@ -104,7 +104,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			// Should we add Ticket id? This might be returned in a separate callback
 			if ( isset( $posted['ticket'] ) ) {
 				update_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
-				$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
+				$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['ticket'] ) );
 
 				if ( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
 					$subs = wcs_get_subscriptions_for_order( $order, array( 'order_type' => 'parent' ) );
@@ -140,7 +140,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			// Verify MD5
 			if ( $posted['authkey'] != $md5 ) {
 				// MD5 check failed
-				$order->update_status( 'failed', sprintf( __( 'MD5 check failed. DIBS transaction ID: %s', 'woocommerce-gateway-dibs' ), strtolower( $posted['transaction'] ) ) );
+				$order->update_status( 'failed', sprintf( __( 'MD5 check failed. DIBS transaction ID: %s', 'dibs-for-woocommerce' ), strtolower( $posted['transaction'] ) ) );
 			}
 
 			// Set order status
@@ -149,31 +149,31 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 					case '2' :
 					case '5' :
 						// Order completed
-						$order->add_order_note( __( 'DIBS payment completed. DIBS transaction number: ', 'woocommerce-gateway-dibs' ) . $posted['transact'] );
+						$order->add_order_note( __( 'DIBS payment completed. DIBS transaction number: ', 'dibs-for-woocommerce' ) . $posted['transact'] );
 						// Transaction captured
 						if ( $this->capturenow == 'yes' ) {
 							update_post_meta( $order_id, '_dibs_order_captured', 'yes' );
-							$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
+							$order->add_order_note( __( 'DIBS transaction captured.', 'dibs-for-woocommerce' ) );
 						}
 						// Store Transaction number as post meta
 						update_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
 
 						if ( isset( $posted['ticket'] ) ) {
 							update_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
-							$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
+							$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['ticket'] ) );
 						}
 
 						$order->payment_complete( $posted['transact'] );
 						break;
 					case '12' :
 						// Order completed
-						$order->update_status( 'on-hold', sprintf( __( 'DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'woocommerce-gateway-dibs' ), $posted['transact'] ) );
+						$order->update_status( 'on-hold', sprintf( __( 'DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs-for-woocommerce' ), $posted['transact'] ) );
 						// Store Transaction number as post meta
 						update_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
 
 						if ( isset( $posted['ticket'] ) ) {
 							update_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
-							$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'woocommerce-gateway-dibs' ), $posted['ticket'] ) );
+							$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['ticket'] ) );
 						}
 
 						// Store card details
@@ -194,7 +194,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 					case '4' :
 					case '17' :
 						// Order failed
-						$order->update_status( 'failed', sprintf( __( 'DIBS payment %s not approved. Status code %s.', 'woocommerce-gateway-dibs' ), strtolower( $posted['transaction'] ), $posted['statuscode'] ) );
+						$order->update_status( 'failed', sprintf( __( 'DIBS payment %s not approved. Status code %s.', 'dibs-for-woocommerce' ), strtolower( $posted['transaction'] ), $posted['statuscode'] ) );
 						break;
 
 					default:
@@ -264,16 +264,16 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			if ( $order->id == $order_id && $order->status == 'pending' ) {
 
 				// Cancel the order + restore stock
-				$order->cancel_order( __( 'Order cancelled by customer.', 'woocommerce-gateway-dibs' ) );
+				$order->cancel_order( __( 'Order cancelled by customer.', 'dibs-for-woocommerce' ) );
 
 				// Message
-				wc_add_notice( __( 'Your order was cancelled.', 'woocommerce-gateway-dibs' ), 'error' );
+				wc_add_notice( __( 'Your order was cancelled.', 'dibs-for-woocommerce' ), 'error' );
 			} elseif ( $order->status != 'pending' ) {
 
-				wc_add_notice( __( 'Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'woocommerce-gateway-dibs' ), 'error' );
+				wc_add_notice( __( 'Your order is no longer pending and could not be cancelled. Please contact us if you need assistance.', 'dibs-for-woocommerce' ), 'error' );
 			} else {
 
-				wc_add_notice( __( 'Invalid order.', 'woocommerce-gateway-dibs' ), 'error' );
+				wc_add_notice( __( 'Invalid order.', 'dibs-for-woocommerce' ), 'error' );
 			}
 
 			wp_safe_redirect( $woocommerce->cart->get_cart_url() );
@@ -370,24 +370,24 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 
 		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" || $response['status'] == "ACCEPTED" ) ) {
 			// Payment ok
-			$order->add_order_note( sprintf( __( 'DIBS subscription payment completed. Transaction Id: %s.', 'woocommerce-gateway-dibs' ), $response['transact'] ) );
+			$order->add_order_note( sprintf( __( 'DIBS subscription payment completed. Transaction Id: %s.', 'dibs-for-woocommerce' ), $response['transact'] ) );
 			update_post_meta( $order->id, '_dibs_transaction_no', $response['transact'] );
 			update_post_meta( $order->id, '_transaction_id', $response['transact'] );
 
 			if ( $this->capturenow == 'yes' ) {
 				add_post_meta( $order->id, '_dibs_order_captured', 'yes' );
-				$order->add_order_note( __( 'DIBS transaction captured.', 'woocommerce-gateway-dibs' ) );
+				$order->add_order_note( __( 'DIBS transaction captured.', 'dibs-for-woocommerce' ) );
 			}
 
 			return $response['transact'];
 		} elseif ( ! empty( $response['wp_remote_note'] ) ) {
 			// WP remote post problem
-			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ), $response['wp_remote_note'] ) );
+			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. WP Remote post problem: %s.', 'dibs-for-woocommerce' ), $response['wp_remote_note'] ) );
 
 			return false;
 		} else {
 			// Payment problem
-			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['reason'] ) );
+			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. Decline reason: %s.', 'dibs-for-woocommerce' ), $response['reason'] ) );
 			
 			// Debug
 			if ( $this->debug == 'yes' ) {
@@ -423,13 +423,13 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 
 		if ( ! $this->can_refund_order( $order ) ) {
 			$this->log->add( 'Refund Failed: No transaction ID.' );
-			$order->add_order_note( __( 'Refund Failed: No transaction ID.', 'woocommerce-gateway-dibs' ) );
+			$order->add_order_note( __( 'Refund Failed: No transaction ID.', 'dibs-for-woocommerce' ) );
 
 			return false;
 		}
 
 		if ( ! $this->api_username || ! $this->api_password ) {
-			$order->add_order_note( __( 'Refund Failed: Missing API Credentials.', 'woocommerce-gateway-dibs' ) );
+			$order->add_order_note( __( 'Refund Failed: Missing API Credentials.', 'dibs-for-woocommerce' ) );
 
 			return false;
 		}
@@ -457,7 +457,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 
 		// WP remote post problem
 		if ( is_wp_error( $response ) ) {
-			$refund_note = sprintf( __( 'DIBS refund failed. WP Remote post problem: %s.', 'woocommerce-gateway-dibs' ), $response['wp_remote_note'] );
+			$refund_note = sprintf( __( 'DIBS refund failed. WP Remote post problem: %s.', 'dibs-for-woocommerce' ), $response['wp_remote_note'] );
 
 			$order->add_order_note( $refund_note );
 
@@ -466,9 +466,9 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 
 		if ( isset( $response['status'] ) && ( $response['status'] == 'ACCEPT' || $response['status'] == 'ACCEPTED' ) ) {
 			// Refund OK
-			$refund_note = sprintf( __( '%s refunded successfully via DIBS.', 'woocommerce-gateway-dibs' ), wc_price( $amount ) );
+			$refund_note = sprintf( __( '%s refunded successfully via DIBS.', 'dibs-for-woocommerce' ), wc_price( $amount ) );
 			if ( '' != $reason ) {
-				$refund_note .= sprintf( __( ' Reason: %s.', 'woocommerce-gateway-dibs' ), $reason );
+				$refund_note .= sprintf( __( ' Reason: %s.', 'dibs-for-woocommerce' ), $reason );
 			}
 
 			$order->add_order_note( $refund_note );
@@ -481,7 +481,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			return true;
 		} else {
 			// Refund problem
-			$order->add_order_note( sprintf( __( 'DIBS refund failed. Decline reason: %s.', 'woocommerce-gateway-dibs' ), $response['message'] ) );
+			$order->add_order_note( sprintf( __( 'DIBS refund failed. Decline reason: %s.', 'dibs-for-woocommerce' ), $response['message'] ) );
 
 			return false;
 		}
