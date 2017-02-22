@@ -65,7 +65,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			$redirect_url = $order->get_checkout_order_received_url();
 			
 			// Subscription payment method change or new subscription with a free trial
-			if( isset( $posted['transact'] )  && 'true' == $posted['preauth'] && '13' == $posted['statuscode'] ) {
+			if( isset( $posted['preauth'] )  && 'true' == $posted['preauth'] && '13' == $posted['statuscode'] ) {
 				update_post_meta( $order_id, '_dibs_ticket', $posted['transact'] );
 				
 				// 

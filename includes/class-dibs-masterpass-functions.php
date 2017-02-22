@@ -237,7 +237,8 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 		// Do nothing if order's payment method doesn't allow automatic cancellation via DIBS
 		$payment_method_option_name = 'woocommerce_' . $order_payment_method . '_settings';
 		$payment_method_option = get_option( $payment_method_option_name );
-		if ( 'yes' != $payment_method_option['push_cancellation'] ) {
+		$push_cancellation = ( isset( $payment_method_option['push_cancellation'] ) ) ? $payment_method_option['push_cancellation'] : '';
+		if ( 'yes' != $push_cancellation ) {
 			return;
 		}
 
