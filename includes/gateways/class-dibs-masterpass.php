@@ -1198,53 +1198,52 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 	 * Override checkout fields with address data received from MatserPass
 	 **/
 	function override_checkout_fields( $args, $key, $value ) {
-		
-		if( true == WC()->session->get( 'dibs_wallet_mp_validate_respons' ) ) {
-			$mp_validate_respons = WC()->session->get( 'dibs_wallet_mp_validate_respons' );
-			
-		    if( 'billing_first_name' == $key ) {
-			    $args['default'] = $mp_validate_respons['Contact']['FirstName'];
-			}
-			if( 'billing_last_name' == $key ) {
-			    $args['default'] = $mp_validate_respons['Contact']['LastName'];
-			}
-			if( 'billing_postcode' == $key ) {
-			    $args['default'] = $mp_validate_respons['shippingAddress']['PostalCode'];
-			}
-			if( 'billing_address_1' == $key ) {
-			    $args['default'] = $mp_validate_respons['shippingAddress']['Line1'];
-			}
-			if( 'billing_city' == $key ) {
-			    $args['default'] = $mp_validate_respons['shippingAddress']['City'];			
-			}
-			if( 'billing_email' == $key ) {
-			    $args['default'] = $mp_validate_respons['Contact']['EmailAddress'];
-			}
-			if( 'billing_phone' == $key ) {
-			    $args['default'] = $mp_validate_respons['Contact']['PhoneNumber'];
-			}
-			
-			if( 'shipping_first_name' == $key ) {
-			    $args['default'] = $mp_validate_respons['Contact']['FirstName'];
-			}
-			if( 'shipping_last_name' == $key ) {
-			    $args['default'] = $mp_validate_respons['Contact']['LastName'];
-			}
-			if( 'shipping_postcode' == $key ) {
-			    $args['default'] = $mp_validate_respons['shippingAddress']['PostalCode'];
-			}
-			if( 'shipping_address_1' == $key ) {
-			    $args['default'] = $mp_validate_respons['shippingAddress']['Line1'];
-			}
-			if( 'shipping_address_2' == $key ) {
-			    $args['default'] = $mp_validate_respons['shippingAddress']['Line2'];
-			}
-			if( 'shipping_city' == $key ) {
-			    $args['default'] = $mp_validate_respons['shippingAddress']['City'];			
-			}
-			
-	    }
-	    
+		if( !is_admin() ) {
+			if( true == WC()->session->get( 'dibs_wallet_mp_validate_respons' ) ) {
+				$mp_validate_respons = WC()->session->get( 'dibs_wallet_mp_validate_respons' );
+				
+			    if( 'billing_first_name' == $key ) {
+				    $args['default'] = $mp_validate_respons['Contact']['FirstName'];
+				}
+				if( 'billing_last_name' == $key ) {
+				    $args['default'] = $mp_validate_respons['Contact']['LastName'];
+				}
+				if( 'billing_postcode' == $key ) {
+				    $args['default'] = $mp_validate_respons['shippingAddress']['PostalCode'];
+				}
+				if( 'billing_address_1' == $key ) {
+				    $args['default'] = $mp_validate_respons['shippingAddress']['Line1'];
+				}
+				if( 'billing_city' == $key ) {
+				    $args['default'] = $mp_validate_respons['shippingAddress']['City'];			
+				}
+				if( 'billing_email' == $key ) {
+				    $args['default'] = $mp_validate_respons['Contact']['EmailAddress'];
+				}
+				if( 'billing_phone' == $key ) {
+				    $args['default'] = $mp_validate_respons['Contact']['PhoneNumber'];
+				}
+				
+				if( 'shipping_first_name' == $key ) {
+				    $args['default'] = $mp_validate_respons['Contact']['FirstName'];
+				}
+				if( 'shipping_last_name' == $key ) {
+				    $args['default'] = $mp_validate_respons['Contact']['LastName'];
+				}
+				if( 'shipping_postcode' == $key ) {
+				    $args['default'] = $mp_validate_respons['shippingAddress']['PostalCode'];
+				}
+				if( 'shipping_address_1' == $key ) {
+				    $args['default'] = $mp_validate_respons['shippingAddress']['Line1'];
+				}
+				if( 'shipping_address_2' == $key ) {
+				    $args['default'] = $mp_validate_respons['shippingAddress']['Line2'];
+				}
+				if( 'shipping_city' == $key ) {
+				    $args['default'] = $mp_validate_respons['shippingAddress']['City'];			
+				}
+		    }
+		}
 	    return $args;
 	}
 	
