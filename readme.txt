@@ -2,12 +2,12 @@
 Contributors: krokedil, niklashogefjord, slobodanmanic, boozebrorsan
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 4.7
+Tested up to: 4.8.1
 Requires WooCommerce at least: 2.4
 Tested WooCommerce up to: 2.6.8
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 2.4.4
+Stable tag: 2.4.5
 
 DIBS for WooCommerce is a plugin that extends WooCommerce, allowing you to take payments via DIBS (via the D2/FlexWin platform).
 
@@ -49,6 +49,10 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2017.08.10	- version 2.4.5 =
+* Tweak			- WPML compatibility to return customer to correct language for thank you page.
+* Fix			- Only run override_checkout_fields on frontend for MasterPass.
 
 = 2017.02.02	- version 2.4.4
 * Fix			- Makes the plugin translatable through WordPress.org (https://translate.wordpress.org/projects/wp-plugins/dibs-for-woocommerce).
