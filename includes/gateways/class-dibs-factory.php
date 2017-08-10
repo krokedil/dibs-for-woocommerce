@@ -64,6 +64,12 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			// Prepare redirect url
 			$redirect_url = $order->get_checkout_order_received_url();
 			
+			// WPML compatibility hack
+			$lang_code = get_post_meta( $order_id, 'wpml_language', true );
+			if( $lang_code ) {
+				$redirect_url = apply_filters( 'wpml_permalink', $redirect_url , $lang_code );
+			}
+			
 			// Subscription payment method change or new subscription with a free trial
 			if( isset( $posted['preauth'] )  && 'true' == $posted['preauth'] && '13' == $posted['statuscode'] ) {
 				update_post_meta( $order_id, '_dibs_ticket', $posted['transact'] );
