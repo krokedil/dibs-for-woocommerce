@@ -1,5 +1,9 @@
 *** DIBS Changelog ***
 
+2017.08.10		- version 2.4.5
+* Tweak			- WPML compatibility to return customer to correct language for thank you page.
+* Fix			- Only run override_checkout_fields on frontend for MasterPass.
+
 2017.02.02		- version 2.4.4
 * Fix			- Makes the plugin translatable through WordPress.org (https://translate.wordpress.org/projects/wp-plugins/dibs-for-woocommerce).
 
