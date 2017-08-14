@@ -68,8 +68,8 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 		
 		// Address info from MasterPass
 		add_filter( 'woocommerce_form_field_args' , array( $this, 'override_checkout_fields' ), 10, 3  );
-		add_filter( 'default_checkout_country', array( $this, 'maybe_change_default_checkout_country' ) );
-		add_filter( 'default_checkout_postcode', array( $this, 'maybe_change_default_checkout_postcode' ) );
+		add_filter( 'default_checkout_billing_country', array( $this, 'maybe_change_default_checkout_billing_country' ) );
+		add_filter( 'default_checkout_billing_postcode', array( $this, 'maybe_change_default_checkout_billing_postcode' ) );
 		
 		add_action( 'woocommerce_receipt_dibs_masterpass', array( $this, 'receipt_page' ) );
 		add_filter( 'woocommerce_available_payment_gateways', array( $this, 'filter_gateways' ), 1);
@@ -129,7 +129,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 	 *
 	 *
 	 */
-	function maybe_change_default_checkout_country( $country ){
+	function maybe_change_default_checkout_billing_country( $country ){
 		
 		if( true == WC()->session->get( 'dibs_wallet_mp_validate_respons' ) && !( is_user_logged_in() ) ) {
 			$mp_validate_respons = WC()->session->get( 'dibs_wallet_mp_validate_respons' ) ;
@@ -148,7 +148,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 	 *
 	 *
 	 */
-	function maybe_change_default_checkout_postcode( $postcode ){
+	function maybe_change_default_checkout_billing_postcode( $postcode ){
 
 		if( true == WC()->session->get( 'dibs_wallet_mp_validate_respons' ) && !( is_user_logged_in() ) ) {
 			$mp_validate_respons = WC()->session->get( 'dibs_wallet_mp_validate_respons' ) ;
