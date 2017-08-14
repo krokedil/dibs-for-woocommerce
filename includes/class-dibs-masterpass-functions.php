@@ -232,7 +232,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 	 */
 	function cancel_transaction( $order_id ) {
 		$order = wc_get_order( $order_id );
-		$order_payment_method = $order->payment_method;
+		$order_payment_method = $order->get_payment_method();
 
 		// Do nothing if order's payment method doesn't allow automatic cancellation via DIBS
 		$payment_method_option_name = 'woocommerce_' . $order_payment_method . '_settings';
