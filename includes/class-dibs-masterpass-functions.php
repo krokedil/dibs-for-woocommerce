@@ -259,7 +259,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 		}
 
 		// Make sure the order wasn't already cancelled
-		if ( 'yes' == get_post_meta( $order->id, '_dibs_order_cancelled', true ) ){
+		if ( 'yes' == get_post_meta( $order->get_id(), '_dibs_order_cancelled', true ) ){
 			return;
 		}
 
@@ -293,7 +293,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 					'dibs-for-woocommerce'
 				)
 			);
-			update_post_meta( $order->id, '_dibs_order_cancelled', 'yes' );
+			update_post_meta( $order->get_id(), '_dibs_order_cancelled', 'yes' );
 
 			return true;
 		} else if ( $response['status'] == 'DECLINED' ) {

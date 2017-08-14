@@ -1141,7 +1141,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 		$data = array(
 			'merchantId'      				=> $this->merchant_id,
 			'amount'      					=> $order->order_total * 100,
-			'clientIp'      				=> get_post_meta( $order->id, '_customer_ip_address', true ),
+			'clientIp'      				=> get_post_meta( $order->get_id(), '_customer_ip_address', true ),
 			'walletSessionId'				=> WC()->session->get( 'dibs_wallet_session_id' ),
 			'orderId'						=> ltrim( $order->get_order_number(), '#')
 		);
@@ -1293,7 +1293,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 			$data = array(
 				'merchantId'      				=> $this->merchant_id,
 				'amount'      					=> $order->order_total * 100,
-				'clientIp'      				=> get_post_meta( $order->id, '_customer_ip_address', true ),
+				'clientIp'      				=> get_post_meta( $order->get_id(), '_customer_ip_address', true ),
 				'walletSessionId'				=> WC()->session->get( 'dibs_wallet_session_id' ),
 				'orderId'						=> ltrim( $order->get_order_number(), '#')
 			);
