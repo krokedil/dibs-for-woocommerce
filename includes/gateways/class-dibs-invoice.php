@@ -94,6 +94,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 				break;
 			default:
 				$this->dibs_country = '';
+				$dibs_language = '';
 		}
 
 		// Apply filters for language
