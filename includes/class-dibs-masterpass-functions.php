@@ -232,7 +232,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 	 */
 	function cancel_transaction( $order_id ) {
 		$order = wc_get_order( $order_id );
-		$order_payment_method = $order->payment_method;
+		$order_payment_method = $order->get_payment_method();
 
 		// Do nothing if order's payment method doesn't allow automatic cancellation via DIBS
 		$payment_method_option_name = 'woocommerce_' . $order_payment_method . '_settings';
@@ -259,7 +259,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 		}
 
 		// Make sure the order wasn't already cancelled
-		if ( 'yes' == get_post_meta( $order->id, '_dibs_order_cancelled', true ) ){
+		if ( 'yes' == get_post_meta( $order->get_id(), '_dibs_order_cancelled', true ) ){
 			return;
 		}
 
@@ -293,7 +293,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 					'dibs-for-woocommerce'
 				)
 			);
-			update_post_meta( $order->id, '_dibs_order_cancelled', 'yes' );
+			update_post_meta( $order->get_id(), '_dibs_order_cancelled', 'yes' );
 
 			return true;
 		} else if ( $response['status'] == 'DECLINED' ) {
