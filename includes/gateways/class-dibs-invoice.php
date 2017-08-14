@@ -497,7 +497,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 			$args['decorator'] = $this->decorator;
 		}
 
-		$args['ordertext'] = 'Name: ' . $order->billing_first_name . ' ' . $order->billing_last_name . '. Address: ' . $order->billing_address_1 . ', ' . $order->billing_postcode . ' ' . $order->billing_city;
+		$args['ordertext'] = 'Name: ' . $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() . '. Address: ' . $order->get_billing_address_1() . ', ' . $order->get_billing_postcode() . ' ' . $order->get_billing_city();
 
 		// Callback URL doesn't work as in the other gateways. DIBS erase everything
 		// after a '?' in a specified callback URL
