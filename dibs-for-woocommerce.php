@@ -36,6 +36,8 @@ if ( ! defined( 'WC_DIBS_PLUGIN_DIR' ) ) {
 if ( ! defined( 'WC_DIBS_PLUGIN_URL' ) ) {
 	define( 'WC_DIBS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
+// Plugin version
+define( 'WC_DIBS_VERSION', '2.4.5' );
 
 require_once( plugin_dir_path( __FILE__ ) . 'includes/class-dibs-extra.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'includes/class-dibs-masterpass-functions.php' );

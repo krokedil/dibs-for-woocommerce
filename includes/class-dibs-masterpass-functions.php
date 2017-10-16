@@ -52,12 +52,13 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 	 *
 	 */
 	public function single_variable_masterpass_button(){
-	
+		
 		if( 'yes' == $this->display_pp_button && 'yes' == $this->enabled && !isset( $_REQUEST['add-to-cart'] ) ) {
+			global $product;
 			?>
 			<div class="dibs-mp-pp variations_button">
 				<p class="dibs-mp-pp-button">
-					<button type="submit" name="mp_from_product_page" value="1"><img src="<?php echo $this->get_icon_url();?>" width="<?php echo $this->display_pp_button_img;?>" alt="Buy with MasterPass"></button>
+					<button type="submit" formaction="/?mp_from_product_page=1" name="add-to-cart" class="mp-add-to-cart"><img src="<?php echo $this->get_icon_url();?>" width="<?php echo $this->display_pp_button_img;?>" alt="Buy with MasterPass"></button>
 					<br/><a href="#" rel="external" onclick="window.open('http://www.mastercard.com/mc_us/wallet/learnmore/en', '_blank', 'width=650,height=750,scrollbars=yes'); return false;"><small><?php echo $this->get_read_more_text();?></small></a>
 				</p>
 			</div>
@@ -79,7 +80,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 			?>
 			<div class="dibs-mp-pp variations_button">
 				<p class="dibs-mp-pp-button">
-					<button type="submit" name="mp_from_product_page" value="1"><img src="<?php echo $this->get_icon_url();?>" width="<?php echo $this->display_pp_button_img;?>" alt="Buy with MasterPass"></button>
+					<button type="submit" formaction="/?mp_from_product_page=1" name="add-to-cart" class="mp-add-to-cart" value="<?php echo esc_attr( $product->get_id() ); ?>"><img src="<?php echo $this->get_icon_url();?>" width="<?php echo $this->display_pp_button_img;?>" alt="Buy with MasterPass"></button>
 					<br/><a href="#" rel="external" onclick="window.open('<?php echo $this->get_read_more_url();?>', '_blank', 'width=650,height=750,scrollbars=yes'); return false;"><small><?php echo $this->get_read_more_text();?></small></a>
 				</p>
 			</div>
@@ -128,7 +129,7 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 	**/
 	function check_mp_purchase_from_product_page() {
 		
-		if ( isset($_POST['mp_from_product_page']) && '1' == woocommerce_clean($_POST['mp_from_product_page']) ) {
+		if ( isset($_GET['mp_from_product_page']) && '1' == woocommerce_clean($_GET['mp_from_product_page']) ) {
 			$callback = new WC_Gateway_Dibs_MasterPass_New;
 			$callback->single_masterpass_button_mpinit();
 		}
@@ -171,6 +172,8 @@ class WC_Gateway_Dibs_MasterPass_Functions {
 		//if ( 'yes' == $this->enabled && 'yes' == $this->display_cart_widget_button || ( is_product() && 'yes' == $this->display_pp_button ) ) {
 		if ( 'yes' == $this->enabled ) {
 			wp_enqueue_style( 'dibs-mp-style', WC_DIBS_PLUGIN_URL . 'assets/css/masterpass.css', array(), 1.22 );
+			wp_register_script( 'dibs-mp-add-to-cart', WC_DIBS_PLUGIN_URL . 'assets/js/masterpass-add-to-cart.js', array( 'wc-add-to-cart-variation' ), WC_DIBS_VERSION );
+			wp_enqueue_script( 'dibs-mp-add-to-cart' );
 		}
 	}
 	
