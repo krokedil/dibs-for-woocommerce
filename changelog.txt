@@ -4,6 +4,7 @@
 * Misc			- WC 3.0 compat/removed deprecated notices.
 * Tweak			- Added WC 3.2+ new plugin headers ( WC requires at least & WC tested up to).
 * Tweak			- Added more payment types to credit card payment type.
+* Tweak			- Don't send Order on-hold email for DIBS status code 12 (capture pending). Send regular Processing order email.
 * Fix			- Fixed Materpass WC 3.0 bug.
 * Fix 			- PHP Notice:  Undefined variable: dibs_language.
 * Fix 			- PHP Notice: Order properties should not be accessed directly on /order-pay page.

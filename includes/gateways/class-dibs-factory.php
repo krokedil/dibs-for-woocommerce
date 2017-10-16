@@ -172,8 +172,6 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 						$order->payment_complete( $posted['transact'] );
 						break;
 					case '12' :
-						// Order completed
-						$order->update_status( 'on-hold', sprintf( __( 'DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs-for-woocommerce' ), $posted['transact'] ) );
 						// Store Transaction number as post meta
 						update_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
 
@@ -192,7 +190,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 						if ( isset( $posted['cardexpdate'] ) ) {
 							update_post_meta( $order_id, '_dibs_cardexpdate', $posted['cardexpdate'] );
 						}
-
+						$order->add_order_note( sprintf( __( 'DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs-for-woocommerce' ), $posted['transact'] ) );
 						$order->payment_complete( $posted['transact'] );
 						break;
 					case '0' :

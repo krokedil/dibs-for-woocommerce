@@ -2,12 +2,12 @@
 Contributors: krokedil, niklashogefjord, slobodanmanic, boozebrorsan
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 4.8.1
-Requires WooCommerce at least: 2.4
-Tested WooCommerce up to: 2.6.8
+Tested up to: 4.8.2
+Requires WooCommerce at least: 3.0
+Tested WooCommerce up to: 3.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
-Stable tag: 2.4.5
+Stable tag: trunk
 
 DIBS for WooCommerce is a plugin that extends WooCommerce, allowing you to take payments via DIBS (via the D2/FlexWin platform).
 
