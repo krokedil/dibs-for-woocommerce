@@ -1,5 +1,13 @@
 *** DIBS Changelog ***
 
+2017.10.16		- version 2.5.0
+* Misc			- WC 3.0 compat/removed deprecated notices.
+* Tweak			- Added WC 3.2+ new plugin headers ( WC requires at least & WC tested up to).
+* Tweak			- Added more payment types to credit card payment type.
+* Fix			- Fixed Materpass WC 3.0 bug.
+* Fix 			- PHP Notice:  Undefined variable: dibs_language.
+* Fix 			- PHP Notice: Order properties should not be accessed directly on /order-pay page.
+
 2017.08.10		- version 2.4.5
 * Tweak			- WPML compatibility to return customer to correct language for thank you page.
 * Fix			- Only run override_checkout_fields on frontend for MasterPass.
