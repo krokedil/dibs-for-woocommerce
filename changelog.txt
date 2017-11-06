@@ -1,5 +1,9 @@
 *** DIBS Changelog ***
 
+2017.11.06		- version 2.5.1
+* Tweak			- Removed V-DK as paytype sent to DIBS for card payments.
+* Tweak			- Don't send Order on-hold email for DIBS status code 12 (capture pending).
+
 2017.10.16		- version 2.5.0
 * Misc			- WC 3.0 compat/removed deprecated notices.
 * Tweak			- Added WC 3.2+ new plugin headers ( WC requires at least & WC tested up to).

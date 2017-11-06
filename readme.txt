@@ -2,9 +2,9 @@
 Contributors: krokedil, niklashogefjord, slobodanmanic, boozebrorsan
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 4.8.2
+Tested up to: 4.8.3
 Requires WooCommerce at least: 3.0
-Tested WooCommerce up to: 3.2
+Tested WooCommerce up to: 3.2.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Stable tag: trunk
@@ -50,8 +50,12 @@ More information on how to get started can be found in the [plugin documentation
 
 == CHANGELOG ==
 
+= 2017.11.06	- version 2.5.1 =
+* Tweak			- Removed V-DK as paytype sent to DIBS for card payments.
+* Tweak			- Don't send Order on-hold email for DIBS status code 12 (capture pending).
+
 = 2017.10.16	- version 2.5.0 =
-* Misc			- WC 3.0 compat/removed deprecated notices.
+* Misc			- WC 3.0 compat/removed deprecated notices. Removed 2.x support.
 * Tweak			- Added WC 3.2+ new plugin headers ( WC requires at least & WC tested up to).
 * Tweak			- Added more payment types to credit card payment type.
 * Fix			- Fixed Materpass WC 3.0 bug.
