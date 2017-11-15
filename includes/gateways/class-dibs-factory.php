@@ -35,7 +35,6 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
      * Complete a payment and fire action
      * @param $order
      * @param $posted
-     * @param $transaction_id
      */
     function payment_complete( $order, $posted ) {
         do_action( 'dibs_woocommerce_payment_complete', $order, $posted );
@@ -180,7 +179,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 							$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['ticket'] ) );
 						}
 
-            $this->payment_complete( $order, $posted );
+                        $this->payment_complete( $order, $posted );
 						break;
 					case '12' :
 						// Store Transaction number as post meta
@@ -202,7 +201,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 							update_post_meta( $order_id, '_dibs_cardexpdate', $posted['cardexpdate'] );
 						}
 						$order->add_order_note( sprintf( __( 'DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs-for-woocommerce' ), $posted['transact'] ) );
-            $this->payment_complete( $order, $posted );
+                        $this->payment_complete( $order, $posted );
 						break;
 					case '0' :
 					case '1' :
