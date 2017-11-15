@@ -31,16 +31,16 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 		);
 	}
 
-  /**
-   * Complete a payment and fire action
-   * @param $order
-   * @param $posted
-   * @param $transaction_id
-   */
-  function payment_complete( $order, $posted ) {
-    do_action( 'dibs_woocommerce_payment_complete', $order, $posted );
-    $order->payment_complete( $posted['transact'] );
-  }
+    /**
+     * Complete a payment and fire action
+     * @param $order
+     * @param $posted
+     * @param $transaction_id
+     */
+    function payment_complete( $order, $posted ) {
+        do_action( 'dibs_woocommerce_payment_complete', $order, $posted );
+        $order->payment_complete( $posted['transact'] );
+    }
 
 	/**
 	 * Process successful payment.
