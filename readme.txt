@@ -2,9 +2,9 @@
 Contributors: krokedil, niklashogefjord, slobodanmanic, boozebrorsan
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 4.8.3
+Tested up to: 4.9
 Requires WooCommerce at least: 3.0
-Tested WooCommerce up to: 3.2.3
+Tested WooCommerce up to: 3.2.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Stable tag: trunk
@@ -49,6 +49,9 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2017.11.21	- version 2.5.2 =
+* Tweak			- Grab DIBS ticket number from subscription first (instead of parent order) on subscription renewal orders. Could cause problem when customer had changed card on a subscription.
 
 = 2017.11.06	- version 2.5.1 =
 * Tweak			- Removed V-DK as paytype sent to DIBS for card payments.

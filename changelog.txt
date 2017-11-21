@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2017.11.21		- version 2.5.2
+* Tweak			- Grab DIBS ticket number from subscription first (instead of parent order) on subscription renewal orders. Could cause problem when customer had changed card on a subscription.
+
 2017.11.06		- version 2.5.1
 * Tweak			- Removed V-DK as paytype sent to DIBS for card payments.
 * Tweak			- Don't send Order on-hold email for DIBS status code 12 (capture pending).
