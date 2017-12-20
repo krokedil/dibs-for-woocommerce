@@ -410,9 +410,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 
 		// Callback URL doesn't work as in the other gateways. DIBS erase everything
 		// after a '?' in a specified callback URL
-		$args['callbackurl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit( site_url( '/woocommerce/dibscallback' ) ) );
-		$args['accepturl']   = trailingslashit( site_url( '/woocommerce/dibsaccept' ) );
-		$args['cancelurl']   = trailingslashit( site_url( '/woocommerce/dibscancel' ) );
+		$args['callbackurl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit( get_site_url( null, '/woocommerce/dibscallback' ) ) );
+		$args['accepturl']   = trailingslashit( get_site_url( null, '/woocommerce/dibsaccept' ) );
+		$args['cancelurl']   = trailingslashit( get_site_url( null,  '/woocommerce/dibscancel' ) );
 
 		// Testmode
 		if ( 'yes' == $this->testmode ) {
