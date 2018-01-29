@@ -455,10 +455,10 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 			// Subscription payment
 			$args['maketicket'] = '1';
 
-			if ( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
+			if ( $order->get_total( 'edit' ) == 0 ) {
 				$price = 1;
 			} else {
-				$price = WC_Subscriptions_Order::get_total_initial_payment( $order );
+				$price = $order->get_total( 'edit' );
 			}
 
 			// Price
