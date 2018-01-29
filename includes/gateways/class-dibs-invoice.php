@@ -451,14 +451,14 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		$args['structuredOrderInformation'] = esc_attr( $structured_information );
 
 		// What kind of payment is this - subscription payment or regular payment
-		if ( class_exists( 'WC_Subscriptions_Order' ) && WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
+		if ( class_exists( 'WC_Subscriptions_Order' ) && wcs_order_contains_subscription( $order_id ) ) {
 			// Subscription payment
 			$args['maketicket'] = '1';
 
-			if ( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
+			if ( $order->get_total( 'edit' ) == 0 ) {
 				$price = 1;
 			} else {
-				$price = WC_Subscriptions_Order::get_total_initial_payment( $order );
+				$price = $order->get_total( 'edit' );
 			}
 
 			// Price
