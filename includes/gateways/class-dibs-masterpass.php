@@ -94,11 +94,15 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 		if ( is_admin() ) {
 			return __( 'Place order', 'woocommerce' );
 		} else {
-			if ( WC()->session->get( 'dibs_wallet_mp_validate_respons' ) ) {
-				return __( 'Place order', 'woocommerce' );
+			if ( WC()->session ) {
+				if ( WC()->session->get( 'dibs_wallet_mp_validate_respons' ) ) {
+					return __( 'Place order', 'woocommerce' );
+				} else {
+					return __( 'Proceed to MasterPass', 'dibs-for-woocommerce' );
+				}
 			} else {
-				return __( 'Proceed to MasterPass', 'dibs-for-woocommerce' );
-			}
+				return __( 'Place order', 'woocommerce' );
+			}	
 		}
 	}
 	
