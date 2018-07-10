@@ -1,5 +1,9 @@
 *** DIBS Changelog ***
 
+2018.06.10		- version 2.5.3
+* Tweak			- Use get_site_url() instead of site_url() for callback url's. Better support for https.
+* Fix			- Session error fix (could be triggered in WC 3.3+).
+
 2017.11.21		- version 2.5.2
 * Tweak			- Grab DIBS ticket number from subscription first (instead of parent order) on subscription renewal orders. Could cause problem when customer had changed card on a subscription.
 
