@@ -338,6 +338,11 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 
 		$args['orderid'] = ltrim( $tmp_order_id, '#' ); // Strip #
 
+		// Store the sent order number if it differs from order_id 
+		if( $tmp_order_id !== $order_id ) {
+			update_post_meta( $order_id, '_dibs_sent_order_id', $tmp_order_id );
+		}
+
 		// Language
 		$args['lang'] = $this->dibs_language;
 
