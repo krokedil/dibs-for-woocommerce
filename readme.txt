@@ -50,6 +50,9 @@ More information on how to get started can be found in the [plugin documentation
 
 == CHANGELOG ==
 
+= 2018.07.16	- version 2.5.4 =
+* Tweak			- Improved compatibility with plugins adding sequential order numbers features and devs changing order number via the woocommerce_order_number filter.
+
 = 2018.06.10	- version 2.5.3 =
 * Tweak			- Use get_site_url() instead of site_url() for callback url's. Better support for https.
 * Fix			- Session error fix (could be triggered in WC 3.3+).
