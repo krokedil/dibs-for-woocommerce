@@ -383,14 +383,19 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		}
 
 		// Order number
-		$prefix       = 'n°'; // Strip n° (french translation)
 		$tmp_order_id = $order->get_order_number();
+		$prefix       = 'n°'; // Strip n° (french translation)
 
 		if ( substr( $tmp_order_id, 0, strlen( $prefix ) ) == $prefix ) {
 			$tmp_order_id = substr( $tmp_order_id, strlen( $prefix ) );
 		}
 
 		$args['orderid'] = ltrim( $tmp_order_id, '#' ); // Strip #
+
+		// Store the sent order number if it differs from order_id 
+		if( $tmp_order_id !== $order_id ) {
+			update_post_meta( $order_id, '_dibs_sent_order_id', $tmp_order_id );
+		}
 
 		// Language
 		if( 'wp' == $this->dibs_language) {
