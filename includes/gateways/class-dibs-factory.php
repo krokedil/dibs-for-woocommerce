@@ -78,6 +78,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 				if( wcs_order_contains_subscription($order_id) ) {
 					
 					// New subscription but with a free trial. 
+					
 					// Multiple callbacks are sent from DIBS. Don't add an order note if we already have done this
 					if ( $order->get_status() !== 'completed' || $order->get_status() !== 'processing' ) {
 						$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['transact'] ) );
@@ -85,9 +86,13 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 					}
 					
 				} else {
+
 					// Payment method change
 					$order->add_order_note( sprintf( __( 'Payment method updated. DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['transact'] ) );
 					wc_add_notice( sprintf( __( 'Your card %s is now stored with DIBS and will be used for future subscription renewal payments.', 'dibs-for-woocommerce' ), $posted['cardnomask'] ), 'success' );
+					
+					// Change redirect url
+					$return_url = get_permalink( wc_get_page_id( 'myaccount' ) );
 				}
 				
 
@@ -102,7 +107,6 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 					update_post_meta( $order_id, '_dibs_cardexpdate', $posted['cardexpdate'] );
 				}
 				
-				$return_url = get_permalink( wc_get_page_id( 'myaccount' ) );
 				wp_redirect( $return_url );
 				exit;
 			}
