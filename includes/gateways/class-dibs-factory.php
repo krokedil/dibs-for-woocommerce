@@ -76,7 +76,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 				
 				// 
 				if( wcs_order_contains_subscription($order_id) ) {
-					
+				
 					// New subscription but with a free trial. 
 					
 					// Multiple callbacks are sent from DIBS. Don't add an order note if we already have done this
@@ -86,13 +86,13 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 					}
 					
 				} else {
-
+					
 					// Payment method change
 					$order->add_order_note( sprintf( __( 'Payment method updated. DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['transact'] ) );
 					wc_add_notice( sprintf( __( 'Your card %s is now stored with DIBS and will be used for future subscription renewal payments.', 'dibs-for-woocommerce' ), $posted['cardnomask'] ), 'success' );
 					
 					// Change redirect url
-					$return_url = get_permalink( wc_get_page_id( 'myaccount' ) );
+					$redirect_url = get_permalink( wc_get_page_id( 'myaccount' ) );
 				}
 				
 
@@ -107,7 +107,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 					update_post_meta( $order_id, '_dibs_cardexpdate', $posted['cardexpdate'] );
 				}
 				
-				wp_redirect( $return_url );
+				wp_redirect( $redirect_url );
 				exit;
 			}
 
@@ -230,25 +230,18 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 	function get_order_id( $order_number ) {
 
 		$order_id = false;
-		
-		$order = wc_get_order( $order_number );
-		if( is_object( $order ) ) {
-			// Order ID used as order number, return it.
-			$order_id = $order_number;
-			
-		} else {
-			// Check if we can find the order id by query orders by _dibs_sent_order_id (saved in the order during checkout process).
-			$query_args = array(
-				'fields'      => 'ids',
-				'post_type'   => wc_get_order_types(),
-				'post_status' => array_keys( wc_get_order_statuses() ),
-				'meta_key'    => '_dibs_sent_order_id',
-				'meta_value'  => $order_number,
-			);
-			$orders = get_posts( $query_args );
-			if ( !empty( $orders ) ) {
-				$order_id = $orders[0];
-			}	
+
+		// Check if we can find the order id by query orders by _dibs_sent_order_id (saved in the order during checkout process).
+		$query_args = array(
+			'fields'      => 'ids',
+			'post_type'   => wc_get_order_types(),
+			'post_status' => array_keys( wc_get_order_statuses() ),
+			'meta_key'    => '_dibs_sent_order_id',
+			'meta_value'  => $order_number,
+		);
+		$orders = get_posts( $query_args );
+		if ( !empty( $orders ) ) {
+			$order_id = $orders[0];
 		}
 
 		if( empty( $order_id ) ) {
@@ -261,6 +254,16 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 				// Get Order ID by order_number() if the Sequential Order Number Pro plugin is installed
 			} elseif ( class_exists( 'WC_Seq_Order_Number_Pro' ) ) {
 				$order_id = wc_seq_order_number_pro()->find_order_by_order_number( $order_number );
+			}
+		}
+
+		// Check if order_id has been used as order number
+		if( empty( $order_id ) ) {
+			$order = wc_get_order( $order_number );
+			if( is_object( $order ) ) {
+				// Order ID used as order number, return it.
+				$order_id = $order_number;
+				
 			}
 		}
 		
