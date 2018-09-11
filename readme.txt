@@ -2,9 +2,9 @@
 Contributors: krokedil, niklashogefjord, slobodanmanic, boozebrorsan
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 4.9.7
+Tested up to: 4.9.8
 Requires WooCommerce at least: 3.0
-Tested WooCommerce up to: 3.4.3
+Tested WooCommerce up to: 3.4.5
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Stable tag: trunk
@@ -49,6 +49,10 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2018.09.11	- version 2.5.5 =
+* Tweak			- Improved get_order_id() function to get correct order id during callbacks from DIBS.
+* Fix			- Modify redirct url to checkout page for subscriptions with free trial (previous customer ended up on My account page).
 
 = 2018.07.16	- version 2.5.4 =
 * Tweak			- Improved compatibility with plugins adding sequential order numbers features and devs changing order number via the woocommerce_order_number filter.
