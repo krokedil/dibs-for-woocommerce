@@ -3,13 +3,13 @@
  * Plugin Name: DIBS for WooCommerce
  * Plugin URI: https://krokedil.se/produkt/dibs/
  * Description: Extends WooCommerce. Provides a <a href="https://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
- * Version: 2.5.4
+ * Version: 2.5.5
  * Author: Krokedil
  * Author URI: https://krokedil.se
  * Text Domain: dibs-for-woocommerce
  * Domain Path: /languages
  * WC requires at least: 3.0.0
- * WC tested up to: 3.4.3
+ * WC tested up to: 3.4.5
 */
 
 /*  Copyright 2011-2018  Krokedil Produktionsbyrå AB  (email : info@krokedil.se)
@@ -39,7 +39,7 @@ if ( ! defined( 'WC_DIBS_PLUGIN_URL' ) ) {
 	define( 'WC_DIBS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 // Plugin version
-define( 'WC_DIBS_VERSION', '2.5.4' );
+define( 'WC_DIBS_VERSION', '2.5.5' );
 
 require_once( plugin_dir_path( __FILE__ ) . 'includes/class-dibs-extra.php' );
 require_once( plugin_dir_path( __FILE__ ) . 'includes/class-dibs-masterpass-functions.php' );
