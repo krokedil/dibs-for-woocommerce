@@ -211,7 +211,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 							'title' => __( 'Enable/Disable', 'dibs-for-woocommerce' ), 
 							'type' => 'checkbox', 
 							'label' => __( 'Enable MasterPass', 'dibs-for-woocommerce' ), 
-							'default' => 'yes'
+							'default' => 'no'
 						),
 			'title' => array(
 							'title' => __( 'Title', 'dibs-for-woocommerce' ), 
