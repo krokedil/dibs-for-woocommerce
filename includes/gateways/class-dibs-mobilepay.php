@@ -50,15 +50,17 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 		// Supports
 		$this->supports = array(
 			'products',
-			'refunds'
+			'refunds',
 		);
 
 		// Actions
 		add_action( 'woocommerce_receipt_dibs_mobilepay', array( $this, 'receipt_page' ) );
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
-			$this,
-			'process_admin_options'
-		) );
+		add_action(
+			'woocommerce_update_options_payment_gateways_' . $this->id, array(
+				$this,
+				'process_admin_options',
+			)
+		);
 
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
 		$this->dibs_currency = array(
@@ -79,21 +81,21 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 
 		// Check if the currency is supported
 		if ( ! isset( $this->dibs_currency[ $this->selected_currency ] ) ) {
-			$this->enabled = "no";
+			$this->enabled = 'no';
 		} else {
 			$this->enabled = $this->settings['enabled'];
 		}
 
 		add_action( 'woocommerce_receipt_dibs_mobilepay', array( $this, 'receipt_page' ) );
 	} // End construct
-	
-	
+
+
 	/**
 	 * Check if this gateway is enabled and available in the user's country
 	 */
 	function is_available() {
-		if ( $this->enabled == "yes" ) {
-			
+		if ( $this->enabled == 'yes' ) {
+
 			// Required fields check
 			if ( empty( $this->merchant_id ) ) {
 				return false;
@@ -121,37 +123,37 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 				'title'   => __( 'Enable/Disable', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable DIBS MobilePay', 'dibs-for-woocommerce' ),
-				'default' => 'yes'
+				'default' => 'no',
 			),
 			'title'                    => array(
 				'title'       => __( 'Title', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'dibs-for-woocommerce' ),
-				'default'     => __( 'DIBS MobilePay', 'dibs-for-woocommerce' )
+				'default'     => __( 'DIBS MobilePay', 'dibs-for-woocommerce' ),
 			),
 			'description'              => array(
 				'title'       => __( 'Description', 'dibs-for-woocommerce' ),
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'dibs-for-woocommerce' ),
-				'default'     => __( "Pay via DIBS using MobilePay.", 'dibs-for-woocommerce' )
+				'default'     => __( 'Pay via DIBS using MobilePay.', 'dibs-for-woocommerce' ),
 			),
 			'merchant_id'              => array(
 				'title'       => __( 'DIBS Merchant ID', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Please enter your DIBS Merchant ID; this is needed in order to take payment.', 'dibs-for-woocommerce' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'key_1'                    => array(
 				'title'       => __( 'MD5 k1', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Please enter your DIBS MD5 k1; this is only needed when using Flexwin as the payment method.', 'dibs-for-woocommerce' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'key_2'                    => array(
 				'title'       => __( 'MD5 k2', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Please enter your DIBS MD5 k2; this is only needed when using Flexwin as the payment method.', 'dibs-for-woocommerce' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'language'                 => array(
 				'title'       => __( 'Language', 'dibs-for-woocommerce' ),
@@ -172,19 +174,19 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 					'kl' => 'Greenlandic',
 				),
 				'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'dibs-for-woocommerce' ),
-				'default'     => 'sv'
+				'default'     => 'sv',
 			),
 			'alternative_icon'         => array(
 				'title'       => __( 'Alternative payment icon', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => sprintf( __( 'Add the URL to an alternative payment icon that the user sees during checkout. Leave blank to use the default image. Alternative payment method logos can be found <a href="%s" target="_blank">here</a>.', 'dibs-for-woocommerce' ), 'http://tech.dibspayment.com/logos#check-out-logos' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'alternative_icon_width'   => array(
 				'title'       => __( 'Icon width', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'The width of the Alternative payment icon.', 'dibs-for-woocommerce' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'capturenow'               => array(
 				'title'       => __( 'DIBS transaction capture', 'dibs-for-woocommerce' ),
@@ -192,10 +194,10 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 				'options'     => array(
 					'yes'      => __( 'On Purchase', 'dibs-for-woocommerce' ),
 					'complete' => __( 'On order completion', 'dibs-for-woocommerce' ),
-					'no'       => __( 'No', 'dibs-for-woocommerce' )
+					'no'       => __( 'No', 'dibs-for-woocommerce' ),
 				),
 				'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account.', 'dibs-for-woocommerce' ),
-				'default'     => 'no'
+				'default'     => 'no',
 			),
 			'decorator'                => array(
 				'title'       => __( 'Decorator', 'dibs-for-woocommerce' ),
@@ -205,7 +207,7 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 					'default'    => __( 'Default', 'dibs-for-woocommerce' ),
 					'basal'      => __( 'Basal', 'dibs-for-woocommerce' ),
 					'rich'       => __( 'Rich', 'dibs-for-woocommerce' ),
-					''           => __( 'None', 'dibs-for-woocommerce' )
+					''           => __( 'None', 'dibs-for-woocommerce' ),
 				),
 				'description' => __( 'Specifies which of the pre-built decorators to use (when using Flexwin as the payment method). This will override the customer specific decorator, if one has been uploaded.', 'dibs-for-woocommerce' ),
 				'default'     => 'responsive',
@@ -213,7 +215,7 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 			'api_settings_title'       => array(
 				'title'       => __( 'API Credentials', 'dibs-for-woocommerce' ),
 				'type'        => 'title',
-				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %shere%s.', 'dibs-for-woocommerce' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
+				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %1$shere%2$s.', 'dibs-for-woocommerce' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
 			),
 			'api_username'             => array(
 				'title'       => __( 'API Username', 'dibs-for-woocommerce' ),
@@ -221,7 +223,7 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 				'description' => __( 'Get your API credentials from DIBS.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 				'desc_tip'    => true,
-				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' )
+				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' ),
 			),
 			'api_password'             => array(
 				'title'       => __( 'API Password', 'dibs-for-woocommerce' ),
@@ -229,7 +231,7 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 				'description' => __( 'Get your API credentials from DIBS.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 				'desc_tip'    => true,
-				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' )
+				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' ),
 			),
 			'test_mode_settings_title' => array(
 				'title' => __( 'Test Mode Settings', 'dibs-for-woocommerce' ),
@@ -239,14 +241,14 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 				'title'   => __( 'Test Mode', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable DIBS Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'dibs-for-woocommerce' ),
-				'default' => 'yes'
+				'default' => 'yes',
 			),
 			'debug'                    => array(
 				'title'   => __( 'Debug', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'dibs-for-woocommerce' ),
-				'default' => 'no'
-			)
+				'default' => 'no',
+			),
 		);
 	} // End init_form_fields()
 
@@ -267,7 +269,8 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 			if ( isset( $this->dibs_currency[ $this->selected_currency ] ) ) {
 				// Generate the HTML For the settings form.
 				$this->generate_settings_html();
-			} else { ?>
+			} else {
+			?>
 				<tr valign="top">
 					<th scope="row" class="titledesc">DIBS disabled</th>
 					<td class="forminp">
@@ -283,7 +286,7 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 		</table><!--/.form-table-->
 		<?php
 	}
-	
+
 	/**
 	 * Show receipt page.
 	 *
@@ -294,7 +297,7 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 
 		echo $this->generate_dibs_form( $order );
 	}
-		
+
 	/**
 	 * Generate the dibs button link
 	 *
@@ -318,7 +321,6 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 			$args['paytype'] = $paytypes;
 		}
 
-		
 		// Price
 		$args['amount'] = $order->get_total() * 100;
 
@@ -326,7 +328,6 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 		if ( $this->capturenow == 'yes' ) {
 			$args['capturenow'] = 'yes';
 		}
-		
 
 		// Order number
 		$prefix       = 'n°'; // Strip n° (french translation)
@@ -338,8 +339,8 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 
 		$args['orderid'] = ltrim( $tmp_order_id, '#' ); // Strip #
 
-		// Store the sent order number if it differs from order_id 
-		if( $tmp_order_id !== $order_id ) {
+		// Store the sent order number if it differs from order_id
+		if ( $tmp_order_id !== $order_id ) {
 			update_post_meta( $order_id, '_dibs_sent_order_id', $tmp_order_id );
 		}
 
@@ -375,7 +376,6 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 		$key2     = $this->key_2;
 		$merchant = $this->merchant_id;
 		// $orderid = $order_id;
-
 		$currency = $this->dibs_currency[ $this->selected_currency ];
 		$amount   = $order->get_total() * 100;
 		$postvars = 'merchant=' . $merchant . '&orderid=' . $args['orderid'] . '&currency=' . $currency . '&amount=' . $amount;
@@ -407,7 +407,8 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 			$this->log->add( 'dibs', 'Sending values to DIBS: ' . $tmp_log );
 		}
 
-		wc_enqueue_js( '
+		wc_enqueue_js(
+			'
 			jQuery("body").block({
 					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'dibs-for-woocommerce' ) ) . '",
 					baseZ: 99999,
@@ -428,7 +429,8 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 				    }
 				});
 			jQuery("#submit_dibs_cc_payment_form").click();
-		' );
+		'
+		);
 
 		// Print out and send the form
 		return '<form action="' . $dibs_adr . '" method="post" id="dibs_cc_payment_form">
@@ -436,7 +438,7 @@ class WC_Gateway_Dibs_MobilePay extends WC_Gateway_Dibs_Factory {
 				<input type="submit" class="button-alt" id="submit_dibs_cc_payment_form" value="' . __( 'Pay via dibs', 'dibs-for-woocommerce' ) . '" /> <a class="button cancel" href="' . $order->get_cancel_order_url() . '">' . __( 'Cancel order &amp; restore cart', 'dibs-for-woocommerce' ) . '</a>
 			</form>';
 	}
-	
+
 	/**
 	 * Get gateway icon.
 	 *
