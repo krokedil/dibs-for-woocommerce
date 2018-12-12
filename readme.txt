@@ -2,9 +2,9 @@
 Contributors: krokedil, niklashogefjord, slobodanmanic, boozebrorsan
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 4.9.8
+Tested up to: 5.0.0
 Requires WooCommerce at least: 3.0
-Tested WooCommerce up to: 3.4.5
+Tested WooCommerce up to: 3.5.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Stable tag: trunk
@@ -49,6 +49,12 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2018.12.12	- version 2.6.0 =
+* Feature		- Added Dankort app as new separate payment method.
+* Tweak			- Plugin WordPress 5.0 compatible.
+* Tweak			- Changed URL to docs about refunds/API credentials in settings page.
+* Fix			- Code cleaning.
 
 = 2018.09.11	- version 2.5.5 =
 * Tweak			- Improved get_order_id() function to get correct order id during callbacks from DIBS.
