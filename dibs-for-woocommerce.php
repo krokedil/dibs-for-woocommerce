@@ -81,6 +81,9 @@ function init_dibs_gateway() {
 	// Include our Dibs MasterPass class
 	require_once WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-masterpass.php';
 
+	// Include our Dibs Dankort app class
+	require_once WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-dankort-app.php';
+
 	// Check if we should include the Dibs manual modification class
 	if ( defined( 'WC_DIBS_DEBUG' ) && true === WC_DIBS_DEBUG ) {
 		require_once WC_DIBS_PLUGIN_DIR . 'includes/class-wc-dibs-manual-modification.php';
@@ -96,6 +99,7 @@ function add_dibs_gateway( $methods ) {
 	$methods[] = 'WC_Gateway_Dibs_Invoice';
 	$methods[] = 'WC_Gateway_Dibs_MobilePay';
 	$methods[] = 'WC_Gateway_Dibs_MasterPass_New';
+	$methods[] = 'WC_Gateway_Dibs_Dankort_App';
 
 	return $methods;
 }
