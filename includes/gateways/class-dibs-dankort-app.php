@@ -41,7 +41,6 @@ class WC_Gateway_Dibs_Dankort_App extends WC_Gateway_Dibs_Factory {
 		$this->alternative_icon_width = ( isset( $this->settings['alternative_icon_width'] ) ) ? $this->settings['alternative_icon_width'] : '';
 		$this->api_username           = ( isset( $this->settings['api_username'] ) ) ? $this->settings['api_username'] : '';
 		$this->api_password           = ( isset( $this->settings['api_password'] ) ) ? $this->settings['api_password'] : '';
-		$this->testmode               = ( isset( $this->settings['testmode'] ) ) ? $this->settings['testmode'] : '';
 		$this->debug                  = ( isset( $this->settings['debug'] ) ) ? $this->settings['debug'] : '';
 
 		// Apply filters for language
@@ -119,43 +118,43 @@ class WC_Gateway_Dibs_Dankort_App extends WC_Gateway_Dibs_Factory {
 	function init_form_fields() {
 
 		$this->form_fields = array(
-			'enabled'                  => array(
+			'enabled'                => array(
 				'title'   => __( 'Enable/Disable', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable Dankort app', 'dibs-for-woocommerce' ),
 				'default' => 'no',
 			),
-			'title'                    => array(
+			'title'                  => array(
 				'title'       => __( 'Title', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'dibs-for-woocommerce' ),
 				'default'     => __( 'Dankort app', 'dibs-for-woocommerce' ),
 			),
-			'description'              => array(
+			'description'            => array(
 				'title'       => __( 'Description', 'dibs-for-woocommerce' ),
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'dibs-for-woocommerce' ),
 				'default'     => __( 'Pay via DIBS using Dankort app.', 'dibs-for-woocommerce' ),
 			),
-			'merchant_id'              => array(
+			'merchant_id'            => array(
 				'title'       => __( 'DIBS Merchant ID', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Please enter your DIBS Merchant ID; this is needed in order to take payment.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 			),
-			'key_1'                    => array(
+			'key_1'                  => array(
 				'title'       => __( 'MD5 k1', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Please enter your DIBS MD5 k1; this is only needed when using Flexwin as the payment method.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 			),
-			'key_2'                    => array(
+			'key_2'                  => array(
 				'title'       => __( 'MD5 k2', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Please enter your DIBS MD5 k2; this is only needed when using Flexwin as the payment method.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 			),
-			'language'                 => array(
+			'language'               => array(
 				'title'       => __( 'Language', 'dibs-for-woocommerce' ),
 				'type'        => 'select',
 				'options'     => array(
@@ -177,19 +176,19 @@ class WC_Gateway_Dibs_Dankort_App extends WC_Gateway_Dibs_Factory {
 				'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'dibs-for-woocommerce' ),
 				'default'     => 'da',
 			),
-			'alternative_icon'         => array(
+			'alternative_icon'       => array(
 				'title'       => __( 'Alternative payment icon', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => sprintf( __( 'Add the URL to an alternative payment icon that the user sees during checkout. Leave blank to use the default image. Alternative payment method logos can be found <a href="%s" target="_blank">here</a>.', 'dibs-for-woocommerce' ), 'http://tech.dibspayment.com/logos#check-out-logos' ),
 				'default'     => '',
 			),
-			'alternative_icon_width'   => array(
+			'alternative_icon_width' => array(
 				'title'       => __( 'Icon width', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'The width of the Alternative payment icon.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 			),
-			'capturenow'               => array(
+			'capturenow'             => array(
 				'title'       => __( 'DIBS transaction capture', 'dibs-for-woocommerce' ),
 				'type'        => 'select',
 				'options'     => array(
@@ -200,7 +199,7 @@ class WC_Gateway_Dibs_Dankort_App extends WC_Gateway_Dibs_Factory {
 				'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account.', 'dibs-for-woocommerce' ),
 				'default'     => 'no',
 			),
-			'decorator'                => array(
+			'decorator'              => array(
 				'title'       => __( 'Decorator', 'dibs-for-woocommerce' ),
 				'type'        => 'select',
 				'options'     => array(
@@ -213,12 +212,12 @@ class WC_Gateway_Dibs_Dankort_App extends WC_Gateway_Dibs_Factory {
 				'description' => __( 'Specifies which of the pre-built decorators to use (when using Flexwin as the payment method). This will override the customer specific decorator, if one has been uploaded.', 'dibs-for-woocommerce' ),
 				'default'     => 'responsive',
 			),
-			'api_settings_title'       => array(
+			'api_settings_title'     => array(
 				'title'       => __( 'API Credentials', 'dibs-for-woocommerce' ),
 				'type'        => 'title',
 				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %1$shere%2$s.', 'dibs-for-woocommerce' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
 			),
-			'api_username'             => array(
+			'api_username'           => array(
 				'title'       => __( 'API Username', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Get your API credentials from DIBS.', 'dibs-for-woocommerce' ),
@@ -226,7 +225,7 @@ class WC_Gateway_Dibs_Dankort_App extends WC_Gateway_Dibs_Factory {
 				'desc_tip'    => true,
 				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' ),
 			),
-			'api_password'             => array(
+			'api_password'           => array(
 				'title'       => __( 'API Password', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Get your API credentials from DIBS.', 'dibs-for-woocommerce' ),
@@ -234,17 +233,11 @@ class WC_Gateway_Dibs_Dankort_App extends WC_Gateway_Dibs_Factory {
 				'desc_tip'    => true,
 				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' ),
 			),
-			'test_mode_settings_title' => array(
-				'title' => __( 'Test Mode Settings', 'dibs-for-woocommerce' ),
+			'debug_settings_title'   => array(
+				'title' => __( 'Debug Settings', 'dibs-for-woocommerce' ),
 				'type'  => 'title',
 			),
-			'testmode'                 => array(
-				'title'   => __( 'Test Mode', 'dibs-for-woocommerce' ),
-				'type'    => 'checkbox',
-				'label'   => __( 'Enable DIBS Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'dibs-for-woocommerce' ),
-				'default' => 'yes',
-			),
-			'debug'                    => array(
+			'debug'                  => array(
 				'title'   => __( 'Debug', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'dibs-for-woocommerce' ),
@@ -366,11 +359,6 @@ class WC_Gateway_Dibs_Dankort_App extends WC_Gateway_Dibs_Factory {
 		$args['callbackurl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit( site_url( '/woocommerce/dibscallback' ) ) );
 		$args['accepturl']   = trailingslashit( site_url( '/woocommerce/dibsaccept' ) );
 		$args['cancelurl']   = trailingslashit( site_url( '/woocommerce/dibscancel' ) );
-
-		// Testmode
-		if ( $this->testmode == 'yes' ) {
-			$args['test'] = 'yes';
-		}
 
 		// IP
 		if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
