@@ -239,7 +239,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 			'api_settings_title'       => array(
 				'title'       => __( 'API Credentials', 'dibs-for-woocommerce' ),
 				'type'        => 'title',
-				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %1$shere%2$s.', 'dibs-for-woocommerce' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
+				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %1$shere%2$s.', 'dibs-for-woocommerce' ), '<a href="http://docs.krokedil.com/documentation/dibs-for-woocommerce/#4" target="_top">', '</a>' ),
 			),
 			'api_username'             => array(
 				'title'       => __( 'API Username', 'dibs-for-woocommerce' ),
