@@ -28,8 +28,8 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		$this->title                  = ( isset( $this->settings['title'] ) ) ? $this->settings['title'] : '';
 		$this->description            = ( isset( $this->settings['description'] ) ) ? $this->settings['description'] : '';
 		$this->merchant_id            = ( isset( $this->settings['merchant_id'] ) ) ? $this->settings['merchant_id'] : '';
-		$this->key_1					= ( isset( $this->settings['key_1'] ) ) ? html_entity_decode( $this->settings['key_1'] ) : '';
-		$this->key_2					= ( isset( $this->settings['key_2'] ) ) ? html_entity_decode( $this->settings['key_2'] ) : '';
+		$this->key_1                  = ( isset( $this->settings['key_1'] ) ) ? html_entity_decode( $this->settings['key_1'] ) : '';
+		$this->key_2                  = ( isset( $this->settings['key_2'] ) ) ? html_entity_decode( $this->settings['key_2'] ) : '';
 		$this->payment_method         = ( isset( $this->settings['payment_method'] ) ) ? $this->settings['payment_method'] : '';
 		$this->pay_type_cards         = ( isset( $this->settings['pay_type_cards'] ) ) ? $this->settings['pay_type_cards'] : 'yes';
 		$this->pay_type_netbanks      = ( isset( $this->settings['pay_type_netbanks'] ) ) ? $this->settings['pay_type_netbanks'] : 'yes';
@@ -49,7 +49,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		$this->dibs_language = apply_filters( 'dibs_language', $this->language );
 
 		// Invoice fee
-		if ( $this->invoice_fee_id == "" ) {
+		if ( $this->invoice_fee_id == '' ) {
 			$this->invoice_fee_id = 0;
 		}
 		if ( $this->invoice_fee_id > 0 ) {
@@ -72,34 +72,36 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		// Subscription support
 		$this->supports = array(
 			'products',
-			'refunds'
+			'refunds',
 		);
 
 		// Actions
 		add_action( 'woocommerce_receipt_dibs_invoice', array( $this, 'receipt_page' ) );
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
-			$this,
-			'process_admin_options'
-		) );
-		
+		add_action(
+			'woocommerce_update_options_payment_gateways_' . $this->id, array(
+				$this,
+				'process_admin_options',
+			)
+		);
+
 		// Set country based on currency. For DIBS Invoice - available in Sweden, Norway and Denmark
 		switch ( $this->selected_currency ) {
-			case 'NOK' :
+			case 'NOK':
 				$this->dibs_country = 'NO';
 				$dibs_language      = 'nb';
 				break;
-			case 'SEK' :
+			case 'SEK':
 				$this->dibs_country = 'SE';
 				$dibs_language      = 'sv';
 				break;
 			default:
 				$this->dibs_country = '';
-				$dibs_language = '';
+				$dibs_language      = '';
 		}
 
 		// Apply filters for language
 		$this->dibs_language = apply_filters( 'dibs_language', $dibs_language );
-		
+
 		// Dibs currency codes http://tech.dibs.dk/toolbox/currency_codes/
 		$this->dibs_currency = array(
 			'DKK' => '208', // Danish Kroner
@@ -119,7 +121,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 
 		// Check if the currency is supported
 		if ( ! isset( $this->dibs_currency[ $this->selected_currency ] ) ) {
-			$this->enabled = "no";
+			$this->enabled = 'no';
 		} else {
 			$this->enabled = $this->settings['enabled'];
 		}
@@ -138,37 +140,37 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 				'title'   => __( 'Enable/Disable', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable DIBS Invoice', 'dibs-for-woocommerce' ),
-				'default' => 'yes'
+				'default' => 'yes',
 			),
 			'title'                    => array(
 				'title'       => __( 'Title', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'dibs-for-woocommerce' ),
-				'default'     => __( 'DIBS Invoice', 'dibs-for-woocommerce' )
+				'default'     => __( 'DIBS Invoice', 'dibs-for-woocommerce' ),
 			),
 			'description'              => array(
 				'title'       => __( 'Description', 'dibs-for-woocommerce' ),
 				'type'        => 'textarea',
 				'description' => __( 'This controls the description which the user sees during checkout.', 'dibs-for-woocommerce' ),
-				'default'     => __( "Pay via DIBS using invoice.", 'dibs-for-woocommerce' )
+				'default'     => __( 'Pay via DIBS using invoice.', 'dibs-for-woocommerce' ),
 			),
 			'merchant_id'              => array(
 				'title'       => __( 'DIBS Merchant ID', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Please enter your DIBS Merchant ID; this is needed in order to take payment.', 'dibs-for-woocommerce' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'key_1'                    => array(
 				'title'       => __( 'MD5 k1', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Please enter your DIBS MD5 k1; this is only needed when using Flexwin as the payment method.', 'dibs-for-woocommerce' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'key_2'                    => array(
 				'title'       => __( 'MD5 k2', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Please enter your DIBS MD5 k2; this is only needed when using Flexwin as the payment method.', 'dibs-for-woocommerce' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'language'                 => array(
 				'title'       => __( 'Language', 'dibs-for-woocommerce' ),
@@ -190,19 +192,19 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 					'kl' => 'Greenlandic',
 				),
 				'description' => __( 'Set the language in which the page will be opened when the customer is redirected to DIBS.', 'dibs-for-woocommerce' ),
-				'default'     => 'sv'
+				'default'     => 'sv',
 			),
 			'alternative_icon'         => array(
 				'title'       => __( 'Alternative payment icon', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => sprintf( __( 'Add the URL to an alternative payment icon that the user sees during checkout. Leave blank to use the default image. Alternative payment method logos can be found <a href="%s" target="_blank">here</a>.', 'dibs-for-woocommerce' ), 'http://tech.dibspayment.com/logos#check-out-logos' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'alternative_icon_width'   => array(
 				'title'       => __( 'Icon width', 'dibs-for-woocommerce-masterpass' ),
 				'type'        => 'text',
 				'description' => __( 'The width of the Alternative payment icon.', 'dibs-for-woocommerce' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'capturenow'               => array(
 				'title'       => __( 'DIBS transaction capture', 'dibs-for-woocommerce' ),
@@ -210,10 +212,10 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 				'options'     => array(
 					'yes'      => __( 'On Purchase', 'dibs-for-woocommerce' ),
 					'complete' => __( 'On order completion', 'dibs-for-woocommerce' ),
-					'no'       => __( 'No', 'dibs-for-woocommerce' )
+					'no'       => __( 'No', 'dibs-for-woocommerce' ),
 				),
 				'description' => __( 'If On Purchase is selected the order amount is immediately transferred from the customer’s account to the shop’s account.', 'dibs-for-woocommerce' ),
-				'default'     => 'no'
+				'default'     => 'no',
 			),
 			'decorator'                => array(
 				'title'       => __( 'Decorator', 'dibs-for-woocommerce' ),
@@ -223,7 +225,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 					'default'    => __( 'Default', 'dibs-for-woocommerce' ),
 					'basal'      => __( 'Basal', 'dibs-for-woocommerce' ),
 					'rich'       => __( 'Rich', 'dibs-for-woocommerce' ),
-					''           => __( 'None', 'dibs-for-woocommerce' )
+					''           => __( 'None', 'dibs-for-woocommerce' ),
 				),
 				'description' => __( 'Specifies which of the pre-built decorators to use (when using Flexwin as the payment method). This will override the customer specific decorator, if one has been uploaded.', 'dibs-for-woocommerce' ),
 				'default'     => 'responsive',
@@ -232,12 +234,12 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 				'title'       => __( 'Invoice Fee', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'Create a hidden (simple) product that acts as the invoice fee. Enter the ID number in this textfield. Leave blank to disable. ', 'dibs-for-woocommerce' ),
-				'default'     => ''
+				'default'     => '',
 			),
 			'api_settings_title'       => array(
 				'title'       => __( 'API Credentials', 'dibs-for-woocommerce' ),
 				'type'        => 'title',
-				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %shere%s.', 'dibs-for-woocommerce' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
+				'description' => sprintf( __( 'Enter your DIBS API user credentials to process refunds via DIBS. Learn how to access your DIBS API Credentials %1$shere%2$s.', 'dibs-for-woocommerce' ), '<a href="https://docs.woothemes.com/document/dibs/" target="_top">', '</a>' ),
 			),
 			'api_username'             => array(
 				'title'       => __( 'API Username', 'dibs-for-woocommerce' ),
@@ -245,7 +247,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 				'description' => __( 'Get your API credentials from DIBS.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 				'desc_tip'    => true,
-				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' )
+				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' ),
 			),
 			'api_password'             => array(
 				'title'       => __( 'API Password', 'dibs-for-woocommerce' ),
@@ -253,7 +255,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 				'description' => __( 'Get your API credentials from DIBS.', 'dibs-for-woocommerce' ),
 				'default'     => '',
 				'desc_tip'    => true,
-				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' )
+				'placeholder' => __( 'Optional', 'dibs-for-woocommerce' ),
 			),
 			'test_mode_settings_title' => array(
 				'title' => __( 'Test Mode Settings', 'dibs-for-woocommerce' ),
@@ -263,14 +265,14 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 				'title'   => __( 'Test Mode', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable DIBS Test Mode. Read more about the <a href="http://tech.dibs.dk/10_step_guide/your_own_test/" target="_blank">DIBS test process here</a>.', 'dibs-for-woocommerce' ),
-				'default' => 'yes'
+				'default' => 'yes',
 			),
 			'debug'                    => array(
 				'title'   => __( 'Debug', 'dibs-for-woocommerce' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable logging (<code>woocommerce/logs/dibs.txt</code>)', 'dibs-for-woocommerce' ),
-				'default' => 'no'
-			)
+				'default' => 'no',
+			),
 		);
 	} // End init_form_fields()
 
@@ -291,7 +293,8 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 			if ( isset( $this->dibs_currency[ $this->selected_currency ] ) ) {
 				// Generate the HTML For the settings form.
 				$this->generate_settings_html();
-			} else { ?>
+			} else {
+			?>
 				<tr valign="top">
 					<th scope="row" class="titledesc">DIBS disabled</th>
 					<td class="forminp">
@@ -307,15 +310,15 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		</table><!--/.form-table-->
 		<?php
 	}
-	
-	
+
+
 	/**
 	 * Check if this gateway is enabled and available in the user's country
 	 */
 	function is_available() {
 
 		global $woocommerce;
-		if ( $this->enabled == "yes" ) :
+		if ( $this->enabled == 'yes' ) :
 
 			// Base country check
 			if ( ! in_array( get_option( 'woocommerce_default_country' ), array( 'SE', 'NO', 'DK' ) ) ) {
@@ -341,8 +344,8 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * get_icon function.
 	 *
@@ -355,10 +358,10 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 			case 'NOK':
 				$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/single/horiz/DIBS_checkout_single_faktura.png" alt="DIBS - Payments made easy" width="100"/>';
 				break;
-			case 'SEK' :
+			case 'SEK':
 				$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/single/horiz/DIBS_checkout_single_faktura.png" alt="DIBS - Payments made easy" width="100"/>';
 				break;
-			case 'DKK' :
+			case 'DKK':
 				$icon_html = '<img src="https://cdn.dibspayment.com/logo/checkout/single/horiz/DIBS_checkout_single_faktura.png" alt="DIBS - Payments made easy" width="100"/>';
 				break;
 			default:
@@ -367,7 +370,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 
 		return apply_filters( 'wc_dibs_invoice_icon_html', $icon_html );
 	}
-	
+
 	/**
 	 * Show receipt page.
 	 *
@@ -378,7 +381,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 
 		echo $this->generate_dibs_form( $order );
 	}
-	
+
 	/**
 	 * Generate the dibs button link
 	 *
@@ -447,7 +450,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 			$structured_information .= '<orderItem itemDescription="' . $shipping_description . '" itemID="' . $shipping_id . '" orderRowNumber="' . $shipping_row_number . '" price="' . $shipping_price . '" quantity="' . $shipping_quantity . '" unitCode="pcs" VATAmount="' . $shipping_vat_amount . '" />';
 		}
 
-		$structured_information .= '</orderInformation>';
+		$structured_information            .= '</orderInformation>';
 		$args['structuredOrderInformation'] = esc_attr( $structured_information );
 
 		// What kind of payment is this - subscription payment or regular payment
@@ -483,15 +486,15 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 
 		$args['orderid'] = ltrim( $tmp_order_id, '#' ); // Strip #
 
-		// Store the sent order number if it differs from order_id 
-		if( $tmp_order_id !== $order_id ) {
+		// Store the sent order number if it differs from order_id
+		if ( $tmp_order_id !== $order_id ) {
 			update_post_meta( $order_id, '_dibs_sent_order_id', $tmp_order_id );
 		}
 
 		// Language
-		if( 'wp' == $this->dibs_language) {
+		if ( 'wp' == $this->dibs_language ) {
 			// Get ISO language code
-			$iso_code = explode('_', get_locale());
+			$iso_code     = explode( '_', get_locale() );
 			$args['lang'] = $iso_code[0];
 		} else {
 			$args['lang'] = $this->dibs_language;
@@ -526,7 +529,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		$key2     = $this->key_2;
 		$merchant = $this->merchant_id;
 		// $orderid = $order_id;
-
 		$currency = $this->dibs_currency[ $this->selected_currency ];
 		$amount   = $order->get_total() * 100;
 		$postvars = 'merchant=' . $merchant . '&orderid=' . $args['orderid'] . '&currency=' . $currency . '&amount=' . $amount;
@@ -558,7 +560,8 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 			$this->log->add( 'dibs', 'Sending values to DIBS: ' . $tmp_log );
 		}
 
-		wc_enqueue_js( '
+		wc_enqueue_js(
+			'
 			jQuery("body").block({
 					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'dibs-for-woocommerce' ) ) . '",
 					baseZ: 99999,
@@ -579,7 +582,8 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 				    }
 				});
 			jQuery("#submit_dibs_cc_payment_form").click();
-		' );
+		'
+		);
 
 		// Print out and send the form
 		return '<form action="' . $dibs_adr . '" method="post" id="dibs_cc_payment_form">
@@ -593,7 +597,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 	 * when a payment method is selected.
 	 */
 	function print_invoice_fee_updater() {
-		if ( is_checkout() && $this->enabled == "yes" && $this->invoice_fee_id > 0 ) {
+		if ( is_checkout() && $this->enabled == 'yes' && $this->invoice_fee_id > 0 ) {
 			?>
 			<script type="text/javascript">
 				//<![CDATA[
