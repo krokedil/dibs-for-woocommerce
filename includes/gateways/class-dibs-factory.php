@@ -112,7 +112,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 				update_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
 				$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['ticket'] ) );
 				if ( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
-					$subs = wcs_get_subscriptions_for_order( $order, array( 'order_type' => 'parent' ) );
+					$subs = wcs_get_subscriptions_for_order( $order, array( 'order_type' => 'any' ) );
 					foreach ( $subs as $subscription ) {
 						update_post_meta( $subscription->get_id(), '_dibs_ticket', $posted['ticket'] );
 						update_post_meta( $subscription->get_id(), '_dibs_transact', $posted['transact'] );
