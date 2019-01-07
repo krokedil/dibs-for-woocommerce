@@ -282,10 +282,10 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			<tr valign="top">
 			<th scope="row" class="titledesc">DIBS disabled</th>
 			<td class="forminp">
-				<fieldset>
-					<legend class="screen-reader-text"><span>DIBS disabled</span></legend>
-					<?php _e( 'DIBS does not support your store currency.', 'dibs-for-woocommerce' ); ?><br>
-				</fieldset>
+			<fieldset>
+				<legend class="screen-reader-text"><span>DIBS disabled</span></legend>
+				<?php _e( 'DIBS does not support your store currency.', 'dibs-for-woocommerce' ); ?><br>
+			</fieldset>
 			</td>
 			</tr>
 			<?php
@@ -479,7 +479,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			// Debug
 		if ( $this->debug == 'yes' ) :
 			$this->log->add( 'dibs', 'Sending values to DIBS: ' . $tmp_log );
-			endif;
+				endif;
 
 			wc_enqueue_js(
 				'
