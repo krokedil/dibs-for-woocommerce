@@ -2,9 +2,9 @@
 Contributors: krokedil, niklashogefjord, slobodanmanic, boozebrorsan
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 5.0.0
+Tested up to: 5.0.2
 Requires WooCommerce at least: 3.0
-Tested WooCommerce up to: 3.5.2
+Tested WooCommerce up to: 3.5.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Stable tag: trunk
@@ -49,6 +49,10 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2019.01.07	- version 2.6.1 =
+* Tweak			- Update DIBS ticket number in subscription during every subscription renewal payment.
+* Fix			- Add maketicket (new DIBS subscription) even if it is a manuall subscription renewal. This can happen if customer pays for a renewal maually and selects DIBS as payment method.
 
 = 2018.12.12	- version 2.6.0 =
 * Feature		- Added Dankort app as new separate payment method.

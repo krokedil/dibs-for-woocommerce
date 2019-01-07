@@ -270,29 +270,29 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		?>
 		<h3><?php _e( 'DIBS', 'dibs-for-woocommerce' ); ?></h3>
 		<p>
-			<?php printf( __( 'Documentation <a href="%s" target="_blank">can be found here</a>.', 'dibs-for-woocommerce' ), 'http://docs.krokedil.com/documentation/dibs-for-woocommerce/' ); ?>
+		<?php printf( __( 'Documentation <a href="%s" target="_blank">can be found here</a>.', 'dibs-for-woocommerce' ), 'http://docs.krokedil.com/documentation/dibs-for-woocommerce/' ); ?>
 		</p>
 		<table class="form-table">
-			<?php
-			if ( isset( $this->dibs_currency[ $this->selected_currency ] ) ) {
-				// Generate the HTML For the settings form.
-				$this->generate_settings_html();
-			} else {
-			?>
-				<tr valign="top">
-					<th scope="row" class="titledesc">DIBS disabled</th>
-					<td class="forminp">
-						<fieldset>
-							<legend class="screen-reader-text"><span>DIBS disabled</span></legend>
-							<?php _e( 'DIBS does not support your store currency.', 'dibs-for-woocommerce' ); ?><br>
-						</fieldset>
-					</td>
-				</tr>
-				<?php
-			} // End check currency
-			?>
-		</table><!--/.form-table-->
 		<?php
+		if ( isset( $this->dibs_currency[ $this->selected_currency ] ) ) {
+			// Generate the HTML For the settings form.
+			$this->generate_settings_html();
+		} else {
+			?>
+			<tr valign="top">
+			<th scope="row" class="titledesc">DIBS disabled</th>
+			<td class="forminp">
+			<fieldset>
+			<legend class="screen-reader-text"><span>DIBS disabled</span></legend>
+			<?php _e( 'DIBS does not support your store currency.', 'dibs-for-woocommerce' ); ?><br>
+			</fieldset>
+			</td>
+			</tr>
+			<?php
+		} // End check currency
+			?>
+			</table><!--/.form-table-->
+			<?php
 	}
 
 	/**
@@ -324,7 +324,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 	function is_available() {
 		if ( $this->enabled == 'yes' ) :
 			return true;
-		endif;
+			endif;
 
 		return false;
 	}
@@ -364,8 +364,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			$args['paytype'] = $paytypes;
 		}
 
-		// What kind of payment is this - subscription payment or regular payment
-		if ( class_exists( 'WC_Subscriptions_Order' ) && WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
+		// What kind of payment is this - subscription payment or regular payment.
+		if ( class_exists( 'WC_Subscriptions_Order' ) && wcs_order_contains_subscription( $order_id, array( 'parent', 'resubscribe', 'switch', 'renewal' ) ) ) {
 
 			if ( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
 				$price = 0;
@@ -375,8 +375,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 				$args['maketicket'] = '1';
 			}
 
-			// Price
-			$args['amount'] = $price * 100;
+				// Price
+				$args['amount'] = $price * 100;
 
 		} else {
 
@@ -389,22 +389,22 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			}
 		}
 
-		// Order number
-		$tmp_order_id = $order->get_order_number();
-		$prefix       = 'n°'; // Strip n° (french translation)
+			// Order number
+			$tmp_order_id = $order->get_order_number();
+			$prefix       = 'n°'; // Strip n° (french translation)
 
 		if ( substr( $tmp_order_id, 0, strlen( $prefix ) ) == $prefix ) {
 			$tmp_order_id = substr( $tmp_order_id, strlen( $prefix ) );
 		}
 
-		$args['orderid'] = ltrim( $tmp_order_id, '#' ); // Strip #
+			$args['orderid'] = ltrim( $tmp_order_id, '#' ); // Strip #
 
-		// Store the sent order number if it differs from order_id
+			// Store the sent order number if it differs from order_id
 		if ( $tmp_order_id !== $order_id ) {
 			update_post_meta( $order_id, '_dibs_sent_order_id', $tmp_order_id );
 		}
 
-		// Language
+			// Language
 		if ( 'wp' == $this->dibs_language ) {
 			// Get ISO language code
 			$iso_code     = explode( '_', get_locale() );
@@ -413,49 +413,49 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			$args['lang'] = $this->dibs_language;
 		}
 
-		// Layout
+			// Layout
 		if ( ! empty( $this->decorator ) ) {
 			$args['decorator'] = $this->decorator;
 		}
 
-		$args['ordertext'] = 'Name: ' . $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() . '. Address: ' . $order->get_billing_address_1() . ', ' . $order->get_billing_postcode() . ' ' . $order->get_billing_city();
+			$args['ordertext'] = 'Name: ' . $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() . '. Address: ' . $order->get_billing_address_1() . ', ' . $order->get_billing_postcode() . ' ' . $order->get_billing_city();
 
-		// Callback URL doesn't work as in the other gateways. DIBS erase everything
-		// after a '?' in a specified callback URL
-		$args['callbackurl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit( get_site_url( null, '/woocommerce/dibscallback' ) ) );
-		$args['accepturl']   = trailingslashit( get_site_url( null, '/woocommerce/dibsaccept' ) );
-		$args['cancelurl']   = trailingslashit( get_site_url( null, '/woocommerce/dibscancel' ) );
+			// Callback URL doesn't work as in the other gateways. DIBS erase everything
+			// after a '?' in a specified callback URL
+			$args['callbackurl'] = apply_filters( 'woocommerce_dibs_cc_callbackurl', trailingslashit( get_site_url( null, '/woocommerce/dibscallback' ) ) );
+			$args['accepturl']   = trailingslashit( get_site_url( null, '/woocommerce/dibsaccept' ) );
+			$args['cancelurl']   = trailingslashit( get_site_url( null, '/woocommerce/dibscancel' ) );
 
-		// Testmode
+			// Testmode
 		if ( 'yes' == $this->testmode ) {
 			$args['test'] = 'yes';
 		}
 
-		// Calcfee
+			// Calcfee
 		if ( 'yes' == $this->calcfee ) {
 			$args['calcfee'] = 'yes';
 		}
 
-		// IP
+			// IP
 		if ( ! empty( $_SERVER['HTTP_CLIENT_IP'] ) ) {
 			$args['ip'] = $_SERVER['HTTP_CLIENT_IP'];
 		}
 
-		// Calculate MD5 key
-		// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/
-		$key1     = $this->key_1;
-		$key2     = $this->key_2;
-		$merchant = $this->merchant_id;
-		// $orderid = $order_id;
-		$currency = $this->dibs_currency[ $this->selected_currency ];
-		$amount   = $order->get_total() * 100;
-		$postvars = 'merchant=' . $merchant . '&orderid=' . $args['orderid'] . '&currency=' . $currency . '&amount=' . $amount;
+			// Calculate MD5 key
+			// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/
+			$key1     = $this->key_1;
+			$key2     = $this->key_2;
+			$merchant = $this->merchant_id;
+			// $orderid = $order_id;
+			$currency = $this->dibs_currency[ $this->selected_currency ];
+			$amount   = $order->get_total() * 100;
+			$postvars = 'merchant=' . $merchant . '&orderid=' . $args['orderid'] . '&currency=' . $currency . '&amount=' . $amount;
 
 		if ( ! isset( $args['maketicket'] ) ) {
 			$args['md5key'] = MD5( $key2 . MD5( $key1 . $postvars ) );
 		}
 
-		// Check if this is a subscription payment method change or the subscription contains a free trial period.
+			// Check if this is a subscription payment method change or the subscription contains a free trial period.
 		if ( class_exists( 'WC_Subscriptions_Order' ) && 0 == $args['amount'] ) {
 			$args['preauth'] = 'true';
 			$args['amount']  = 1;
@@ -463,26 +463,26 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			unset( $args['md5key'] );
 		}
 
-		// Apply filters to the $args array
-		$args = apply_filters( 'dibs_checkout_form', $args, 'dibs_cc', $order );
+			// Apply filters to the $args array
+			$args = apply_filters( 'dibs_checkout_form', $args, 'dibs_cc', $order );
 
-		// Prepare the form
-		$fields  = '';
-		$tmp_log = '';
+			// Prepare the form
+			$fields  = '';
+			$tmp_log = '';
 		foreach ( $args as $key => $value ) {
 			$fields .= '<input type="hidden" name="' . $key . '" value="' . $value . '" />';
 
 			// Debug preparing
 			$tmp_log .= $key . '=' . $value . "\r\n";
 		}
-
-		// Debug
+			error_log( '$tmp_log ' . $tmp_log );
+			// Debug
 		if ( $this->debug == 'yes' ) :
 			$this->log->add( 'dibs', 'Sending values to DIBS: ' . $tmp_log );
-		endif;
+				endif;
 
-		wc_enqueue_js(
-			'
+			wc_enqueue_js(
+				'
 			jQuery("body").block({
 					message: "' . esc_js( __( 'Thank you for your order. We are now redirecting you to DIBS to make payment.', 'dibs-for-woocommerce' ) ) . '",
 					baseZ: 99999,
@@ -504,7 +504,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 				});
 			jQuery("#submit_dibs_cc_payment_form").click();
 		'
-		);
+			);
 
 		// Print out and send the form
 		return '<form action="' . $dibs_adr . '" method="post" id="dibs_cc_payment_form">

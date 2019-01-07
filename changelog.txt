@@ -1,12 +1,16 @@
 *** DIBS Changelog ***
 
-2018.12.12	- version 2.6.0
+2019.01.07		- version 2.6.1
+* Tweak			- Update DIBS ticket number in subscription during every subscription renewal payment.
+* Fix			- Add maketicket (new DIBS subscription) even if it is a manuall subscription renewal. This can happen if customer pays for a renewal maually and selects DIBS as payment method.
+
+2018.12.12		- version 2.6.0
 * Feature		- Added Dankort app as new separate payment method.
 * Tweak			- Plugin WordPress 5.0 compatible.
 * Tweak			- Changed URL to docs about refunds/API credentials in settings page.
 * Fix			- Code cleaning.
 
-2018.09.11	- version 2.5.5
+2018.09.11		- version 2.5.5
 * Tweak			- Improved get_order_id() function to get correct order id during callbacks from DIBS.
 * Fix			- Modify redirct url to checkout page for subscriptions with free trial (previous customer ended up on My account page).
 
