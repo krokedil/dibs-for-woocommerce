@@ -14,7 +14,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			echo wpautop( wptexturize( $description ) );
 		}
 	}
-	
+
 	/**
 	 * Process the payment and return the result.
 	 *
@@ -27,7 +27,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 
 		return array(
 			'result'   => 'success',
-			'redirect' => $order->get_checkout_payment_url( true )
+			'redirect' => $order->get_checkout_payment_url( true ),
 		);
 	}
 
@@ -51,7 +51,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 		// Flexwin callback
 		if ( isset( $posted['transact'] ) && isset( $posted['orderid'] ) ) {
 			// Verify MD5 checksum
-			// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/	
+			// http://tech.dibs.dk/dibs_api/other_features/md5-key_control/
 			$key1 = $this->key_1;
 			$key2 = $this->key_2;
 			$vars = 'transact=' . $posted['transact'] . '&amount=' . $posted['amount'] . '&currency=' . $posted['currency'];
@@ -63,38 +63,34 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 
 			// Prepare redirect url
 			$redirect_url = $order->get_checkout_order_received_url();
-			
+
 			// WPML compatibility hack
 			$lang_code = get_post_meta( $order_id, 'wpml_language', true );
-			if( $lang_code ) {
-				$redirect_url = apply_filters( 'wpml_permalink', $redirect_url , $lang_code );
+			if ( $lang_code ) {
+				$redirect_url = apply_filters( 'wpml_permalink', $redirect_url, $lang_code );
 			}
-			
+
 			// Subscription payment method change or new subscription with a free trial
-			if( isset( $posted['preauth'] )  && 'true' == $posted['preauth'] && '13' == $posted['statuscode'] ) {
+			if ( isset( $posted['preauth'] ) && 'true' == $posted['preauth'] && '13' == $posted['statuscode'] ) {
 				update_post_meta( $order_id, '_dibs_ticket', $posted['transact'] );
-				
-				// 
-				if( wcs_order_contains_subscription($order_id) ) {
-				
-					// New subscription but with a free trial. 
-					
+
+				if ( wcs_order_contains_subscription( $order_id ) ) {
+
+					// New subscription but with a free trial.
 					// Multiple callbacks are sent from DIBS. Don't add an order note if we already have done this
 					if ( $order->get_status() !== 'completed' || $order->get_status() !== 'processing' ) {
 						$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['transact'] ) );
 						$order->payment_complete( $posted['transact'] );
 					}
-					
 				} else {
-					
+
 					// Payment method change
 					$order->add_order_note( sprintf( __( 'Payment method updated. DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['transact'] ) );
 					wc_add_notice( sprintf( __( 'Your card %s is now stored with DIBS and will be used for future subscription renewal payments.', 'dibs-for-woocommerce' ), $posted['cardnomask'] ), 'success' );
-					
+
 					// Change redirect url
 					$redirect_url = get_permalink( wc_get_page_id( 'myaccount' ) );
 				}
-				
 
 				// Store card details in the subscription
 				if ( isset( $posted['cardnomask'] ) ) {
@@ -106,7 +102,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 				if ( isset( $posted['cardexpdate'] ) ) {
 					update_post_meta( $order_id, '_dibs_cardexpdate', $posted['cardexpdate'] );
 				}
-				
+
 				wp_redirect( $redirect_url );
 				exit;
 			}
@@ -115,7 +111,6 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			if ( isset( $posted['ticket'] ) ) {
 				update_post_meta( $order_id, '_dibs_ticket', $posted['ticket'] );
 				$order->add_order_note( sprintf( __( 'DIBS subscription ticket number: %s.', 'dibs-for-woocommerce' ), $posted['ticket'] ) );
-
 				if ( function_exists( 'wcs_get_subscriptions_for_order' ) ) {
 					$subs = wcs_get_subscriptions_for_order( $order, array( 'order_type' => 'parent' ) );
 					foreach ( $subs as $subscription ) {
@@ -156,8 +151,8 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			// Set order status
 			if ( $order->get_status() !== 'completed' || $order->get_status() !== 'processing' ) {
 				switch ( strtolower( $posted['statuscode'] ) ) :
-					case '2' :
-					case '5' :
+					case '2':
+					case '5':
 						// Order completed
 						$order->add_order_note( __( 'DIBS payment completed. DIBS transaction number: ', 'dibs-for-woocommerce' ) . $posted['transact'] );
 						// Transaction captured
@@ -175,7 +170,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 
 						$order->payment_complete( $posted['transact'] );
 						break;
-					case '12' :
+					case '12':
 						// Store Transaction number as post meta
 						update_post_meta( $order_id, '_dibs_transaction_no', $posted['transact'] );
 
@@ -197,12 +192,12 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 						$order->add_order_note( sprintf( __( 'DIBS Payment Pending. Check with DIBS for further information. DIBS transaction number: %s', 'dibs-for-woocommerce' ), $posted['transact'] ) );
 						$order->payment_complete( $posted['transact'] );
 						break;
-					case '0' :
-					case '1' :
-					case '4' :
-					case '17' :
+					case '0':
+					case '1':
+					case '4':
+					case '17':
 						// Order failed
-						$order->update_status( 'failed', sprintf( __( 'DIBS payment %s not approved. Status code %s.', 'dibs-for-woocommerce' ), strtolower( $posted['transaction'] ), $posted['statuscode'] ) );
+						$order->update_status( 'failed', sprintf( __( 'DIBS payment %1$s not approved. Status code %2$s.', 'dibs-for-woocommerce' ), strtolower( $posted['transaction'] ), $posted['statuscode'] ) );
 						break;
 
 					default:
@@ -239,18 +234,18 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			'meta_key'    => '_dibs_sent_order_id',
 			'meta_value'  => $order_number,
 		);
-		$orders = get_posts( $query_args );
-		if ( !empty( $orders ) ) {
+		$orders     = get_posts( $query_args );
+		if ( ! empty( $orders ) ) {
 			$order_id = $orders[0];
 		}
 
-		if( empty( $order_id ) ) {
-			
+		if ( empty( $order_id ) ) {
+
 			// Get Order ID by order_number() if the Sequential Order Number plugin is installed
 			if ( class_exists( 'WC_Seq_Order_Number' ) ) {
 				global $wc_seq_order_number;
 				$order_id = $wc_seq_order_number->find_order_by_order_number( $order_number );
-				
+
 				// Get Order ID by order_number() if the Sequential Order Number Pro plugin is installed
 			} elseif ( class_exists( 'WC_Seq_Order_Number_Pro' ) ) {
 				$order_id = wc_seq_order_number_pro()->find_order_by_order_number( $order_number );
@@ -258,17 +253,17 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 		}
 
 		// Check if order_id has been used as order number
-		if( empty( $order_id ) ) {
+		if ( empty( $order_id ) ) {
 			$order = wc_get_order( $order_number );
-			if( is_object( $order ) ) {
+			if ( is_object( $order ) ) {
 				// Order ID used as order number, return it.
 				$order_id = $order_number;
-				
+
 			}
 		}
-		
+
 		// No order_id found, use the returned $order_number instead
-		if( empty( $order_id ) ) {
+		if ( empty( $order_id ) ) {
 			$order_id = $order_number;
 			if ( $this->debug == 'yes' ) {
 				$this->log->add( 'dibs', 'ERROR. No order id found in get_order_id() function for order number ' . $order_number . ' returned from DIBS.' );
@@ -322,10 +317,10 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 	function scheduled_subscription_payment( $amount_to_charge, $order ) {
 		// This function may get triggered multiple times because the class is instantiated one time per payment method (card, invoice & mobile pay). Only run it for card payments.
 		// TODO: Restructure the classes so this doesn't happen.
-		if( 'dibs' != $this->id ) {
+		if ( 'dibs' != $this->id ) {
 			return;
 		}
-		
+
 		$result = $this->process_subscription_payment( $order, $amount_to_charge );
 
 		if ( false == $result ) {
@@ -352,19 +347,19 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 	 * Process a subscription payment.
 	 *
 	 * @param string $order
-	 * @param int $amount
+	 * @param int    $amount
 	 *
 	 * @return bool
 	 */
 	function process_subscription_payment( $order = '', $amount = 0 ) {
-		require_once( WC_DIBS_PLUGIN_DIR . 'includes/dibs-api-functions.php' );
-		
+		require_once WC_DIBS_PLUGIN_DIR . 'includes/dibs-api-functions.php';
+
 		$dibs_ticket = '';
-		//$dibs_ticket = get_post_meta( WC_Subscriptions_Renewal_Order::get_parent_order_id( $order->get_id() ), '_dibs_ticket', true );
-		
+		// $dibs_ticket = get_post_meta( WC_Subscriptions_Renewal_Order::get_parent_order_id( $order->get_id() ), '_dibs_ticket', true );
 		// If we the DIBS ticket number isn't stored in the parent order, look for it in the subscription.
 		// We store it there if the card/payment method has been updated.
-		/*if( empty( $dibs_ticket ) ) {
+		/*
+		if( empty( $dibs_ticket ) ) {
 			$subscriptions = wcs_get_subscriptions_for_order( $order->get_id(), array( 'order_type' => array( 'parent', 'renewal' ) ) );
 			foreach ( $subscriptions as $subscription ) {
 				if( get_post_meta( $subscription->get_id(), '_dibs_ticket', true ) ) {
@@ -373,10 +368,10 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 				}
 			}
 		}*/
-		
+
 		$dibs_ticket = get_post_meta( $order->get_id(), '_dibs_ticket', true );
 		// If the recurring token isn't stored in the subscription, grab it from parent order.
-		if( empty( $dibs_ticket ) ) {
+		if ( empty( $dibs_ticket ) ) {
 			$dibs_ticket = get_post_meta( WC_Subscriptions_Renewal_Order::get_parent_order_id( $order->get_id() ), '_dibs_ticket', true );
 		}
 
@@ -390,7 +385,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			'md5key'    => $md5key,
 			'merchant'  => $this->merchant_id,
 			'orderid'   => $order->get_order_number(),
-			'test' 		=> $this->testmode,
+			'test'      => $this->testmode,
 			'textreply' => 'yes',
 			'ticket'    => $dibs_ticket,
 		);
@@ -398,15 +393,15 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 		if ( $this->capturenow == 'yes' ) {
 			$params['capturenow'] = 'yes';
 		}
-		
+
 		// Debug
 		if ( $this->debug == 'yes' ) {
 			$this->log->add( 'dibs', 'Process subscription payment params: ' . var_export( $params, true ) );
 		}
-			
+
 		$response = postToDIBS( 'AuthorizeTicket', $params, false );
 
-		if ( isset( $response['status'] ) && ( $response['status'] == "ACCEPT" || $response['status'] == "ACCEPTED" ) ) {
+		if ( isset( $response['status'] ) && ( $response['status'] == 'ACCEPT' || $response['status'] == 'ACCEPTED' ) ) {
 			// Payment ok
 			$order->add_order_note( sprintf( __( 'DIBS subscription payment completed. Transaction Id: %s.', 'dibs-for-woocommerce' ), $response['transact'] ) );
 			update_post_meta( $order->get_id(), '_dibs_transaction_no', $response['transact'] );
@@ -426,12 +421,12 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 		} else {
 			// Payment problem
 			$order->add_order_note( sprintf( __( 'DIBS subscription payment failed. Decline reason: %s.', 'dibs-for-woocommerce' ), $response['reason'] ) );
-			
+
 			// Debug
 			if ( $this->debug == 'yes' ) {
 				$this->log->add( 'dibs', 'DIBS subscription payment failed, received response: ' . var_export( $response, true ) );
 			}
-		
+
 			return false;
 		}
 	}
@@ -450,8 +445,8 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 	/**
 	 * Process a refund if supported.
 	 *
-	 * @param int $order_id
-	 * @param null $amount
+	 * @param int    $order_id
+	 * @param null   $amount
 	 * @param string $reason
 	 *
 	 * @return bool
@@ -472,7 +467,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			return false;
 		}
 
-		require_once( WC_DIBS_PLUGIN_DIR . 'includes/dibs-api-functions.php' );
+		require_once WC_DIBS_PLUGIN_DIR . 'includes/dibs-api-functions.php';
 
 		$amount_smallest_unit = $amount * 100;
 		$transact             = $order->get_transaction_id();
@@ -488,7 +483,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 			'merchant'  => $merchant_id,
 			'orderid'   => $order->get_order_number(),
 			'textreply' => 'yes',
-			'transact'  => $transact
+			'transact'  => $transact,
 		);
 
 		$response = postToDIBS( 'RefundTransaction', $params, false, $this->api_username, $this->api_password );
