@@ -283,8 +283,8 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			<th scope="row" class="titledesc">DIBS disabled</th>
 			<td class="forminp">
 			<fieldset>
-				<legend class="screen-reader-text"><span>DIBS disabled</span></legend>
-				<?php _e( 'DIBS does not support your store currency.', 'dibs-for-woocommerce' ); ?><br>
+			<legend class="screen-reader-text"><span>DIBS disabled</span></legend>
+			<?php _e( 'DIBS does not support your store currency.', 'dibs-for-woocommerce' ); ?><br>
 			</fieldset>
 			</td>
 			</tr>
@@ -365,7 +365,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		}
 
 		// What kind of payment is this - subscription payment or regular payment.
-		if ( class_exists( 'WC_Subscriptions_Order' ) && WC_Subscriptions_Order::order_contains_subscription( $order_id ) ) {
+		if ( class_exists( 'WC_Subscriptions_Order' ) && wcs_order_contains_subscription( $order_id, array( 'parent', 'resubscribe', 'switch', 'renewal' ) ) ) {
 
 			if ( WC_Subscriptions_Order::get_total_initial_payment( $order ) == 0 ) {
 				$price = 0;
