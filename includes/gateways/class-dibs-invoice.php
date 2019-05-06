@@ -78,7 +78,8 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 		// Actions
 		add_action( 'woocommerce_receipt_dibs_invoice', array( $this, 'receipt_page' ) );
 		add_action(
-			'woocommerce_update_options_payment_gateways_' . $this->id, array(
+			'woocommerce_update_options_payment_gateways_' . $this->id,
+			array(
 				$this,
 				'process_admin_options',
 			)
@@ -294,7 +295,7 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 				// Generate the HTML For the settings form.
 				$this->generate_settings_html();
 			} else {
-			?>
+				?>
 				<tr valign="top">
 					<th scope="row" class="titledesc">DIBS disabled</th>
 					<td class="forminp">
@@ -317,7 +318,6 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 	 */
 	function is_available() {
 
-		global $woocommerce;
 		if ( $this->enabled == 'yes' ) :
 
 			// Base country check
@@ -331,9 +331,9 @@ class WC_Gateway_Dibs_Invoice extends WC_Gateway_Dibs_Factory {
 			}
 
 			// Checkout form check
-			if ( isset( $woocommerce->cart->total ) ) {
+			if ( isset( WC()->cart->total ) ) {
 				// Only activate the payment gateway if the customers country is the same as the shop country ($this->dibs_country)
-				if ( $woocommerce->customer->get_country() == true && $woocommerce->customer->get_country() != $this->dibs_country ) {
+				if ( WC()->customer->get_billing_country() == true && WC()->customer->get_billing_country() != $this->dibs_country ) {
 					return false;
 				}
 			} // End Checkout form check

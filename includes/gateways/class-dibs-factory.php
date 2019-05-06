@@ -279,7 +279,6 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 	 * @param $posted
 	 */
 	function cancel_order( $posted ) {
-		global $woocommerce;
 
 		// Flexwin callback
 		if ( isset( $posted['orderid'] ) ) {
@@ -290,8 +289,8 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 
 			if ( $order->get_id() == $order_id && $order->get_status() == 'pending' ) {
 
-				// Cancel the order + restore stock
-				$order->cancel_order( __( 'Order cancelled by customer.', 'dibs-for-woocommerce' ) );
+				// Cancel the order + restore stock.
+				$order->update_status( 'cancelled', __( 'Order cancelled by customer.', 'dibs-for-woocommerce' ) );
 
 				// Message
 				wc_add_notice( __( 'Your order was cancelled.', 'dibs-for-woocommerce' ), 'error' );
@@ -303,7 +302,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 				wc_add_notice( __( 'Invalid order.', 'dibs-for-woocommerce' ), 'error' );
 			}
 
-			wp_safe_redirect( $woocommerce->cart->get_cart_url() );
+			wp_safe_redirect( wc_get_cart_url() );
 			exit;
 		} // End Flexwin
 	}
