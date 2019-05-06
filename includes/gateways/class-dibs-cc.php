@@ -66,23 +66,30 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		// Subscriptions
 		if ( class_exists( 'WC_Subscriptions_Order' ) ) {
 			add_action(
-				'woocommerce_scheduled_subscription_payment_' . $this->id, array(
+				'woocommerce_scheduled_subscription_payment_' . $this->id,
+				array(
 					$this,
 					'scheduled_subscription_payment',
-				), 10, 2
+				),
+				10,
+				2
 			);
 			add_action(
-				'woocommerce_subscription_failing_payment_method_updated_' . $this->id, array(
+				'woocommerce_subscription_failing_payment_method_updated_' . $this->id,
+				array(
 					$this,
 					'update_failing_payment_method',
-				), 10, 2
+				),
+				10,
+				2
 			);
 		}
 
 		// Actions
 		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
 		add_action(
-			'woocommerce_update_options_payment_gateways_' . $this->id, array(
+			'woocommerce_update_options_payment_gateways_' . $this->id,
+			array(
 				$this,
 				'process_admin_options',
 			)
@@ -290,7 +297,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			</tr>
 			<?php
 		} // End check currency
-			?>
+		?>
 			</table><!--/.form-table-->
 			<?php
 	}
@@ -475,11 +482,11 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 			// Debug preparing
 			$tmp_log .= $key . '=' . $value . "\r\n";
 		}
-			error_log( '$tmp_log ' . $tmp_log );
+
 			// Debug
-		if ( $this->debug == 'yes' ) :
+		if ( $this->debug == 'yes' ) {
 			$this->log->add( 'dibs', 'Sending values to DIBS: ' . $tmp_log );
-				endif;
+		}
 
 			wc_enqueue_js(
 				'
