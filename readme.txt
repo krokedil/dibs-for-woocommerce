@@ -2,9 +2,9 @@
 Contributors: krokedil, niklashogefjord, slobodanmanic, boozebrorsan
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 5.0.2
+Tested up to: 5.1.1
 Requires WooCommerce at least: 3.0
-Tested WooCommerce up to: 3.5.3
+Tested WooCommerce up to: 3.6.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Stable tag: trunk
@@ -49,6 +49,10 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2019.05.06	- version 2.6.2 =
+* Fix           - Fixed error in MasterPass class related to WC_Session.
+* Fix           - WC version deprecated notice fix. Could cause issues with cancel order redirect from DIBS payment window.
 
 = 2019.01.07	- version 2.6.1 =
 * Tweak			- Update DIBS ticket number in subscription during every subscription renewal payment.
