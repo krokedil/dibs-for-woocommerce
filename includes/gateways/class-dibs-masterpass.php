@@ -114,7 +114,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 	function filter_gateways( $gateways ) {
 		global $woocommerce;
 		foreach ( $gateways as $gateway ) {
-			if ( ! is_admin() ) {
+			if ( method_exists( WC()->session, 'get' ) ) {
 				$dibs_wallet_mp_selected = WC()->session->get( 'dibs_wallet_mp_selected' );
 				if ( $dibs_wallet_mp_selected && 'dibs_masterpass' != $gateway->id ) {
 					unset( $gateways[ $gateway->id ] );
@@ -648,7 +648,8 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 		die();
 		*/
 		$response = wp_remote_post(
-			$url, array(
+			$url,
+			array(
 				'method'      => 'POST',
 				'timeout'     => 45,
 				'redirection' => 5,
@@ -1041,7 +1042,8 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 			}
 
 			$response = wp_remote_post(
-				$url, array(
+				$url,
+				array(
 					'method'      => 'POST',
 					'timeout'     => 45,
 					'redirection' => 5,
@@ -1170,7 +1172,8 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 		}
 
 		$response = wp_remote_post(
-			$url, array(
+			$url,
+			array(
 				'method'      => 'POST',
 				'timeout'     => 45,
 				'redirection' => 5,
@@ -1328,7 +1331,8 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 			}
 
 			$response = wp_remote_post(
-				$url, array(
+				$url,
+				array(
 					'method'      => 'POST',
 					'timeout'     => 45,
 					'redirection' => 5,

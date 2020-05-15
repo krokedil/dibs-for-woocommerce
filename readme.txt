@@ -1,27 +1,26 @@
-=== DIBS for WooCommerce ===
+=== Nets D2 for WooCommerce ===
 Contributors: krokedil, niklashogefjord, slobodanmanic, boozebrorsan
 Tags: ecommerce, e-commerce, woocommerce, dibs
 Requires at least: 4.3
-Tested up to: 5.0.2
+Tested up to: 5.4.1
 Requires WooCommerce at least: 3.0
-Tested WooCommerce up to: 3.5.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Stable tag: trunk
 
-DIBS for WooCommerce is a plugin that extends WooCommerce, allowing you to take payments via DIBS (via the D2/FlexWin platform).
+Nets D2 for WooCommerce is a plugin that extends WooCommerce, allowing you to take payments via Nets (via the D2 platform).
 
 
 
 == DESCRIPTION ==
-DIBS Payment Services is a leading Scandinavian online payment service provider. DIBS can take payment in the following currencies: Danish Krona - Euro - US Dollar $ - English Pound £ - Swedish Krona - Australian Dollar - Canadian Dollar - Icelandic Krona - Japanese Yen - New Zealand Dollar - Norwegian Krona - Swiss Franc - Turkish Lire.
+Nets Payment Services is a leading Scandinavian online payment service provider. Nets can take payment in the following currencies: Danish Krona - Euro - US Dollar $ - English Pound £ - Swedish Krona - Australian Dollar - Canadian Dollar - Icelandic Krona - Japanese Yen - New Zealand Dollar - Norwegian Krona - Swiss Franc - Turkish Lire.
 
-To get started with DIBS you will need an agreement with DIBS as well as your acquiring bank. Visit [DIBS](http://www.dibspayment.com/) website for more information.
+To get started with Nets you will need an agreement with Nets as well as your acquiring bank. Visit [Nets](https://www.nets.eu/en/payments/) website for more information.
 
 = How does it work? =
-* When an order is placed, the customer is taken to DIBS to make a secure payment.
+* When an order is placed, the customer is taken to Nets to make a secure payment.
 * After the customer completes their payment the order is confirmed and the user is taken to the thank you page on your site.
-* Because DIBS handle the payment process for you, no SSL certificate is required (but recommended) on your site.
+* Because Nets handle the payment process for you, no SSL certificate is required (but recommended) on your site.
 
 = Multiple payment methods available =
 The extension comes with the following payment methods that can be activated/deactivated individually:
@@ -49,6 +48,15 @@ More information on how to get started can be found in the [plugin documentation
 
 
 == CHANGELOG ==
+
+= 2020.05.15	- version 2.7.0 =
+* Tweak         - Made recurring payments more compatible with new WooCommerce subscription flow.
+* Tweak         - Declare support for WC 4.1.0 & WP 5.4.1.
+* Tweak         - Change the name of the plugin to Nets D2 for WooCommerce.
+
+= 2019.05.06	- version 2.6.2 =
+* Fix           - Fixed error in MasterPass class related to WC_Session.
+* Fix           - WC version deprecated notice fix. Could cause issues with cancel order redirect from DIBS payment window.
 
 = 2019.01.07	- version 2.6.1 =
 * Tweak			- Update DIBS ticket number in subscription during every subscription renewal payment.
