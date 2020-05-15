@@ -322,6 +322,8 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 
 		$result = $this->process_subscription_payment( $order, $amount_to_charge );
 
+		$subscriptions = wcs_get_subscriptions_for_renewal_order( $order->get_id() );
+
 		if ( false == $result ) {
 
 			// Debug
@@ -329,7 +331,9 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 				$this->log->add( 'dibs', 'Scheduled subscription payment failed for order ' . $order->get_id() );
 			}
 
-			WC_Subscriptions_Manager::process_subscription_payment_failure_on_order( $order );
+			foreach ( $subscriptions as $subscription ) {
+				$subscription->payment_failed();
+			}
 		} else {
 
 			// Debug
@@ -337,8 +341,9 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 				$this->log->add( 'dibs', 'Scheduled subscription payment succeeded for order ' . $order->get_id() );
 			}
 
-			WC_Subscriptions_Manager::process_subscription_payments_on_order( $order );
-			$order->payment_complete();
+			foreach ( $subscriptions as $subscription ) {
+				$subscription->payment_complete( $result );
+			}
 		}
 	}
 
@@ -354,24 +359,15 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 		require_once WC_DIBS_PLUGIN_DIR . 'includes/dibs-api-functions.php';
 
 		$dibs_ticket = '';
-		// $dibs_ticket = get_post_meta( WC_Subscriptions_Renewal_Order::get_parent_order_id( $order->get_id() ), '_dibs_ticket', true );
-		// If we the DIBS ticket number isn't stored in the parent order, look for it in the subscription.
-		// We store it there if the card/payment method has been updated.
-		/*
-		if( empty( $dibs_ticket ) ) {
-			$subscriptions = wcs_get_subscriptions_for_order( $order->get_id(), array( 'order_type' => array( 'parent', 'renewal' ) ) );
-			foreach ( $subscriptions as $subscription ) {
-				if( get_post_meta( $subscription->get_id(), '_dibs_ticket', true ) ) {
-					$dibs_ticket = get_post_meta( $subscription->get_id(), '_dibs_ticket', true );
-					break;
-				}
-			}
-		}*/
 
 		$dibs_ticket = get_post_meta( $order->get_id(), '_dibs_ticket', true );
 		// If the recurring token isn't stored in the subscription, grab it from parent order.
 		if ( empty( $dibs_ticket ) ) {
 			$dibs_ticket = get_post_meta( WC_Subscriptions_Renewal_Order::get_parent_order_id( $order->get_id() ), '_dibs_ticket', true );
+
+			if ( ! empty( $dibs_ticket ) ) {
+				update_post_meta( $order->get_id(), '_dibs_ticket', $dibs_ticket );
+			}
 		}
 
 		$amount_smallest_unit = number_format( $amount, 2, '.', '' ) * 100;
