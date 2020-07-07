@@ -10,7 +10,7 @@ class WC_Gateway_Dibs_CC_2 extends WC_Gateway_Dibs_Factory {
 	public function __construct() {
 		parent::__construct();
 
-		$this->id           = 'dibs_2"';
+		$this->id           = 'dibs_2';
 		$this->name         = 'DIBS 2';
 		$this->method_title = 'DIBS 2';
 		$this->has_fields   = false;
@@ -86,7 +86,7 @@ class WC_Gateway_Dibs_CC_2 extends WC_Gateway_Dibs_Factory {
 		}
 
 		// Actions
-		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
+		add_action( 'woocommerce_receipt_dibs_2', array( $this, 'receipt_page' ) );
 		add_action(
 			'woocommerce_update_options_payment_gateways_' . $this->id,
 			array(
@@ -124,7 +124,6 @@ class WC_Gateway_Dibs_CC_2 extends WC_Gateway_Dibs_Factory {
 	 * Initialise Gateway Settings Form Fields
 	 */
 	function init_form_fields() {
-
 		$this->form_fields = array(
 			'enabled'                  => array(
 				'title'   => __( 'Enable/Disable', 'dibs-for-woocommerce' ),
@@ -343,7 +342,6 @@ class WC_Gateway_Dibs_CC_2 extends WC_Gateway_Dibs_Factory {
 	 */
 	function receipt_page( $order ) {
 		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'dibs-for-woocommerce' ) . '</p>';
-
 		echo $this->generate_dibs_form( $order );
 	}
 

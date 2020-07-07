@@ -86,7 +86,7 @@ class WC_Gateway_Dibs_CC_3 extends WC_Gateway_Dibs_Factory {
 		}
 
 		// Actions
-		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
+		add_action( 'woocommerce_receipt_dibs_3', array( $this, 'receipt_page' ) );
 		add_action(
 			'woocommerce_update_options_payment_gateways_' . $this->id,
 			array(

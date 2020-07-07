@@ -20,10 +20,12 @@ class WC_Dibs_Manual_Modification {
 	 * @param $post_type
 	 */
 	public function dibs_transaction_metabox( $post_type ) {
-		add_meta_box( 'wc_dibs_transaction_metabox', __( 'DIBS Order transaction details', 'dibs-for-woocommerce' ), array(
-			$this,
-			'render_transaction_meta_box_content'
-		), 'shop_order', 'advanced', 'high' );
+		add_meta_box(
+			'wc_dibs_transaction_metabox', __( 'DIBS Order transaction details', 'dibs-for-woocommerce' ), array(
+				$this,
+				'render_transaction_meta_box_content',
+			), 'shop_order', 'advanced', 'high'
+		);
 	}
 
 	/**
@@ -35,7 +37,7 @@ class WC_Dibs_Manual_Modification {
 		$order = wc_get_order( $post->ID );
 
 		// Only display the metabox if DIBS is the used payment gateway
-		if ( $order->get_payment_method() != 'dibs' ) {
+		if ( ! in_array( $order->get_payment_method(), array( 'dibs', 'dibs_2', 'dibs_3' ), true ) {
 			return;
 		}
 
@@ -55,12 +57,12 @@ class WC_Dibs_Manual_Modification {
 				<tbody>
 				<tr>
 					<td class="dibs-transaction"><input type="text" name="woocommerce_dibs_transaction"
-					                                    id="woocommerce_dibs_transaction"
-					                                    value="<?php echo esc_attr( get_post_meta( $post->ID, '_dibs_transaction_no', true ) ); ?>"/>
+														id="woocommerce_dibs_transaction"
+														value="<?php echo esc_attr( get_post_meta( $post->ID, '_dibs_transaction_no', true ) ); ?>"/>
 					</td>
 					<td class="dibs-ticket"><input type="text" name="woocommerce_dibs_ticket"
-					                               id="woocommerce_dibs_ticket"
-					                               value="<?php echo esc_attr( get_post_meta( $post->ID, '_dibs_ticket', true ) ); ?>"/>
+												   id="woocommerce_dibs_ticket"
+												   value="<?php echo esc_attr( get_post_meta( $post->ID, '_dibs_ticket', true ) ); ?>"/>
 					</td>
 
 				</tr>
@@ -81,7 +83,6 @@ class WC_Dibs_Manual_Modification {
 	public function save_metabox( $post_id ) {
 		// We need to verify this came from the our screen and with proper authorization,
 		// because save_post can be triggered at other times.
-
 		// Check if our nonce is set.
 		if ( ! isset( $_POST['wc_dibs_transaction_metabox_nonce'] ) ) {
 			return $post_id;
