@@ -37,7 +37,7 @@ class WC_Dibs_Manual_Modification {
 		$order = wc_get_order( $post->ID );
 
 		// Only display the metabox if DIBS is the used payment gateway
-		if ( ! in_array( $order->get_payment_method(), array( 'dibs', 'dibs_2', 'dibs_3' ), true ) {
+		if ( ! in_array( $order->get_payment_method(), array( 'dibs', 'dibs_2', 'dibs_3' ), true ) ) {
 			return;
 		}
 
