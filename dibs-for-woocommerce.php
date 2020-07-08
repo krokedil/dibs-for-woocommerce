@@ -71,6 +71,8 @@ function init_dibs_gateway() {
 
 	// Include our Dibs credit card class
 	require_once WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-cc.php';
+	require_once WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-cc-2.php';
+	require_once WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-cc-3.php';
 
 	// Include our Dibs Invoice class
 	require_once WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-invoice.php';
@@ -100,6 +102,11 @@ function add_dibs_gateway( $methods ) {
 	$methods[] = 'WC_Gateway_Dibs_MobilePay';
 	$methods[] = 'WC_Gateway_Dibs_MasterPass_New';
 	$methods[] = 'WC_Gateway_Dibs_Dankort_App';
+	$options   = get_option( 'woocommerce_dibs_settings' );
+	if ( isset( $options['split_card'] ) && 'yes' === $options['split_card'] ) {
+		$methods[] = 'WC_Gateway_Dibs_CC_2';
+		$methods[] = 'WC_Gateway_Dibs_CC_3';
+	}
 
 	return $methods;
 }
