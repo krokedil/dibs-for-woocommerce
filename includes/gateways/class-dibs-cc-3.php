@@ -136,7 +136,7 @@ class WC_Gateway_Dibs_CC_3 extends WC_Gateway_Dibs_Factory {
 				'title'       => __( 'Title', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'dibs-for-woocommerce' ),
-				'default'     => __( 'DIBS', 'dibs-for-woocommerce' ),
+				'default'     => __( 'DIBS - 3', 'dibs-for-woocommerce' ),
 			),
 			'description'              => array(
 				'title'       => __( 'Description', 'dibs-for-woocommerce' ),
