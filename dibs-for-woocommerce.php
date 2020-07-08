@@ -3,7 +3,7 @@
  * Plugin Name: Nets D2 for WooCommerce
  * Plugin URI: https://krokedil.se/produkt/dibs/
  * Description: Extends WooCommerce. Provides a <a href="https://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
- * Version: 2.7.0
+ * Version: 2.8.0
  * Author: Krokedil
  * Author URI: https://krokedil.se
  * Text Domain: dibs-for-woocommerce
@@ -40,7 +40,7 @@ if ( ! defined( 'WC_DIBS_PLUGIN_URL' ) ) {
 	define( 'WC_DIBS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 // Plugin version
-define( 'WC_DIBS_VERSION', '2.7.0' );
+define( 'WC_DIBS_VERSION', '2.8.0' );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-dibs-extra.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-dibs-masterpass-functions.php';
@@ -71,6 +71,8 @@ function init_dibs_gateway() {
 
 	// Include our Dibs credit card class
 	require_once WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-cc.php';
+	require_once WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-cc-2.php';
+	require_once WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-cc-3.php';
 
 	// Include our Dibs Invoice class
 	require_once WC_DIBS_PLUGIN_DIR . 'includes/gateways/class-dibs-invoice.php';
@@ -100,6 +102,11 @@ function add_dibs_gateway( $methods ) {
 	$methods[] = 'WC_Gateway_Dibs_MobilePay';
 	$methods[] = 'WC_Gateway_Dibs_MasterPass_New';
 	$methods[] = 'WC_Gateway_Dibs_Dankort_App';
+	$options   = get_option( 'woocommerce_dibs_settings' );
+	if ( isset( $options['split_card'] ) && 'yes' === $options['split_card'] ) {
+		$methods[] = 'WC_Gateway_Dibs_CC_2';
+		$methods[] = 'WC_Gateway_Dibs_CC_3';
+	}
 
 	return $methods;
 }

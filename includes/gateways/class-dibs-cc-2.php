@@ -2,7 +2,7 @@
 /**
  * Class WC_Gateway_Dibs_CC
  */
-class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
+class WC_Gateway_Dibs_CC_2 extends WC_Gateway_Dibs_Factory {
 
 	/**
 	 * WC_Gateway_Dibs_CC constructor.
@@ -10,9 +10,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 	public function __construct() {
 		parent::__construct();
 
-		$this->id           = 'dibs';
-		$this->name         = 'DIBS';
-		$this->method_title = 'DIBS';
+		$this->id           = 'dibs_2';
+		$this->name         = 'DIBS Debit card - activate for Sweden';
+		$this->method_title = 'DIBS Debit card - activate for Sweden';
 		$this->has_fields   = false;
 		$this->log          = new WC_Logger();
 
@@ -86,7 +86,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 		}
 
 		// Actions
-		add_action( 'woocommerce_receipt_dibs', array( $this, 'receipt_page' ) );
+		add_action( 'woocommerce_receipt_dibs_2', array( $this, 'receipt_page' ) );
 		add_action(
 			'woocommerce_update_options_payment_gateways_' . $this->id,
 			array(
@@ -124,7 +124,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 	 * Initialise Gateway Settings Form Fields
 	 */
 	function init_form_fields() {
-
 		$this->form_fields = array(
 			'enabled'                  => array(
 				'title'   => __( 'Enable/Disable', 'dibs-for-woocommerce' ),
@@ -136,7 +135,7 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 				'title'       => __( 'Title', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'dibs-for-woocommerce' ),
-				'default'     => __( 'DIBS', 'dibs-for-woocommerce' ),
+				'default'     => __( 'DIBS - Debit card', 'dibs-for-woocommerce' ),
 			),
 			'description'              => array(
 				'title'       => __( 'Description', 'dibs-for-woocommerce' ),
@@ -226,12 +225,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 				),
 				'description' => __( 'Specifies which of the pre-built decorators to use (when using Flexwin as the payment method). This will override the customer specific decorator, if one has been uploaded.', 'dibs-for-woocommerce' ),
 				'default'     => 'responsive',
-			),
-			'split_card'               => array(
-				'title'   => __( 'Split card payments', 'dibs-for-woocommerce' ),
-				'type'    => 'checkbox',
-				'label'   => __( 'Enables two more card payment methods to be able to separate the card payments.', 'dibs-for-woocommerce' ),
-				'default' => 'no',
 			),
 			'api_settings_title'       => array(
 				'title'       => __( 'API Credentials', 'dibs-for-woocommerce' ),
@@ -349,7 +342,6 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 	 */
 	function receipt_page( $order ) {
 		echo '<p>' . __( 'Thank you for your order, please click the button below to pay with DIBS.', 'dibs-for-woocommerce' ) . '</p>';
-
 		echo $this->generate_dibs_form( $order );
 	}
 

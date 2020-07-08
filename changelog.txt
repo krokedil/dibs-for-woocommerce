@@ -1,5 +1,8 @@
 *** DIBS Changelog ***
 
+2020.05.15	    - version 2.8.0
+* Feature       - Added ability to split card payments into two additional payment methods.
+
 2020.05.15	    - version 2.7.0
 * Tweak         - Made recurring payments more compatible with new WooCommerce subscription flow.
 * Tweak         - Declare support for WC 4.1.0 & WP 5.4.1.
