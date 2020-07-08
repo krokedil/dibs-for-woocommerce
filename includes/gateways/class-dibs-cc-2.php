@@ -12,7 +12,7 @@ class WC_Gateway_Dibs_CC_2 extends WC_Gateway_Dibs_Factory {
 
 		$this->id           = 'dibs_2';
 		$this->name         = 'DIBS Debit card - activate for Sweden';
-		$this->method_title = 'DIBS Debit card';
+		$this->method_title = 'DIBS Debit card - activate for Sweden';
 		$this->has_fields   = false;
 		$this->log          = new WC_Logger();
 
