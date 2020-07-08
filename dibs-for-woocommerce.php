@@ -3,7 +3,7 @@
  * Plugin Name: Nets D2 for WooCommerce
  * Plugin URI: https://krokedil.se/produkt/dibs/
  * Description: Extends WooCommerce. Provides a <a href="https://www.dibspayment.com/" target="_blank">DIBS</a> gateway for WooCommerce.
- * Version: 2.7.0
+ * Version: 2.8.0
  * Author: Krokedil
  * Author URI: https://krokedil.se
  * Text Domain: dibs-for-woocommerce
@@ -40,7 +40,7 @@ if ( ! defined( 'WC_DIBS_PLUGIN_URL' ) ) {
 	define( 'WC_DIBS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
 // Plugin version
-define( 'WC_DIBS_VERSION', '2.7.0' );
+define( 'WC_DIBS_VERSION', '2.8.0' );
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-dibs-extra.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-dibs-masterpass-functions.php';

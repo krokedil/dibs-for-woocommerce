@@ -11,8 +11,8 @@ class WC_Gateway_Dibs_CC_2 extends WC_Gateway_Dibs_Factory {
 		parent::__construct();
 
 		$this->id           = 'dibs_2';
-		$this->name         = 'DIBS 2';
-		$this->method_title = 'DIBS 2';
+		$this->name         = 'DIBS Debit card - activate for Sweden';
+		$this->method_title = 'DIBS Debit card';
 		$this->has_fields   = false;
 		$this->log          = new WC_Logger();
 
@@ -135,7 +135,7 @@ class WC_Gateway_Dibs_CC_2 extends WC_Gateway_Dibs_Factory {
 				'title'       => __( 'Title', 'dibs-for-woocommerce' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the title which the user sees during checkout.', 'dibs-for-woocommerce' ),
-				'default'     => __( 'DIBS - 2', 'dibs-for-woocommerce' ),
+				'default'     => __( 'DIBS - Debit card', 'dibs-for-woocommerce' ),
 			),
 			'description'              => array(
 				'title'       => __( 'Description', 'dibs-for-woocommerce' ),
