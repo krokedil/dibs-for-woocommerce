@@ -371,12 +371,12 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 		}
 
 		$amount_smallest_unit = number_format( $amount, 2, '.', '' ) * 100;
-		$postvars             = 'merchant=' . $this->merchant_id . '&orderid=' . $order->get_order_number() . '&ticket=' . $dibs_ticket . '&currency=' . $order->get_order_currency() . '&amount=' . $amount_smallest_unit;
+		$postvars             = 'merchant=' . $this->merchant_id . '&orderid=' . $order->get_order_number() . '&ticket=' . $dibs_ticket . '&currency=' . $order->get_currency() . '&amount=' . $amount_smallest_unit;
 		$md5key               = MD5( $this->key_2 . MD5( $this->key_1 . $postvars ) );
 
 		$params = array(
 			'amount'    => $amount_smallest_unit,
-			'currency'  => $order->get_order_currency(),
+			'currency'  => $order->get_currency(),
 			'md5key'    => $md5key,
 			'merchant'  => $this->merchant_id,
 			'orderid'   => $order->get_order_number(),
@@ -473,7 +473,7 @@ class WC_Gateway_Dibs_Factory extends WC_Gateway_Dibs {
 		// Refund parameters
 		$params = array(
 			'amount'    => $amount_smallest_unit,
-			'currency'  => $order->get_order_currency(),
+			'currency'  => $order->get_currency(),
 			'md5key'    => $md5key,
 			'merchant'  => $merchant_id,
 			'orderid'   => $order->get_order_number(),
