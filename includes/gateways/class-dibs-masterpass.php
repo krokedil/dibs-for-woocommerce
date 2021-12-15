@@ -396,6 +396,9 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 	public function admin_options() {
 		?>
 		<h3><?php _e( 'MasterPass via DIBS', 'dibs-for-woocommerce' ); ?></h3>
+		<p style="background: #ffcaca; padding: 1em; font-size: 1.1em; border: 0px solid #8c8f94; border-left:10px solid #cc0000;">
+		<strong>Please note that this plugin will be retired early 2022.</strong> <br/>If you want to continue to use Nets (previously DIBS) as your payment provider your option is <a href="https://krokedil.com/product/nets-easy/" target="_blank">Nets Easy for WooCommerce</a>.<br/>If you need help transitioning from Nets D2 to Nets Easy you can <a href="https://krokedil.com/contact/" target="_blank">contact Krokedil</a> - the developer team behind both the Nets D2 and Nets Easy for WooCommerce plugins.
+		</p>
 		<?php
 		$checkout_page_id = wc_get_page_id( 'checkout' );
 		$checkout_url     = '';

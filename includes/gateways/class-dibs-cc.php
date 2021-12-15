@@ -282,6 +282,9 @@ class WC_Gateway_Dibs_CC extends WC_Gateway_Dibs_Factory {
 	public function admin_options() {
 		?>
 		<h3><?php _e( 'DIBS', 'dibs-for-woocommerce' ); ?></h3>
+		<p style="background: #ffcaca; padding: 1em; font-size: 1.1em; border: 0px solid #8c8f94; border-left:10px solid #cc0000;">
+		<strong>Please note that this plugin will be retired early 2022.</strong> <br/>If you want to continue to use Nets (previously DIBS) as your payment provider your option is <a href="https://krokedil.com/product/nets-easy/" target="_blank">Nets Easy for WooCommerce</a>.<br/>If you need help transitioning from Nets D2 to Nets Easy you can <a href="https://krokedil.com/contact/" target="_blank">contact Krokedil</a> - the developer team behind both the Nets D2 and Nets Easy for WooCommerce plugins.
+		</p>
 		<p>
 		<?php printf( __( 'Documentation <a href="%s" target="_blank">can be found here</a>.', 'dibs-for-woocommerce' ), 'http://docs.krokedil.com/documentation/dibs-for-woocommerce/' ); ?>
 		</p>
