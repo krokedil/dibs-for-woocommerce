@@ -277,7 +277,7 @@ class WC_Gateway_Dibs_CC_3 extends WC_Gateway_Dibs_Factory {
 		?>
 		<h3><?php _e( 'DIBS', 'dibs-for-woocommerce' ); ?></h3>
 		<p style="background: #ffcaca; padding: 1em; font-size: 1.1em; border: 0px solid #8c8f94; border-left:10px solid #cc0000;">
-		<strong>Please note that this plugin will be retired early 2022.</strong> <br/>If you want to continue to use Nets (previously DIBS) as your payment provider your option is <a href="https://krokedil.com/product/nets-easy/" target="_blank">Nets Easy for WooCommerce</a>.<br/>If you need help transitioning from Nets D2 to Nets Easy you can <a href="https://krokedil.com/contact/" target="_blank">contact Krokedil</a> - the developer team behind both the Nets D2 and Nets Easy for WooCommerce plugins.
+		<strong>Please note that this plugin will be retired early 2022.</strong> <br/>To continue to use Nets (previously DIBS) as your payment provider you need to upgrade to <a href="https://krokedil.com/product/nets-easy/" target="_blank">Nets Easy for WooCommerce</a>.<br/>If you don't you won't be able to accept payments when Nets D2 is closed down. <a href="https://www.nets.eu/payments/online" target="_blank">Get in touch with Nets</a> to upgrade your account. <br/>If you need help transitioning from the Nets D2 plugin to Nets Easy you can <a href="https://krokedil.com/contact/" target="_blank">contact Krokedil</a> - the developer team behind the plugins.
 		</p>
 		<p>
 		<?php printf( __( 'Documentation <a href="%s" target="_blank">can be found here</a>.', 'dibs-for-woocommerce' ), 'http://docs.krokedil.com/documentation/dibs-for-woocommerce/' ); ?>
