@@ -1469,7 +1469,7 @@ class WC_Gateway_Dibs_MasterPass_New extends WC_Gateway_Dibs_Factory {
 		// Refund parameters
 		$params = array(
 			'amount'    => $amount_smallest_unit,
-			'currency'  => $order->get_order_currency(),
+			'currency'  => $order->get_currency(),
 			'md5key'    => $md5key,
 			'merchant'  => $merchant_id,
 			'orderid'   => $order->get_order_number(),
